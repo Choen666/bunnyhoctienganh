@@ -1,355 +1,302 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="vi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Truong Nguyen Bao Tran — International Law Student &amp; Legal Researcher</title>
-<meta name="description" content="Portfolio of Truong Nguyen Bao Tran, International Law student at the Diplomatic Academy of Vietnam, specializing in legal research, compliance, and cross-border trade law.">
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Poppins:wght@300;400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-
-<link rel="stylesheet" href="style.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="BunnyLingo Reading Lab - học IELTS Reading và từ vựng Anh - Trung - Việt qua ngữ cảnh.">
+  <title>BunnyLingo Reading Lab</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Fredoka:wght@500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <a class="skip-link" href="#main">Đi tới nội dung chính</a>
+  <div class="ambient ambient-one" aria-hidden="true"></div>
+  <div class="ambient ambient-two" aria-hidden="true"></div>
 
-<!-- The Ratifying Thread — signature scroll-progress ribbon -->
-<div class="thread-rail" aria-hidden="true">
-  <svg class="thread-svg" width="3" height="100%" preserveAspectRatio="none">
-    <line class="thread-track" x1="1.5" y1="0" x2="1.5" y2="100%"></line>
-    <line class="thread-fill" x1="1.5" y1="0" x2="1.5" y2="0"></line>
-  </svg>
-</div>
+  <aside class="sidebar" aria-label="Điều hướng chính">
+    <button class="brand" data-nav="home" aria-label="Về trang chủ">
+      <span class="brand-mark" aria-hidden="true"><i></i><b></b></span>
+      <span><strong>BunnyLingo</strong><small>Reading Lab</small></span>
+    </button>
+    <nav id="primary-nav">
+      <button class="nav-item active" data-nav="home"><span>⌂</span> Home</button>
+      <button class="nav-item" data-nav="learn"><span>◌</span> Learn by Context</button>
+      <button class="nav-item" data-nav="reading"><span>≡</span> Reading Lab</button>
+      <button class="nav-item" data-nav="sentence"><span>⌁</span> Sentence Lab</button>
+      <button class="nav-item" data-nav="vocabulary"><span>✣</span> Vocabulary Map</button>
+      <button class="nav-item" data-nav="review"><span>↻</span> Review</button>
+      <button class="nav-item" data-nav="progress"><span>↗</span> Progress</button>
+      <button class="nav-item" data-nav="settings"><span>⚙</span> Settings</button>
+    </nav>
+    <div class="sidebar-note">
+      <span class="pulse-dot"></span>
+      <div><b id="sidebar-streak">7 ngày</b><small>Chuỗi học hiện tại</small></div>
+    </div>
+  </aside>
 
-<!-- Cursor glow -->
-<div class="cursor-glow" aria-hidden="true"></div>
+  <header class="topbar">
+    <button class="mobile-menu" id="mobile-menu" aria-label="Mở menu" aria-expanded="false">☰</button>
+    <div class="top-title">
+      <span id="section-kicker">Hôm nay</span>
+      <b id="section-title">Chào buổi học mới</b>
+    </div>
+    <div class="top-actions">
+      <button class="icon-button" id="focus-toggle" aria-label="Bật chế độ tập trung">◐</button>
+      <button class="profile-button" data-nav="progress" aria-label="Xem tiến độ">
+        <span>BL</span><i id="top-level">B2 • 42%</i>
+      </button>
+    </div>
+  </header>
 
-<!-- NAV -->
-<header class="nav" id="nav">
-  <a href="#hero" class="nav__mark">T · N · B · T</a>
-  <nav class="nav__links" id="navLinks">
-    <a href="#about" data-seal="01">About</a>
-    <a href="#experience" data-seal="02">Experience</a>
-    <a href="#research" data-seal="03">Research</a>
-    <a href="#skills" data-seal="04">Skills</a>
-    <a href="#certifications" data-seal="05">Certifications</a>
-    <a href="#contact" data-seal="06">Contact</a>
+  <main id="main" tabindex="-1">
+    <section class="page active" id="home" aria-labelledby="home-heading">
+      <div class="hero reveal">
+        <div class="hero-copy">
+          <div class="eyebrow"><span></span> Anh · 中文 · Việt</div>
+          <h1 id="home-heading">Read deeply.<br><em>Remember longer.</em></h1>
+          <p>Học từ trong câu, hiểu câu trong đoạn, ghi nhớ qua ngữ cảnh.</p>
+          <div class="hero-actions">
+            <button class="button primary" data-nav="learn">Start Learning <span>→</span></button>
+            <button class="button ghost" id="continue-lesson">Continue Lesson</button>
+          </div>
+          <div class="hero-stats" aria-label="Thống kê học tập">
+            <div><b id="stat-learned">18</b><span>Từ đã học</span></div>
+            <div><b id="stat-readings">3</b><span>Bài đã đọc</span></div>
+            <div><b id="stat-streak">7</b><span>Ngày liên tiếp</span></div>
+            <div><b id="stat-mastery">42%</b><span>Thành thạo</span></div>
+          </div>
+        </div>
+        <div class="hero-visual" aria-label="Linh vật thỏ đang đọc sách">
+          <div class="orbit orbit-a"><span>evidence</span></div>
+          <div class="orbit orbit-b"><span>证据</span></div>
+          <div class="rabbit-mascot">
+            <div class="ear left"></div><div class="ear right"></div>
+            <div class="rabbit-head"><i class="eye left"></i><i class="eye right"></i><b class="nose"></b></div>
+            <div class="book"><span>READ</span></div>
+          </div>
+          <div class="speech">One context at a time!</div>
+        </div>
+      </div>
+
+      <div class="home-grid">
+        <article class="daily-path reveal">
+          <header>
+            <div><span class="section-label">Daily path</span><h2>15–20 phút hôm nay</h2></div>
+            <span class="date-chip" id="today-chip"></span>
+          </header>
+          <div class="path-line" aria-hidden="true"><i style="width: 32%"></i></div>
+          <div class="path-steps">
+            <button data-nav="learn"><span class="step-num done">✓</span><b>8 từ mới</b><small>Climate signals</small></button>
+            <button data-nav="sentence"><span class="step-num current">2</span><b>1 câu dài</b><small>Relative clause</small></button>
+            <button data-nav="reading"><span class="step-num">3</span><b>1 đoạn đọc</b><small>Urban cooling</small></button>
+            <button data-nav="review"><span class="step-num">4</span><b>5 câu ôn</b><small>Mixed recall</small></button>
+          </div>
+        </article>
+
+        <article class="continue-card reveal">
+          <div class="card-top"><span class="pill coral">Đang học</span><span id="continue-percent">42%</span></div>
+          <h2>Signals in a Changing Climate</h2>
+          <p>Nhận diện bằng chứng, xu hướng và paraphrase trong bài đọc khoa học.</p>
+          <div class="weak-words"><span>detect</span><span>deteriorate</span><span>indicate</span></div>
+          <div class="progress-track"><i id="continue-bar" style="width:42%"></i></div>
+          <button class="text-button" data-nav="learn">Tiếp tục từ bước hiện tại <span>→</span></button>
+        </article>
+      </div>
+
+      <article class="constellation-card reveal">
+        <div class="constellation-copy">
+          <span class="section-label">Vocabulary Constellation</span>
+          <h2>Một từ, nhiều đường liên kết</h2>
+          <p>Chạm vào mỗi nút để mở nghĩa ba ngôn ngữ và thấy cách IELTS thay đổi cách diễn đạt.</p>
+          <button class="button soft" data-nav="vocabulary">Explore the map</button>
+        </div>
+        <div class="constellation" id="home-constellation" aria-label="Mạng từ vựng significant">
+          <button class="node main word-trigger" data-word="significant">significant</button>
+          <button class="node n1 word-trigger" data-word="substantial">substantial</button>
+          <button class="node n2" data-toast="Antonym: insignificant">insignificant</button>
+          <button class="node n3" data-toast="Collocation: significant impact">impact</button>
+          <button class="node n4" data-toast="中文: 显著的 / 重要的">显著的</button>
+          <button class="node n5" data-toast="Topic: Science & Society">science</button>
+        </div>
+      </article>
+    </section>
+
+    <section class="page" id="learn" aria-labelledby="learn-heading">
+      <div class="page-heading reveal">
+        <div><span class="eyebrow"><span></span> Context journey</span><h1 id="learn-heading">Learn by Context</h1><p>Một từ được gặp lại qua câu, đoạn và bối cảnh mới.</p></div>
+        <label class="lesson-picker">Bài học<select id="lesson-select" aria-label="Chọn bài học"></select></label>
+      </div>
+      <div class="lesson-shell">
+        <aside class="lesson-rail" aria-label="Các bước bài học">
+          <div class="lesson-meta">
+            <span id="lesson-topic">Climate</span>
+            <b id="lesson-count">01 / 04</b>
+          </div>
+          <div class="lesson-progress"><i id="lesson-progress-bar"></i></div>
+          <div id="lesson-steps"></div>
+        </aside>
+        <article class="lesson-stage reveal" id="lesson-stage"></article>
+      </div>
+    </section>
+
+    <section class="page" id="reading" aria-labelledby="reading-heading">
+      <div class="page-heading reveal">
+        <div><span class="eyebrow"><span></span> IELTS practice</span><h1 id="reading-heading">Reading Lab</h1><p>Đọc sâu khi luyện tập, đọc độc lập khi thi thử.</p></div>
+        <div class="reading-modes" role="group" aria-label="Chế độ đọc">
+          <button data-mode="focus">Focus</button><button class="active" data-mode="guided">Guided</button><button data-mode="exam">Exam</button>
+        </div>
+      </div>
+      <div class="reading-info reveal">
+        <div><span class="pill mint">Science & Society</span><h2>How Cities Learn to Cool Themselves</h2></div>
+        <div class="reading-facts"><span><b>B2–C1</b>Độ khó</span><span><b>~12 phút</b>Thời gian</span><span><b>628</b>Số từ</span><span><b>8</b>Từ mục tiêu</span></div>
+      </div>
+      <div class="exam-clock" id="exam-clock" hidden><span>Exam timer</span><b id="timer">20:00</b><button id="timer-toggle">Bắt đầu</button></div>
+      <div class="reading-layout">
+        <article class="passage-panel reveal">
+          <div class="reader-toolbar">
+            <span>Click từ gạch chân để tra nhanh</span>
+            <button id="toggle-connectors">Từ nối</button>
+            <button id="toggle-translation">Bản dịch</button>
+          </div>
+          <div class="passage" id="passage-content"></div>
+        </article>
+        <aside class="question-panel reveal">
+          <header><div><span class="section-label">Questions 1–14</span><h2>Kiểm tra đọc hiểu</h2></div><b id="answered-count">0/14</b></header>
+          <div id="reading-questions"></div>
+          <button class="button primary full" id="submit-reading">Nộp bài & xem giải thích</button>
+          <div id="reading-results" class="results-box" hidden></div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="page" id="sentence" aria-labelledby="sentence-heading">
+      <div class="page-heading reveal">
+        <div><span class="eyebrow"><span></span> Syntax studio</span><h1 id="sentence-heading">Sentence Lab</h1><p>Tìm xương sống của câu trước khi giải mã chi tiết.</p></div>
+        <select id="sentence-select" aria-label="Chọn câu phân tích"></select>
+      </div>
+      <article class="sentence-workbench reveal">
+        <div class="sentence-number" id="sentence-number">01</div>
+        <div class="sentence-main">
+          <p class="original-sentence" id="original-sentence"></p>
+          <div class="translation-tabs">
+            <button class="active" data-lang="vi">Tiếng Việt</button><button data-lang="zh">中文</button>
+          </div>
+          <p id="sentence-translation"></p>
+          <div class="sentence-controls">
+            <button class="button soft" id="quick-analysis">Quick Analysis</button>
+            <button class="button ghost" id="deep-analysis">Deep Analysis</button>
+            <button class="button ghost" id="rebuild-sentence">Phục dựng câu</button>
+          </div>
+        </div>
+      </article>
+      <div class="syntax-legend reveal">
+        <span><i class="subject"></i>Subject</span><span><i class="verb"></i>Main verb</span><span><i class="object"></i>Object / complement</span><span><i class="clause"></i>Clause</span><span><i class="phrase"></i>Phrase</span>
+      </div>
+      <div class="sentence-grid">
+        <article class="structure-panel reveal"><span class="section-label">Cấu trúc tương tác</span><h2>Chạm vào từng cụm</h2><div id="sentence-chunks"></div></article>
+        <article class="analysis-panel reveal"><span class="section-label" id="analysis-level">Quick analysis</span><h2 id="analysis-title">Xương sống của câu</h2><div id="sentence-analysis"></div></article>
+      </div>
+      <article class="rebuild-panel reveal" id="rebuild-panel" hidden><header><h2>Phục dựng câu</h2><button id="reset-rebuild">Làm lại</button></header><p>Kéo bằng cách bấm các cụm theo đúng thứ tự.</p><div id="rebuild-answer"></div><div id="rebuild-options"></div><button class="button primary" id="check-rebuild">Kiểm tra</button><span id="rebuild-feedback"></span></article>
+    </section>
+
+    <section class="page" id="vocabulary" aria-labelledby="vocab-heading">
+      <div class="page-heading reveal">
+        <div><span class="eyebrow"><span></span> 7.000 từ được lập chỉ mục</span><h1 id="vocab-heading">Vocabulary Map</h1><p>24 mục biên tập sâu + 6.976 mục tần suất để mở rộng dần.</p></div>
+        <div class="view-switch" role="group" aria-label="Kiểu hiển thị"><button class="active" data-view="list">List</button><button data-view="group">Group</button><button data-view="network">Network</button></div>
+      </div>
+      <section class="chapter-curriculum reveal" aria-labelledby="chapter-heading">
+        <header><div><span class="section-label">22-chapter curriculum</span><h2 id="chapter-heading">Từ tự nhiên đến thời gian</h2></div><button id="show-all-chapters">Xem toàn bộ từ</button></header>
+        <div class="chapter-track" id="chapter-track"></div>
+      </section>
+      <div class="filter-bar reveal">
+        <label class="search-box"><span>⌕</span><input id="vocab-search" type="search" placeholder="Tìm English, 中文 hoặc tiếng Việt"></label>
+        <select id="chapter-filter" aria-label="Lọc theo chương"><option value="all">Tất cả 22 chương</option></select>
+        <select id="topic-filter" aria-label="Lọc theo chủ đề"><option value="all">Tất cả chủ đề</option></select>
+        <select id="level-filter" aria-label="Lọc theo trình độ"><option value="all">Mọi trình độ</option><option>B1</option><option>B2</option><option>C1</option></select>
+        <select id="status-filter" aria-label="Lọc theo trạng thái"><option value="all">Mọi trạng thái</option><option value="saved">Đã lưu</option><option value="known">Đã biết</option><option value="difficult">Hay sai</option></select>
+      </div>
+      <div class="corpus-status reveal">
+        <span><i class="quality-dot deep"></i><b>Deep-reviewed</b> 24 mục đầy đủ Anh–Trung–Việt</span>
+        <span><i class="quality-dot indexed"></i><b>Frequency index</b> 6.976 mục đang chờ biên tập sâu</span>
+        <b id="vocab-result-count">7.000 kết quả</b>
+      </div>
+      <div id="vocab-container" class="vocab-list reveal"></div>
+      <div class="pagination reveal" id="vocab-pagination"></div>
+    </section>
+
+    <section class="page" id="review" aria-labelledby="review-heading">
+      <div class="page-heading reveal">
+        <div><span class="eyebrow"><span></span> Active recall</span><h1 id="review-heading">Review Studio</h1><p>Ôn bằng lựa chọn, tái tạo và chuyển đổi ngữ cảnh.</p></div>
+        <div class="review-due"><b id="review-due">10</b><span>câu cần ôn</span></div>
+      </div>
+      <article class="review-card reveal">
+        <div class="review-top"><span class="pill butter" id="review-type">Paraphrase</span><span id="review-counter">1 / 10</span></div>
+        <div class="review-progress"><i id="review-progress"></i></div>
+        <div id="review-content"></div>
+        <div class="review-actions"><button class="button ghost" id="review-skip">Bỏ qua</button><button class="button primary" id="review-check">Kiểm tra</button><button class="button primary" id="review-next" hidden>Câu tiếp theo</button></div>
+        <div id="review-feedback" aria-live="polite"></div>
+      </article>
+    </section>
+
+    <section class="page" id="progress" aria-labelledby="progress-heading">
+      <div class="page-heading reveal">
+        <div><span class="eyebrow"><span></span> Learning analytics</span><h1 id="progress-heading">Your Progress</h1><p>Nhìn thấy đà học, điểm mạnh và nơi cần quay lại.</p></div>
+        <button class="button soft" id="export-progress">Tải bản tóm tắt</button>
+      </div>
+      <div class="metric-grid reveal" id="metric-grid"></div>
+      <div class="progress-layout">
+        <article class="chart-card reveal"><header><div><span class="section-label">7 ngày gần đây</span><h2>Nhịp học đều đặn</h2></div><span class="pill mint">+18%</span></header><canvas id="progress-chart" width="720" height="300" aria-label="Biểu đồ tiến bộ 7 ngày"></canvas></article>
+        <article class="skills-card reveal"><span class="section-label">Độ chính xác theo kỹ năng</span><h2>Reading skills</h2><div id="skill-bars"></div></article>
+      </div>
+      <div class="insight-grid">
+        <article class="insight strong reveal"><span>Điểm mạnh</span><h3>Science & Technology</h3><p>Bạn nhận diện bằng chứng và quan hệ nguyên nhân khá ổn định.</p></article>
+        <article class="insight weak reveal"><span>Cần chú ý</span><h3>Not Given ≠ False</h3><p>Lỗi phổ biến nhất là suy luận vượt quá thông tin trong bài.</p></article>
+        <article class="insight next reveal"><span>Bước tiếp theo</span><h3>Paraphrase chains</h3><p>Ôn lại decline → fall → a downward trend trong bối cảnh mới.</p></article>
+      </div>
+    </section>
+
+    <section class="page" id="settings" aria-labelledby="settings-heading">
+      <div class="page-heading reveal"><div><span class="eyebrow"><span></span> Personalise</span><h1 id="settings-heading">Settings</h1><p>Điều chỉnh không gian đọc theo cách mắt và não bạn thấy dễ chịu nhất.</p></div></div>
+      <div class="settings-grid">
+        <article class="settings-group reveal"><span class="section-label">Ngôn ngữ</span><h2>Hiển thị hỗ trợ</h2>
+          <label><span><b>Tiếng Trung</b><small>Nghĩa và ví dụ tiếng Trung</small></span><input type="checkbox" data-setting="showChinese" checked></label>
+          <label><span><b>Bản dịch Việt</b><small>Giải thích chính bằng tiếng Việt</small></span><input type="checkbox" data-setting="showVietnamese" checked></label>
+          <label><span><b>Pinyin</b><small>Phiên âm tiếng Trung</small></span><input type="checkbox" data-setting="showPinyin" checked></label>
+          <label><span><b>IPA Anh - Mỹ</b><small>Tắt để dùng IPA Anh - Anh</small></span><input type="checkbox" data-setting="useUSIpa"></label>
+        </article>
+        <article class="settings-group reveal"><span class="section-label">Đọc</span><h2>Không gian bài đọc</h2>
+          <label class="range-setting"><span><b>Cỡ chữ</b><small id="font-size-value">18px</small></span><input type="range" data-setting="fontSize" min="16" max="24" value="18"></label>
+          <label class="range-setting"><span><b>Line-height</b><small id="line-height-value">1.85</small></span><input type="range" data-setting="lineHeight" min="1.5" max="2.2" value="1.85" step=".05"></label>
+          <label><span><b>Focus Mode</b><small>Giảm yếu tố xung quanh bài đọc</small></span><input type="checkbox" data-setting="focusMode"></label>
+          <label><span><b>Dark Reading Mode</b><small>Nền tối ấm cho phần đọc</small></span><input type="checkbox" data-setting="darkMode"></label>
+        </article>
+        <article class="settings-group reveal"><span class="section-label">Chuyển động</span><h2>Tương tác</h2>
+          <label><span><b>Animation</b><small>Reveal và micro-interaction</small></span><input type="checkbox" data-setting="animations" checked></label>
+          <label><span><b>Con trỏ thỏ</b><small>Tự tắt trên màn hình cảm ứng</small></span><input type="checkbox" data-setting="rabbitCursor" checked></label>
+          <label><span><b>Màu ngữ pháp</b><small>Phân biệt các thành phần câu</small></span><input type="checkbox" data-setting="grammarColors" checked></label>
+        </article>
+        <article class="settings-group danger-zone reveal"><span class="section-label">Dữ liệu cục bộ</span><h2>Quản lý tiến độ</h2><p>Dữ liệu chỉ được lưu trong trình duyệt này. Reset sẽ xóa trạng thái học và cài đặt.</p><button class="button danger" id="reset-data">Reset localStorage</button></article>
+      </div>
+    </section>
+  </main>
+
+  <nav class="bottom-nav" aria-label="Điều hướng di động">
+    <button class="active" data-nav="home"><span>⌂</span>Home</button>
+    <button data-nav="learn"><span>◌</span>Learn</button>
+    <button data-nav="reading"><span>≡</span>Read</button>
+    <button data-nav="review"><span>↻</span>Review</button>
+    <button data-nav="progress"><span>↗</span>Progress</button>
   </nav>
-  <button class="nav__toggle" id="navToggle" aria-label="Toggle navigation">
-    <span></span><span></span><span></span>
-  </button>
-</header>
 
-<!-- HERO -->
-<section class="hero" id="hero">
-  <canvas class="hero__globe" id="globeCanvas" aria-hidden="true"></canvas>
-  <div class="hero__field" aria-hidden="true">
-    <svg class="floater floater--scales" viewBox="0 0 120 120"><use href="#icon-scales"/></svg>
-    <svg class="floater floater--doc" viewBox="0 0 100 130"><use href="#icon-doc"/></svg>
-    <svg class="floater floater--seal" viewBox="0 0 90 90"><use href="#icon-seal"/></svg>
-    <svg class="floater floater--line" viewBox="0 0 200 4"><use href="#icon-line"/></svg>
-  </div>
+  <aside class="dictionary-panel" id="dictionary-panel" aria-live="polite" aria-label="Từ điển mini" hidden>
+    <button class="panel-close" id="dictionary-close" aria-label="Đóng từ điển">×</button>
+    <div id="dictionary-content"></div>
+  </aside>
 
-  <div class="hero__content">
-    <p class="eyebrow reveal">International Law Student · Legal Researcher</p>
-    <h1 class="hero__title">
-      <span class="reveal reveal--delay-1">Bridging Law,</span>
-      <span class="reveal reveal--delay-2">Research &amp;</span>
-      <span class="reveal reveal--delay-3 hero__title--accent">Global Connections</span>
-    </h1>
-    <p class="hero__subtitle reveal reveal--delay-4">
-      International Law student specializing in legal research, corporate compliance,
-      and cross-border communication — currently reading International Trade Law
-      at the Diplomatic Academy of Vietnam.
-    </p>
-    <div class="hero__actions reveal reveal--delay-5">
-      <a href="#about" class="btn btn--primary">Explore My Journey</a>
-      <a href="#research" class="btn btn--ghost">View Research Portfolio</a>
-    </div>
-    <p class="hero__name reveal reveal--delay-5">Truong Nguyen Bao Tran</p>
-  </div>
-
-  <a href="#about" class="scroll-cue" aria-label="Scroll to About section">
-    <span></span>
-  </a>
-</section>
-
-<!-- ABOUT -->
-<section class="about section" id="about">
-  <div class="section__head">
-    <span class="section__seal">01</span>
-    <h2 class="section__title">About</h2>
-    <p class="section__kicker">A researcher's case for law, told in her own words</p>
-  </div>
-
-  <div class="about__grid">
-    <div class="about__story reveal">
-      <p class="drop-cap">
-        I am currently pursuing a Bachelor of International Law at the Diplomatic
-        Academy of Vietnam, where I am building a foundation in legal research,
-        corporate compliance, and the regulatory frameworks that govern cross-border
-        trade. Law, to me, is less a set of rules than a language — one that lets
-        very different economies, cultures, and institutions negotiate a shared future.
-      </p>
-      <p>
-        My work sits at the intersection of three habits I keep returning to: reading
-        primary sources closely, translating meaning across languages, and asking how
-        a rule actually behaves once it leaves the page. That combination has taken
-        me from academic conferences to business meeting rooms, and from legal
-        drafting to live interpretation — always in service of the same question:
-        how do people and institutions cooperate across a border, fairly and well?
-      </p>
-      <ul class="about__traits">
-        <li>Research mindset</li>
-        <li>Cross-cultural communication</li>
-        <li>Legal analysis</li>
-        <li>Adaptability</li>
-      </ul>
-    </div>
-
-    <div class="about__stats reveal">
-      <div class="stat-card">
-        <span class="stat-card__number" data-count="3">0</span>
-        <span class="stat-card__suffix">+</span>
-        <span class="stat-card__label">Research Projects</span>
-      </div>
-      <div class="stat-card">
-        <span class="stat-card__number" data-count="3">0</span>
-        <span class="stat-card__suffix"></span>
-        <span class="stat-card__label">Languages</span>
-      </div>
-      <div class="stat-card">
-        <span class="stat-card__number" data-count="5">0</span>
-        <span class="stat-card__suffix">+</span>
-        <span class="stat-card__label">Academic Conferences</span>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- EXPERIENCE -->
-<section class="experience section" id="experience">
-  <div class="section__head">
-    <span class="section__seal">02</span>
-    <h2 class="section__title">Experience</h2>
-    <p class="section__kicker">From the classroom to the negotiating table</p>
-  </div>
-
-  <div class="timeline">
-
-    <article class="timeline__item reveal">
-      <div class="timeline__marker"></div>
-      <div class="timeline__card">
-        <span class="timeline__date">2025 — Present</span>
-        <h3 class="timeline__role">Legal Intern</h3>
-        <ul class="timeline__list">
-          <li>Supporting legal document review</li>
-          <li>Conducting legal research</li>
-          <li>Updating regulatory information</li>
-          <li>Assisting compliance-related tasks</li>
-        </ul>
-      </div>
-    </article>
-
-    <article class="timeline__item reveal">
-      <div class="timeline__marker"></div>
-      <div class="timeline__card">
-        <span class="timeline__date">2024</span>
-        <h3 class="timeline__role">Business Assistant</h3>
-        <p class="timeline__org">Shanghai Antutai Network Technology Co., Ltd.</p>
-        <ul class="timeline__list">
-          <li>Market research</li>
-          <li>Chinese–Vietnamese translation</li>
-          <li>Meeting interpretation</li>
-          <li>Business communication support</li>
-        </ul>
-      </div>
-    </article>
-
-    <article class="timeline__item reveal">
-      <div class="timeline__marker"></div>
-      <div class="timeline__card">
-        <span class="timeline__date">2025 — Present</span>
-        <h3 class="timeline__role">Freelance Translator &amp; Recruitment Assistant</h3>
-        <ul class="timeline__list">
-          <li>Translation — Chinese, Vietnamese, English</li>
-          <li>Candidate screening support</li>
-          <li>Cross-border communication</li>
-        </ul>
-      </div>
-    </article>
-
-    <article class="timeline__item reveal">
-      <div class="timeline__marker"></div>
-      <div class="timeline__card">
-        <span class="timeline__date">2025</span>
-        <h3 class="timeline__role">TikTok Shop Operation</h3>
-        <ul class="timeline__list">
-          <li>Content localization</li>
-          <li>Video editing</li>
-          <li>Customer communication</li>
-          <li>E-commerce operation</li>
-        </ul>
-      </div>
-    </article>
-
-  </div>
-</section>
-
-<!-- RESEARCH -->
-<section class="research section" id="research">
-  <div class="section__head">
-    <span class="section__seal">03</span>
-    <h2 class="section__title">Research Portfolio</h2>
-    <p class="section__kicker">Selected contributions, presented like a journal shelf</p>
-  </div>
-
-  <div class="journal">
-
-    <article class="journal__entry reveal">
-      <span class="journal__tag">National Scientific Conference</span>
-      <h3 class="journal__title">Development of Cultural Human Resources in the Digital Transformation Era</h3>
-      <p class="journal__role">Role — Research Contributor</p>
-    </article>
-
-    <article class="journal__entry reveal">
-      <span class="journal__tag">Student Scientific Research</span>
-      <h3 class="journal__title">Promoting Financial Inclusion for Female Entrepreneurs in Vietnam</h3>
-      <p class="journal__role">Role — Research Contributor</p>
-    </article>
-
-    <article class="journal__entry journal__entry--feature reveal">
-      <span class="journal__tag">International Student Research Conference</span>
-      <h3 class="journal__title">The Multilateral Legal Framework of International Trade Facing the Challenges of Post-Globalization</h3>
-      <div class="journal__chips">
-        <span class="chip">International Trade Law</span>
-        <span class="chip">Global Governance</span>
-        <span class="chip">Legal Framework Analysis</span>
-      </div>
-    </article>
-
-  </div>
-</section>
-
-<!-- SKILLS -->
-<section class="skills section" id="skills">
-  <div class="section__head">
-    <span class="section__seal">04</span>
-    <h2 class="section__title">Skills</h2>
-    <p class="section__kicker">The toolkit behind the research</p>
-  </div>
-
-  <div class="skills__groups">
-    <div class="skills__group reveal">
-      <h3 class="skills__group-title">Legal</h3>
-      <div class="bubbles">
-        <span class="bubble">Legal Research</span>
-        <span class="bubble">Legal Document Analysis</span>
-        <span class="bubble">Compliance Awareness</span>
-        <span class="bubble">Policy Analysis</span>
-      </div>
-    </div>
-    <div class="skills__group reveal">
-      <h3 class="skills__group-title">Language</h3>
-      <div class="bubbles">
-        <span class="bubble">Vietnamese</span>
-        <span class="bubble">English</span>
-        <span class="bubble">Chinese</span>
-      </div>
-    </div>
-    <div class="skills__group reveal">
-      <h3 class="skills__group-title">Digital</h3>
-      <div class="bubbles">
-        <span class="bubble">AI Tools</span>
-        <span class="bubble">Website Development</span>
-        <span class="bubble">Office Applications</span>
-        <span class="bubble">Video Editing</span>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- CERTIFICATIONS -->
-<section class="certifications section" id="certifications">
-  <div class="section__head">
-    <span class="section__seal">05</span>
-    <h2 class="section__title">Certifications</h2>
-    <p class="section__kicker">Marks of record</p>
-  </div>
-
-  <div class="cert-timeline">
-    <div class="cert-item reveal">
-      <div class="cert-item__dot"></div>
-      <h3>HSK 5 Certificate</h3>
-      <p>Advanced proficiency in Mandarin Chinese</p>
-    </div>
-    <div class="cert-item reveal">
-      <div class="cert-item__dot"></div>
-      <h3>Chinese Speech Competition Award</h3>
-      <p>Recognition for public speaking in Mandarin</p>
-    </div>
-    <div class="cert-item reveal">
-      <div class="cert-item__dot"></div>
-      <h3>Vietnam–China Business Conference Interpreter Certificate</h3>
-      <p>Verified live interpretation for cross-border business dialogue</p>
-    </div>
-    <div class="cert-item reveal">
-      <div class="cert-item__dot"></div>
-      <h3>Scientific Research Certificate</h3>
-      <p>Acknowledged contribution to academic research</p>
-    </div>
-  </div>
-</section>
-
-<!-- CONTACT -->
-<section class="contact section" id="contact">
-  <div class="contact__card reveal">
-    <span class="section__seal">06</span>
-    <h2 class="contact__title">Let's Connect Across Borders</h2>
-    <p class="contact__text">
-      Open to conversations on legal research, compliance, international trade,
-      and cross-border collaboration.
-    </p>
-    <a class="contact__email" href="mailto:truongnguyenbaotran2208@gmail.com">truongnguyenbaotran2208@gmail.com</a>
-    <div class="contact__actions">
-      <a href="#" class="btn btn--primary">LinkedIn</a>
-      <a href="#research" class="btn btn--ghost">Research Profile</a>
-      <a href="#" class="btn btn--ghost">Download CV</a>
-    </div>
-  </div>
-</section>
-
-<footer class="footer">
-  <p>Truong Nguyen Bao Tran — International Law Student, Diplomatic Academy of Vietnam</p>
-</footer>
-
-<!-- Inline SVG icon library -->
-<svg width="0" height="0" style="position:absolute" aria-hidden="true">
-  <defs>
-    <g id="icon-scales">
-      <path d="M60 8 L60 100 M25 22 H95 M60 22 L30 55 M60 22 L90 55" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
-      <path d="M30 55 a15 15 0 0 0 30 0 Z" stroke="currentColor" stroke-width="2" fill="none"/>
-      <path d="M60 55 a15 15 0 0 0 30 0 Z" stroke="currentColor" stroke-width="2" fill="none"/>
-      <circle cx="60" cy="105" r="6" stroke="currentColor" stroke-width="2" fill="none"/>
-    </g>
-    <g id="icon-doc">
-      <rect x="15" y="10" width="70" height="110" rx="4" stroke="currentColor" stroke-width="2" fill="none"/>
-      <line x1="28" y1="35" x2="72" y2="35" stroke="currentColor" stroke-width="2"/>
-      <line x1="28" y1="52" x2="72" y2="52" stroke="currentColor" stroke-width="2"/>
-      <line x1="28" y1="69" x2="60" y2="69" stroke="currentColor" stroke-width="2"/>
-    </g>
-    <g id="icon-seal">
-      <circle cx="45" cy="45" r="30" stroke="currentColor" stroke-width="2" fill="none"/>
-      <circle cx="45" cy="45" r="18" stroke="currentColor" stroke-width="1.5" fill="none"/>
-      <path d="M45 15 V5 M45 75 V85 M15 45 H5 M75 45 H85" stroke="currentColor" stroke-width="1.5"/>
-    </g>
-    <g id="icon-line">
-      <line x1="0" y1="2" x2="200" y2="2" stroke="currentColor" stroke-width="1"/>
-    </g>
-  </defs>
-</svg>
-
-<script src="script.js"></script>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <div class="rabbit-cursor" id="rabbit-cursor" aria-hidden="true"><i></i><b></b><span></span></div>
+  <script src="script.js"></script>
 </body>
 </html>
