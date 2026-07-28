@@ -1,313 +1,7497 @@
-:root {
-  --pink: #ef8fa8;
-  --pink-deep: #d95f83;
-  --blush: #fbdde5;
-  --cream: #fff9f1;
-  --paper: #fffdf9;
-  --navy: #273143;
-  --muted: #6f7280;
-  --line: #eadfd9;
-  --lavender: #ddd6f7;
-  --lavender-deep: #7d68b3;
-  --mint: #d5eee5;
-  --mint-deep: #3f806a;
-  --butter: #f9e8a8;
-  --coral: #f4a18f;
-  --shadow: 0 18px 48px rgba(79, 57, 54, .1);
-  --reader-size: 18px;
-  --reader-line: 1.85;
-  --sidebar: 246px;
-}
+(() => {
+  "use strict";
 
-* { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
-body {
-  margin: 0;
-  color: var(--navy);
-  background: var(--cream);
-  font-family: "Be Vietnam Pro", "Noto Sans SC", sans-serif;
-  line-height: 1.6;
-  overflow-x: hidden;
-}
-button, input, select, textarea { font: inherit; color: inherit; }
-button { cursor: pointer; }
-button:focus-visible, input:focus-visible, select:focus-visible {
-  outline: 3px solid rgba(217, 95, 131, .3);
-  outline-offset: 3px;
-}
-.skip-link { position: fixed; left: 16px; top: -60px; z-index: 999; background: var(--navy); color: white; padding: 10px 16px; border-radius: 10px; }
-.skip-link:focus { top: 16px; }
-.ambient { position: fixed; border-radius: 50%; filter: blur(2px); pointer-events: none; opacity: .45; z-index: -1; }
-.ambient-one { width: 340px; height: 340px; right: -130px; top: -120px; background: var(--blush); }
-.ambient-two { width: 220px; height: 220px; left: 33%; bottom: -110px; background: var(--mint); }
+  const $ = (selector, root = document) => root.querySelector(selector);
+  const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
+  const STORAGE_KEY = "bunnyLingoStateV1";
 
-.sidebar {
-  position: fixed; inset: 0 auto 0 0; width: var(--sidebar); padding: 30px 20px 22px;
-  background: rgba(255, 253, 249, .94); border-right: 1px solid var(--line); z-index: 30;
-  display: flex; flex-direction: column; backdrop-filter: blur(16px);
-}
-.brand { border: 0; background: transparent; display: flex; align-items: center; gap: 12px; text-align: left; padding: 0 8px 28px; }
-.brand strong { font: 700 20px/1.1 Fredoka, sans-serif; display: block; }
-.brand small { color: var(--pink-deep); font-weight: 700; letter-spacing: .08em; text-transform: uppercase; font-size: 9px; }
-.brand-mark { width: 42px; height: 42px; border-radius: 15px 15px 18px 18px; background: var(--pink); display: block; position: relative; box-shadow: inset 0 -5px 0 rgba(180,65,99,.1); }
-.brand-mark:before, .brand-mark:after { content:""; position:absolute; width:11px; height:24px; top:-11px; border-radius:50% 50% 20% 20%; background:var(--pink); }
-.brand-mark:before { left:8px; transform:rotate(-8deg); } .brand-mark:after { right:8px; transform:rotate(8deg); }
-.brand-mark i, .brand-mark b { position:absolute; width:4px; height:5px; background:var(--navy); border-radius:50%; top:17px; z-index:2; }
-.brand-mark i { left:12px; } .brand-mark b { right:12px; }
-#primary-nav { display: grid; gap: 6px; }
-.nav-item {
-  width: 100%; border: 0; background: transparent; padding: 11px 12px; border-radius: 13px;
-  text-align: left; color: #696a75; font-size: 13px; font-weight: 600; transition: .2s ease;
-}
-.nav-item span { display: inline-grid; place-items: center; width: 27px; margin-right: 8px; font-size: 17px; }
-.nav-item:hover { background: #fff2f5; color: var(--pink-deep); transform: translateX(2px); }
-.nav-item.active { background: var(--blush); color: #9e3e60; box-shadow: inset 3px 0 var(--pink-deep); }
-.sidebar-note { margin-top: auto; background: var(--navy); color: white; padding: 14px; border-radius: 17px; display: flex; align-items: center; gap: 10px; }
-.sidebar-note b, .sidebar-note small { display: block; } .sidebar-note b { font-size: 13px; } .sidebar-note small { opacity:.65; font-size:10px; }
-.pulse-dot { width: 11px; height: 11px; border-radius: 50%; background: #9ce1c5; box-shadow: 0 0 0 6px rgba(156,225,197,.12); }
+  const wordSeeds = [
+    ["considerable","/kənˈsɪdərəbl/","adjective","đáng kể, khá lớn","相当大的；可观的","xiāngdāng dà de; kěguān de","large enough to be important or noticeable","B2","Climate and Environment",["substantial","significant","sizable"],["minor","negligible"],["considerable evidence","a considerable amount","considerable debate"],["consider","consideration","considerably"],"Hãy nghĩ: điều này lớn đến mức phải consider — cân nhắc."],
+    ["detect","/dɪˈtekt/","verb","phát hiện, nhận ra","检测；发现","jiǎncè; fāxiàn","to discover something that is difficult to notice","B2","Science and Technology",["discover","identify","sense"],["miss","overlook"],["detect a signal","detect changes","early detection"],["detection","detectable","detector"],"De-tect: kéo tấm che ra để thấy tín hiệu ẩn."],
+    ["signal","/ˈsɪɡnəl/","noun / verb","tín hiệu; báo hiệu","信号；表明","xìnhào; biǎomíng","a sign that gives information or shows a change","B2","Science and Technology",["sign","indication","cue"],["silence","concealment"],["warning signal","send a signal","signal a shift"],["signal","signalling"],"Đèn tín hiệu báo trước điều sắp xảy ra."],
+    ["civilisation","/ˌsɪvəlaɪˈzeɪʃən/","noun","nền văn minh","文明","wénmíng","an advanced human society with organised institutions","B2","History and Archaeology",["society","culture"],["barbarism"],["ancient civilisation","human civilisation","rise of civilisation"],["civilise","civilised"],"Civil + nation: một xã hội có tổ chức và thiết chế."],
+    ["substantial","/səbˈstænʃəl/","adjective","đáng kể; vững chắc","大量的；实质性的","dàliàng de; shízhìxìng de","large in amount, value, or importance","B2","Business and Economics",["considerable","significant","sizeable"],["slight","trivial"],["substantial increase","substantial evidence","substantial investment"],["substance","substantially"],"Substance là phần có trọng lượng thật, không hời hợt."],
+    ["controversial","/ˌkɒntrəˈvɜːʃəl/","adjective","gây tranh cãi","有争议的","yǒu zhēngyì de","causing strong disagreement or public discussion","B2","Society",["disputed","contentious","debatable"],["accepted","uncontroversial"],["controversial issue","highly controversial","remain controversial"],["controversy","controversially"],"Có controversy thì một ý tưởng thường controversial."],
+    ["evolution","/ˌiːvəˈluːʃən/","noun","sự tiến hóa; phát triển dần","进化；演变","jìnhuà; yǎnbiàn","gradual change and development over time","B2","Science and Technology",["development","adaptation","progression"],["stagnation"],["human evolution","cultural evolution","evolutionary process"],["evolve","evolutionary"],"Evolve là mở dần một cuộn ý tưởng qua thời gian."],
+    ["phenomenon","/fəˈnɒmɪnən/","noun","hiện tượng","现象","xiànxiàng","an observable event or fact, especially an unusual one","B2","Psychology",["occurrence","event","effect"],[],["natural phenomenon","social phenomenon","observe a phenomenon"],["phenomena","phenomenal"],"Phenomenon số nhiều là phenomena — một cặp dễ gặp trong Reading."],
+    ["deteriorate","/dɪˈtɪəriəreɪt/","verb","xấu đi, suy giảm","恶化","èhuà","to become worse in quality, condition, or value","C1","Health",["worsen","decline","degrade"],["improve","recover"],["conditions deteriorate","deteriorate rapidly","health deteriorates"],["deterioration"],"Tưởng tượng vật liệu bị mòn và tình trạng ngày càng tệ."],
+    ["climate","/ˈklaɪmət/","noun","khí hậu; môi trường xu hướng","气候","qìhòu","the usual weather conditions of a place over a long period","B2","Climate and Environment",["weather pattern"],[],["climate change","political climate","climate model"],["climatic"],"Climate là mẫu dài hạn; weather là trạng thái ngắn hạn."],
+    ["significant","/sɪɡˈnɪfɪkənt/","adjective","đáng kể; quan trọng","显著的；重要的","xiǎnzhù de; zhòngyào de","important or large enough to be noticed","B2","Science and Technology",["substantial","notable","meaningful"],["insignificant","negligible"],["significant impact","statistically significant","significant difference"],["significance","significantly"],"Significant để lại một sign — dấu hiệu đủ rõ để chú ý."],
+    ["abundant","/əˈbʌndənt/","adjective","dồi dào, phong phú","丰富的；充足的","fēngfù de; chōngzú de","existing in large quantities; more than enough","B2","Natural Geography",["plentiful","ample","rich"],["scarce","limited"],["abundant resources","abundant evidence","be abundant in"],["abundance","abundantly"],"A-bund-ant: nhiều bó, nhiều cụm, có dư."],
+    ["withstand","/wɪðˈstænd/","verb","chịu đựng, chống chịu","承受；经受住","chéngshòu; jīngshòu zhù","to remain undamaged or unaffected by a force","C1","Science and Technology",["resist","endure","survive"],["yield","collapse"],["withstand pressure","withstand heat","withstand scrutiny"],["withstood"],"Stand vững khi lực tác động đến."],
+    ["influence","/ˈɪnfluəns/","noun / verb","ảnh hưởng; tác động","影响","yǐngxiǎng","the power to affect how someone or something develops","B2","Psychology",["affect","shape","impact"],["independence"],["strong influence","influence behaviour","under the influence of"],["influential"],"Influence là dòng tác động âm thầm làm đổi hướng."],
+    ["evidence","/ˈevɪdəns/","noun","bằng chứng","证据","zhèngjù","facts or signs that support a conclusion","B2","Science and Technology",["proof","indication","data"],["speculation"],["strong evidence","provide evidence","evidence suggests"],["evident","evidently"],"Evidence làm một kết luận trở nên evident — rõ ràng."],
+    ["indicate","/ˈɪndɪkeɪt/","verb","chỉ ra, cho thấy","表明；指示","biǎomíng; zhǐshì","to show that something exists or is likely to be true","B2","Science and Technology",["show","suggest","signal"],["conceal","disprove"],["results indicate","indicate a trend","clearly indicate"],["indication","indicative","indicator"],"Indicator là chiếc kim chỉ hướng; indicate là chỉ ra."],
+    ["decline","/dɪˈklaɪn/","noun / verb","sự suy giảm; giảm xuống","下降；衰退","xiàjiàng; shuāituì","to become smaller, fewer, weaker, or worse","B2","Business and Economics",["decrease","fall","deteriorate"],["increase","recover"],["sharp decline","decline steadily","population decline"],["declining"],"Đường line đi xuống gợi nhớ decline."],
+    ["contribute","/kənˈtrɪbjuːt/","verb","đóng góp; góp phần","贡献；促成","gòngxiàn; cùchéng","to give something or help cause a result","B2","Society",["add","support","lead to"],["hinder"],["contribute to change","make a contribution","contributing factor"],["contribution","contributor"],"Nhiều phần nhỏ contribute để tạo kết quả lớn."],
+    ["rigorous","/ˈrɪɡərəs/","adjective","nghiêm ngặt, chặt chẽ","严格的；严谨的","yángé de; yánjǐn de","extremely careful, thorough, and based on strict standards","C1","Education",["strict","thorough","robust"],["careless","weak"],["rigorous analysis","rigorous testing","rigorous standards"],["rigour","rigorously"],"Rigorous research không để lọt bước kiểm tra lỏng lẻo."],
+    ["predict","/prɪˈdɪkt/","verb","dự đoán","预测","yùcè","to say what is likely to happen in the future","B2","Science and Technology",["forecast","anticipate","project"],["recount"],["predict accurately","difficult to predict","model predicts"],["prediction","predictable"],"Pre + dict: nói trước điều có thể xảy ra."],
+    ["impact","/ˈɪmpækt/","noun / verb","tác động, ảnh hưởng","影响；冲击","yǐngxiǎng; chōngjī","a strong effect that something has on a situation","B2","Climate and Environment",["effect","influence","consequence"],["irrelevance"],["significant impact","environmental impact","impact on"],["impactful"],"Impact gợi một cú chạm tạo ra thay đổi rõ."],
+    ["crucial","/ˈkruːʃəl/","adjective","cực kỳ quan trọng, then chốt","至关重要的","zhìguān zhòngyào de","extremely important because other things depend on it","B2","Education",["vital","essential","critical"],["optional","minor"],["play a crucial role","crucial factor","crucial to"],["crucially"],"Crucial là nút giao: chọn sai hướng sẽ đổi cả kết quả."],
+    ["encounter","/ɪnˈkaʊntə/","verb / noun","gặp phải, chạm trán","遇到；遭遇","yùdào; zāoyù","to meet or experience something, often unexpectedly","B2","Education",["meet","experience","come across"],["avoid"],["encounter difficulty","first encounter","frequently encounter"],["encountered"],"Counter ở ngay trước mặt: bạn bất ngờ gặp điều gì đó."],
+    ["emerge","/ɪˈmɜːdʒ/","verb","xuất hiện, nổi lên","出现；显现","chūxiàn; xiǎnxiàn","to appear or become known after being hidden or unclear","B2","Society",["appear","arise","surface"],["disappear","fade"],["new evidence emerges","emerge from","emerging trend"],["emergence","emerging"],"Một vật emerge khi nhô lên khỏi mặt nước."],
+  ];
 
-.topbar {
-  position: fixed; top: 0; right: 0; left: var(--sidebar); height: 78px; z-index: 20;
-  display: flex; align-items: center; justify-content: space-between; padding: 0 4vw;
-  background: rgba(255,249,241,.82); backdrop-filter: blur(15px); border-bottom: 1px solid rgba(234,223,217,.7);
-}
-.top-title span, .top-title b { display:block; } .top-title span { font-size: 10px; color: var(--pink-deep); font-weight:800; text-transform:uppercase; letter-spacing:.12em; }
-.top-title b { font-size: 14px; }
-.top-actions { display:flex; align-items:center; gap:10px; }
-.icon-button, .mobile-menu { border:1px solid var(--line); background:var(--paper); width:39px; height:39px; border-radius:13px; }
-.profile-button { border:0; background:transparent; display:flex; align-items:center; gap:9px; }
-.profile-button span { display:grid; place-items:center; width:40px; height:40px; background:var(--pink); color:white; border-radius:50%; font-weight:800; font-size:12px; }
-.profile-button i { font-style:normal; font-size:11px; font-weight:700; }
-.mobile-menu { display:none; }
-main { margin-left: var(--sidebar); padding: 112px 4vw 80px; min-height:100vh; }
-.page { display:none; max-width: 1440px; margin:0 auto; animation: pageIn .35s ease both; }
-.page.active { display:block; }
-@keyframes pageIn { from { opacity:0; transform:translateY(8px); } }
+  const corpusWordList = `the
+and
+for
+that
+this
+with
+you
+not
+are
+from
+your
+all
+have
+new
+more
+was
+will
+home
+can
+about
+page
+has
+search
+free
+but
+our
+one
+other
+information
+time
+they
+site
+may
+what
+which
+their
+news
+out
+use
+any
+there
+see
+only
+his
+when
+contact
+here
+business
+who
+web
+also
+now
+help
+get
+view
+online
+first
+been
+would
+how
+were
+services
+some
+these
+click
+its
+like
+service
+than
+find
+price
+date
+back
+top
+people
+had
+list
+name
+just
+over
+state
+year
+day
+into
+email
+two
+health
+world
+next
+used
+work
+last
+most
+products
+music
+buy
+data
+make
+them
+should
+product
+system
+post
+her
+city
+add
+policy
+number
+such
+please
+available
+copyright
+support
+message
+after
+best
+software
+then
+jan
+good
+video
+well
+where
+info
+rights
+public
+books
+high
+school
+through
+each
+links
+she
+review
+years
+order
+very
+privacy
+book
+items
+company
+read
+group
+need
+many
+user
+said
+does
+set
+under
+general
+research
+university
+january
+mail
+full
+map
+reviews
+program
+life
+know
+games
+way
+days
+management
+part
+could
+great
+united
+hotel
+real
+item
+international
+center
+ebay
+must
+store
+travel
+comments
+made
+development
+report
+off
+member
+details
+line
+terms
+before
+hotels
+did
+send
+right
+type
+because
+local
+those
+using
+results
+office
+education
+national
+car
+design
+take
+posted
+internet
+address
+community
+within
+states
+area
+want
+phone
+dvd
+shipping
+reserved
+subject
+between
+forum
+family
+long
+based
+code
+show
+even
+black
+check
+special
+prices
+website
+index
+being
+women
+much
+sign
+file
+link
+open
+today
+technology
+south
+case
+project
+same
+pages
+version
+section
+own
+found
+sports
+house
+related
+security
+both
+county
+american
+photo
+game
+members
+power
+while
+care
+network
+down
+computer
+systems
+three
+total
+place
+end
+following
+download
+him
+without
+per
+access
+think
+north
+resources
+current
+posts
+big
+media
+law
+control
+water
+history
+pictures
+size
+art
+personal
+since
+including
+guide
+shop
+directory
+board
+location
+change
+white
+text
+small
+rating
+rate
+government
+children
+during
+usa
+return
+students
+shopping
+account
+times
+sites
+level
+digital
+profile
+previous
+form
+events
+love
+old
+john
+main
+call
+hours
+image
+department
+title
+description
+non
+insurance
+another
+why
+shall
+property
+class
+still
+money
+quality
+every
+listing
+content
+country
+private
+little
+visit
+save
+tools
+low
+reply
+customer
+december
+compare
+movies
+include
+college
+value
+article
+york
+man
+card
+jobs
+provide
+food
+source
+author
+different
+press
+learn
+sale
+around
+print
+course
+job
+canada
+process
+teen
+room
+stock
+training
+too
+credit
+point
+join
+science
+men
+categories
+advanced
+west
+sales
+look
+english
+left
+team
+estate
+box
+conditions
+select
+windows
+photos
+thread
+week
+category
+note
+live
+large
+gallery
+table
+register
+however
+june
+october
+november
+market
+library
+really
+action
+start
+series
+model
+features
+air
+industry
+plan
+human
+provided
+yes
+required
+second
+hot
+accessories
+cost
+movie
+forums
+march
+september
+better
+say
+questions
+july
+yahoo
+going
+medical
+test
+friend
+come
+dec
+server
+study
+application
+cart
+staff
+articles
+san
+feedback
+again
+play
+looking
+issues
+april
+never
+users
+complete
+street
+topic
+comment
+financial
+things
+working
+against
+standard
+tax
+person
+below
+mobile
+less
+got
+blog
+party
+payment
+equipment
+login
+student
+let
+programs
+offers
+legal
+above
+recent
+park
+stores
+side
+act
+problem
+red
+give
+memory
+performance
+social
+august
+quote
+language
+story
+sell
+options
+experience
+rates
+create
+key
+body
+young
+america
+important
+field
+few
+east
+paper
+single
+age
+activities
+club
+example
+girls
+additional
+password
+latest
+something
+road
+gift
+question
+changes
+night
+hard
+texas
+oct
+pay
+four
+status
+browse
+issue
+range
+building
+seller
+court
+february
+always
+result
+audio
+light
+write
+war
+nov
+offer
+blue
+groups
+easy
+given
+files
+event
+release
+analysis
+request
+fax
+china
+making
+picture
+needs
+possible
+might
+professional
+yet
+month
+major
+star
+areas
+future
+space
+committee
+hand
+sun
+cards
+problems
+london
+washington
+meeting
+rss
+become
+interest
+child
+keep
+enter
+california
+share
+similar
+garden
+schools
+million
+added
+reference
+companies
+listed
+baby
+learning
+energy
+run
+delivery
+net
+popular
+term
+film
+stories
+put
+computers
+journal
+reports
+try
+welcome
+central
+images
+president
+notice
+god
+original
+head
+radio
+until
+cell
+color
+self
+council
+away
+includes
+track
+australia
+discussion
+archive
+once
+others
+entertainment
+agreement
+format
+least
+society
+months
+log
+safety
+friends
+sure
+faq
+trade
+edition
+cars
+messages
+marketing
+tell
+further
+updated
+association
+able
+having
+provides
+david
+fun
+already
+green
+studies
+close
+common
+drive
+specific
+several
+gold
+feb
+living
+sep
+collection
+called
+short
+arts
+lot
+ask
+display
+limited
+powered
+solutions
+means
+director
+daily
+beach
+past
+natural
+whether
+due
+electronics
+five
+upon
+period
+planning
+database
+says
+official
+weather
+mar
+land
+average
+done
+technical
+window
+france
+pro
+region
+island
+record
+direct
+microsoft
+conference
+environment
+records
+district
+calendar
+costs
+style
+url
+front
+statement
+update
+parts
+aug
+ever
+downloads
+early
+miles
+sound
+resource
+present
+applications
+either
+ago
+document
+word
+works
+material
+bill
+apr
+written
+talk
+federal
+hosting
+rules
+final
+adult
+tickets
+thing
+centre
+requirements
+via
+cheap
+kids
+finance
+true
+minutes
+else
+mark
+third
+rock
+gifts
+europe
+reading
+topics
+bad
+individual
+tips
+plus
+auto
+cover
+usually
+edit
+together
+videos
+percent
+fast
+function
+fact
+unit
+getting
+global
+tech
+meet
+far
+economic
+player
+projects
+lyrics
+often
+subscribe
+submit
+germany
+amount
+watch
+included
+feel
+though
+bank
+risk
+thanks
+everything
+deals
+various
+words
+linux
+jul
+production
+commercial
+james
+weight
+town
+heart
+advertising
+received
+choose
+treatment
+newsletter
+archives
+points
+knowledge
+magazine
+error
+camera
+jun
+girl
+currently
+construction
+toys
+registered
+clear
+golf
+receive
+domain
+methods
+chapter
+makes
+protection
+policies
+loan
+wide
+beauty
+manager
+india
+position
+taken
+sort
+listings
+models
+michael
+known
+half
+cases
+step
+engineering
+florida
+simple
+quick
+none
+wireless
+license
+paul
+friday
+lake
+whole
+annual
+published
+later
+basic
+sony
+shows
+corporate
+google
+church
+method
+purchase
+customers
+active
+response
+practice
+hardware
+figure
+materials
+fire
+holiday
+chat
+enough
+designed
+along
+among
+death
+writing
+speed
+html
+countries
+loss
+face
+brand
+discount
+higher
+effects
+created
+remember
+standards
+oil
+bit
+yellow
+political
+increase
+advertise
+kingdom
+base
+near
+environmental
+thought
+stuff
+french
+storage
+japan
+doing
+loans
+shoes
+entry
+stay
+nature
+orders
+availability
+africa
+summary
+turn
+mean
+growth
+notes
+agency
+king
+monday
+european
+activity
+copy
+although
+drug
+pics
+western
+income
+force
+cash
+employment
+overall
+bay
+river
+commission
+package
+contents
+seen
+players
+engine
+port
+album
+regional
+stop
+supplies
+started
+administration
+bar
+institute
+views
+plans
+double
+dog
+build
+screen
+exchange
+types
+soon
+sponsored
+lines
+electronic
+continue
+across
+benefits
+needed
+season
+apply
+someone
+held
+anything
+printer
+condition
+effective
+believe
+organization
+effect
+asked
+eur
+mind
+sunday
+selection
+pdf
+lost
+tour
+menu
+volume
+cross
+anyone
+mortgage
+hope
+silver
+corporation
+wish
+inside
+solution
+mature
+role
+rather
+weeks
+addition
+came
+supply
+nothing
+certain
+usr
+executive
+running
+lower
+necessary
+union
+jewelry
+according
+clothing
+mon
+com
+particular
+fine
+names
+robert
+homepage
+hour
+gas
+skills
+six
+bush
+islands
+advice
+career
+military
+rental
+decision
+leave
+british
+teens
+pre
+huge
+sat
+woman
+facilities
+zip
+bid
+kind
+sellers
+middle
+move
+cable
+opportunities
+taking
+values
+division
+coming
+tuesday
+object
+appropriate
+machine
+logo
+length
+actually
+nice
+score
+statistics
+client
+returns
+capital
+follow
+sample
+investment
+sent
+shown
+saturday
+christmas
+england
+culture
+band
+flash
+lead
+george
+choice
+went
+starting
+registration
+fri
+thursday
+courses
+consumer
+airport
+foreign
+artist
+outside
+furniture
+levels
+channel
+letter
+mode
+phones
+ideas
+wednesday
+structure
+fund
+summer
+allow
+degree
+contract
+button
+releases
+wed
+homes
+super
+male
+matter
+custom
+virginia
+almost
+took
+located
+multiple
+asian
+distribution
+editor
+inn
+industrial
+cause
+potential
+song
+cnet
+ltd
+los
+focus
+late
+fall
+featured
+idea
+rooms
+female
+responsible
+inc
+communications
+win
+associated
+thomas
+primary
+cancer
+numbers
+reason
+tool
+browser
+spring
+foundation
+answer
+voice
+friendly
+schedule
+documents
+communication
+purpose
+feature
+bed
+comes
+police
+everyone
+independent
+approach
+cameras
+brown
+physical
+operating
+hill
+maps
+medicine
+deal
+hold
+ratings
+chicago
+forms
+glass
+happy
+tue
+smith
+wanted
+developed
+thank
+safe
+unique
+survey
+prior
+telephone
+sport
+ready
+feed
+animal
+sources
+mexico
+population
+regular
+secure
+navigation
+operations
+therefore
+ass
+simply
+station
+christian
+round
+paypal
+favorite
+understand
+option
+master
+valley
+recently
+probably
+thu
+rentals
+sea
+built
+publications
+blood
+cut
+worldwide
+improve
+connection
+publisher
+hall
+larger
+anti
+networks
+earth
+parents
+nokia
+transfer
+introduction
+kitchen
+strong
+tel
+carolina
+wedding
+properties
+hospital
+ground
+overview
+ship
+accommodation
+owners
+disease
+excellent
+paid
+italy
+perfect
+hair
+opportunity
+kit
+classic
+basis
+command
+cities
+william
+express
+anal
+award
+distance
+tree
+peter
+assessment
+ensure
+thus
+wall
+involved
+extra
+especially
+interface
+partners
+budget
+rated
+guides
+success
+maximum
+operation
+existing
+quite
+selected
+boy
+amazon
+patients
+restaurants
+beautiful
+warning
+wine
+locations
+horse
+vote
+forward
+flowers
+stars
+lists
+technologies
+owner
+retail
+animals
+useful
+directly
+manufacturer
+ways
+est
+son
+providing
+rule
+mac
+housing
+takes
+iii
+gmt
+bring
+catalog
+searches
+max
+trying
+mother
+authority
+considered
+told
+xml
+traffic
+programme
+joined
+input
+strategy
+feet
+agent
+valid
+bin
+modern
+senior
+ireland
+teaching
+door
+grand
+testing
+trial
+charge
+units
+instead
+canadian
+cool
+normal
+wrote
+enterprise
+ships
+entire
+educational
+leading
+metal
+positive
+fitness
+chinese
+opinion
+asia
+football
+abstract
+uses
+output
+funds
+greater
+likely
+develop
+employees
+artists
+alternative
+processing
+responsibility
+resolution
+java
+guest
+seems
+publication
+pass
+relations
+trust
+van
+contains
+session
+multi
+photography
+republic
+fees
+components
+vacation
+century
+academic
+assistance
+completed
+skin
+graphics
+indian
+prev
+ads
+mary
+expected
+ring
+grade
+dating
+pacific
+mountain
+organizations
+pop
+filter
+mailing
+vehicle
+longer
+consider
+int
+northern
+behind
+panel
+floor
+german
+buying
+match
+proposed
+default
+require
+iraq
+boys
+outdoor
+deep
+morning
+otherwise
+allows
+rest
+protein
+plant
+reported
+hit
+transportation
+pool
+mini
+politics
+partner
+disclaimer
+authors
+boards
+faculty
+parties
+fish
+membership
+mission
+eye
+string
+sense
+modified
+pack
+released
+stage
+internal
+goods
+recommended
+born
+unless
+richard
+detailed
+japanese
+race
+approved
+background
+target
+except
+character
+usb
+maintenance
+ability
+maybe
+functions
+moving
+brands
+places
+php
+pretty
+trademarks
+phentermine
+spain
+southern
+yourself
+etc
+winter
+rape
+battery
+youth
+pressure
+submitted
+boston
+incest
+debt
+keywords
+medium
+television
+interested
+core
+break
+purposes
+throughout
+sets
+dance
+wood
+msn
+itself
+defined
+papers
+playing
+awards
+fee
+studio
+reader
+virtual
+device
+established
+answers
+rent
+las
+remote
+dark
+programming
+external
+apple
+regarding
+instructions
+min
+offered
+theory
+enjoy
+remove
+aid
+surface
+minimum
+visual
+host
+variety
+teachers
+isbn
+martin
+manual
+block
+subjects
+agents
+increased
+repair
+fair
+civil
+steel
+understanding
+songs
+fixed
+wrong
+beginning
+hands
+associates
+finally
+updates
+desktop
+classes
+paris
+ohio
+gets
+sector
+capacity
+requires
+jersey
+fat
+fully
+father
+electric
+saw
+instruments
+quotes
+officer
+driver
+businesses
+dead
+respect
+unknown
+specified
+restaurant
+mike
+trip
+pst
+worth
+procedures
+poor
+teacher
+eyes
+relationship
+workers
+farm
+georgia
+peace
+traditional
+campus
+tom
+showing
+creative
+coast
+benefit
+progress
+funding
+devices
+lord
+grant
+sub
+agree
+fiction
+hear
+sometimes
+watches
+careers
+beyond
+goes
+families
+led
+museum
+themselves
+fan
+transport
+interesting
+blogs
+wife
+evaluation
+accepted
+former
+implementation
+ten
+hits
+zone
+complex
+cat
+galleries
+references
+die
+presented
+jack
+flat
+flow
+agencies
+literature
+respective
+parent
+spanish
+michigan
+columbia
+setting
+scale
+stand
+economy
+highest
+helpful
+monthly
+critical
+frame
+musical
+definition
+secretary
+angeles
+networking
+path
+australian
+employee
+chief
+gives
+bottom
+magazines
+packages
+detail
+francisco
+laws
+changed
+pet
+heard
+begin
+individuals
+colorado
+royal
+clean
+switch
+russian
+largest
+african
+guy
+titles
+relevant
+guidelines
+justice
+connect
+bible
+dev
+cup
+basket
+applied
+weekly
+vol
+installation
+described
+demand
+suite
+vegas
+square
+chris
+attention
+advance
+skip
+diet
+army
+auction
+gear
+lee
+difference
+allowed
+correct
+charles
+nation
+selling
+lots
+piece
+sheet
+firm
+seven
+older
+illinois
+regulations
+elements
+species
+jump
+cells
+module
+resort
+facility
+random
+pricing
+dvds
+certificate
+minister
+motion
+looks
+fashion
+directions
+visitors
+documentation
+monitor
+trading
+forest
+calls
+whose
+coverage
+couple
+giving
+chance
+vision
+ball
+ending
+clients
+actions
+listen
+discuss
+accept
+automotive
+goal
+successful
+sold
+wind
+communities
+clinical
+situation
+sciences
+markets
+lowest
+highly
+publishing
+appear
+emergency
+developing
+lives
+currency
+leather
+determine
+milf
+temperature
+palm
+announcements
+patient
+actual
+historical
+stone
+bob
+commerce
+ringtones
+perhaps
+persons
+difficult
+scientific
+satellite
+fit
+tests
+village
+accounts
+amateur
+met
+pain
+xbox
+particularly
+factors
+coffee
+www
+settings
+cum
+buyer
+cultural
+steve
+easily
+oral
+ford
+poster
+edge
+functional
+root
+closed
+holidays
+ice
+pink
+zealand
+balance
+monitoring
+graduate
+replies
+shot
+architecture
+initial
+label
+thinking
+scott
+llc
+sec
+recommend
+canon
+hardcore
+league
+waste
+minute
+bus
+provider
+optional
+dictionary
+cold
+accounting
+manufacturing
+sections
+chair
+fishing
+effort
+phase
+fields
+bag
+fantasy
+letters
+motor
+professor
+context
+install
+shirt
+apparel
+generally
+continued
+foot
+mass
+crime
+count
+breast
+techniques
+ibm
+johnson
+quickly
+dollars
+websites
+religion
+claim
+driving
+permission
+surgery
+patch
+heat
+wild
+measures
+generation
+kansas
+miss
+chemical
+doctor
+task
+reduce
+brought
+himself
+nor
+component
+enable
+exercise
+bug
+santa
+mid
+guarantee
+leader
+diamond
+israel
+processes
+soft
+servers
+alone
+meetings
+seconds
+jones
+arizona
+keyword
+interests
+flight
+congress
+fuel
+username
+walk
+produced
+italian
+paperback
+classifieds
+wait
+supported
+pocket
+saint
+rose
+freedom
+argument
+competition
+creating
+jim
+drugs
+joint
+premium
+providers
+fresh
+characters
+attorney
+upgrade
+factor
+growing
+thousands
+stream
+apartments
+pick
+hearing
+eastern
+auctions
+therapy
+entries
+dates
+generated
+signed
+upper
+administrative
+serious
+prime
+samsung
+limit
+began
+louis
+steps
+errors
+shops
+bondage
+del
+efforts
+informed
+thoughts
+creek
+worked
+quantity
+urban
+practices
+sorted
+reporting
+essential
+myself
+tours
+platform
+load
+affiliate
+labor
+immediately
+admin
+nursing
+defense
+machines
+designated
+tags
+heavy
+covered
+recovery
+joe
+guys
+integrated
+configuration
+merchant
+comprehensive
+expert
+universal
+protect
+drop
+solid
+cds
+presentation
+languages
+became
+orange
+compliance
+vehicles
+prevent
+theme
+rich
+campaign
+marine
+improvement
+guitar
+finding
+pennsylvania
+examples
+ipod
+saying
+spirit
+claims
+challenge
+motorola
+acceptance
+strategies
+seem
+affairs
+touch
+intended
+towards
+goals
+hire
+election
+suggest
+branch
+charges
+serve
+affiliates
+reasons
+magic
+mount
+smart
+talking
+gave
+ones
+latin
+multimedia
+tits
+avoid
+certified
+manage
+corner
+rank
+computing
+oregon
+element
+birth
+virus
+abuse
+interactive
+requests
+separate
+quarter
+procedure
+leadership
+tables
+define
+racing
+religious
+facts
+breakfast
+kong
+column
+plants
+faith
+chain
+developer
+identify
+avenue
+missing
+died
+approximately
+domestic
+sitemap
+recommendations
+moved
+houston
+reach
+comparison
+mental
+viewed
+moment
+extended
+sequence
+inch
+attack
+sorry
+centers
+opening
+damage
+lab
+reserve
+recipes
+cvs
+gamma
+plastic
+produce
+snow
+placed
+truth
+counter
+failure
+follows
+weekend
+dollar
+camp
+ontario
+automatically
+des
+minnesota
+films
+bridge
+native
+fill
+williams
+movement
+printing
+baseball
+owned
+approval
+draft
+chart
+played
+contacts
+jesus
+readers
+clubs
+lcd
+jackson
+equal
+adventure
+matching
+offering
+shirts
+profit
+leaders
+posters
+institutions
+assistant
+variable
+ave
+advertisement
+expect
+parking
+headlines
+yesterday
+compared
+determined
+wholesale
+workshop
+russia
+gone
+codes
+kinds
+extension
+seattle
+statements
+golden
+completely
+teams
+fort
+lighting
+senate
+forces
+funny
+brother
+gene
+turned
+portable
+tried
+electrical
+applicable
+disc
+returned
+pattern
+hentai
+boat
+named
+theatre
+laser
+earlier
+manufacturers
+sponsor
+classical
+icon
+warranty
+dedicated
+indiana
+direction
+harry
+basketball
+objects
+ends
+delete
+evening
+assembly
+nuclear
+taxes
+mouse
+criminal
+issued
+brain
+sexual
+wisconsin
+powerful
+dream
+obtained
+false
+cast
+flower
+felt
+personnel
+passed
+supplied
+identified
+falls
+pic
+soul
+aids
+opinions
+promote
+stated
+stats
+hawaii
+professionals
+appears
+carry
+flag
+decided
+covers
+advantage
+hello
+designs
+maintain
+tourism
+priority
+newsletters
+adults
+clips
+savings
+graphic
+atom
+payments
+estimated
+binding
+brief
+ended
+winning
+eight
+anonymous
+iron
+straight
+script
+served
+wants
+miscellaneous
+prepared
+void
+dining
+alert
+integration
+atlanta
+dakota
+tag
+interview
+mix
+framework
+disk
+installed
+queen
+vhs
+credits
+clearly
+fix
+handle
+sweet
+desk
+criteria
+pubmed
+dave
+massachusetts
+diego
+hong
+vice
+associate
+truck
+behavior
+enlarge
+ray
+frequently
+revenue
+measure
+changing
+votes
+duty
+looked
+discussions
+bear
+gain
+festival
+laboratory
+ocean
+flights
+experts
+signs
+lack
+depth
+iowa
+whatever
+logged
+laptop
+vintage
+train
+exactly
+dry
+explore
+maryland
+spa
+concept
+nearly
+eligible
+checkout
+reality
+forgot
+handling
+origin
+knew
+gaming
+feeds
+billion
+destination
+scotland
+faster
+intelligence
+dallas
+bought
+con
+ups
+nations
+route
+followed
+specifications
+broken
+tripadvisor
+frank
+alaska
+zoom
+blow
+battle
+residential
+anime
+speak
+decisions
+industries
+protocol
+query
+clip
+partnership
+editorial
+expression
+equity
+provisions
+speech
+wire
+principles
+suggestions
+rural
+shared
+sounds
+replacement
+tape
+strategic
+judge
+spam
+economics
+acid
+bytes
+cent
+forced
+compatible
+fight
+apartment
+height
+null
+zero
+speaker
+filed
+netherlands
+obtain
+consulting
+recreation
+offices
+designer
+remain
+managed
+failed
+marriage
+roll
+korea
+banks
+participants
+secret
+bath
+kelly
+leads
+negative
+austin
+favorites
+toronto
+theater
+springs
+missouri
+andrew
+var
+perform
+healthy
+translation
+estimates
+font
+assets
+injury
+joseph
+ministry
+drivers
+lawyer
+figures
+married
+protected
+proposal
+sharing
+philadelphia
+portal
+waiting
+birthday
+beta
+fail
+gratis
+banking
+officials
+brian
+toward
+won
+slightly
+assist
+conduct
+contained
+lingerie
+shemale
+legislation
+calling
+parameters
+jazz
+serving
+bags
+profiles
+miami
+comics
+matters
+houses
+doc
+postal
+relationships
+tennessee
+wear
+controls
+breaking
+combined
+ultimate
+wales
+representative
+frequency
+introduced
+minor
+finish
+departments
+residents
+noted
+displayed
+mom
+reduced
+physics
+rare
+spent
+performed
+extreme
+samples
+davis
+daniel
+bars
+reviewed
+row
+forecast
+removed
+helps
+singles
+administrator
+cycle
+amounts
+contain
+accuracy
+dual
+rise
+usd
+sleep
+bird
+pharmacy
+brazil
+creation
+static
+scene
+hunter
+addresses
+lady
+crystal
+famous
+writer
+chairman
+violence
+fans
+oklahoma
+speakers
+drink
+academy
+dynamic
+gender
+eat
+permanent
+agriculture
+dell
+cleaning
+constitutes
+portfolio
+practical
+delivered
+collectibles
+infrastructure
+exclusive
+seat
+concerns
+colour
+vendor
+originally
+intel
+utilities
+philosophy
+regulation
+officers
+reduction
+aim
+bids
+referred
+supports
+nutrition
+recording
+regions
+junior
+toll
+les
+cape
+ann
+rings
+meaning
+tip
+secondary
+wonderful
+mine
+ladies
+henry
+ticket
+announced
+guess
+agreed
+prevention
+whom
+ski
+soccer
+math
+import
+posting
+presence
+instant
+mentioned
+automatic
+healthcare
+viewing
+maintained
+increasing
+majority
+connected
+christ
+dan
+dogs
+directors
+aspects
+austria
+ahead
+moon
+participation
+scheme
+utility
+preview
+fly
+manner
+matrix
+containing
+combination
+devel
+amendment
+despite
+strength
+guaranteed
+turkey
+libraries
+proper
+distributed
+degrees
+singapore
+enterprises
+delta
+fear
+seeking
+inches
+phoenix
+convention
+shares
+principal
+daughter
+standing
+voyeur
+comfort
+colors
+wars
+cisco
+ordering
+kept
+alpha
+appeal
+cruise
+bonus
+certification
+previously
+hey
+bookmark
+buildings
+specials
+beat
+disney
+household
+batteries
+adobe
+smoking
+bbc
+becomes
+drives
+arms
+alabama
+tea
+improved
+trees
+avg
+achieve
+positions
+dress
+subscription
+dealer
+contemporary
+sky
+utah
+nearby
+rom
+carried
+happen
+exposure
+panasonic
+hide
+permalink
+signature
+gambling
+refer
+miller
+provision
+outdoors
+clothes
+caused
+luxury
+babes
+frames
+certainly
+indeed
+newspaper
+toy
+circuit
+layer
+printed
+slow
+removal
+easier
+src
+liability
+trademark
+hip
+printers
+faqs
+nine
+adding
+kentucky
+mostly
+eric
+spot
+taylor
+trackback
+prints
+spend
+factory
+interior
+revised
+grow
+americans
+optical
+promotion
+relative
+amazing
+clock
+dot
+hiv
+identity
+suites
+conversion
+feeling
+hidden
+reasonable
+victoria
+serial
+relief
+revision
+broadband
+ratio
+pda
+importance
+rain
+onto
+dsl
+planet
+webmaster
+copies
+recipe
+zum
+permit
+seeing
+proof
+dna
+diff
+tennis
+bass
+prescription
+bedroom
+empty
+instance
+hole
+pets
+ride
+licensed
+orlando
+specifically
+tim
+bureau
+maine
+sql
+represent
+conservation
+pair
+ideal
+specs
+recorded
+don
+pieces
+finished
+parks
+dinner
+lawyers
+sydney
+stress
+cream
+runs
+trends
+yeah
+discover
+sexo
+patterns
+boxes
+louisiana
+hills
+javascript
+fourth
+advisor
+marketplace
+evil
+aware
+wilson
+shape
+irish
+certificates
+objectives
+stations
+suggested
+gps
+remains
+acc
+greatest
+firms
+concerned
+euro
+operator
+structures
+generic
+encyclopedia
+usage
+cap
+ink
+charts
+continuing
+mixed
+census
+interracial
+peak
+competitive
+exist
+wheel
+transit
+suppliers
+salt
+compact
+poetry
+lights
+tracking
+angel
+bell
+keeping
+preparation
+attempt
+receiving
+matches
+accordance
+width
+noise
+engines
+forget
+array
+discussed
+accurate
+stephen
+elizabeth
+reservations
+pin
+playstation
+alcohol
+greek
+instruction
+managing
+annotation
+sister
+raw
+differences
+walking
+explain
+smaller
+newest
+establish
+gnu
+happened
+expressed
+jeff
+extent
+sharp
+lesbians
+ben
+lane
+paragraph
+kill
+mathematics
+aol
+compensation
+export
+managers
+aircraft
+modules
+sweden
+conflict
+conducted
+versions
+employer
+occur
+percentage
+knows
+mississippi
+describe
+concern
+backup
+requested
+citizens
+connecticut
+heritage
+personals
+immediate
+holding
+trouble
+spread
+coach
+kevin
+agricultural
+expand
+supporting
+audience
+assigned
+jordan
+collections
+ages
+participate
+plug
+specialist
+cook
+affect
+virgin
+experienced
+investigation
+raised
+hat
+institution
+directed
+dealers
+searching
+sporting
+helping
+perl
+affected
+lib
+bike
+totally
+plate
+expenses
+blonde
+proceedings
+favourite
+transmission
+anderson
+utc
+characteristics
+der
+lose
+organic
+seek
+experiences
+albums
+cheats
+extremely
+verzeichnis
+contracts
+guests
+hosted
+diseases
+concerning
+developers
+equivalent
+chemistry
+tony
+neighborhood
+nevada
+kits
+thailand
+variables
+agenda
+anyway
+continues
+tracks
+advisory
+cam
+curriculum
+logic
+template
+prince
+circle
+soil
+grants
+anywhere
+psychology
+responses
+atlantic
+wet
+circumstances
+edward
+investor
+identification
+ram
+leaving
+wildlife
+appliances
+matt
+elementary
+cooking
+speaking
+sponsors
+fox
+unlimited
+respond
+sizes
+plain
+exit
+entered
+iran
+arm
+keys
+launch
+wave
+checking
+costa
+belgium
+printable
+holy
+acts
+guidance
+mesh
+trail
+enforcement
+symbol
+crafts
+highway
+buddy
+hardcover
+observed
+dean
+setup
+poll
+booking
+glossary
+fiscal
+celebrity
+styles
+denver
+unix
+filled
+bond
+channels
+ericsson
+appendix
+notify
+blues
+chocolate
+pub
+portion
+scope
+hampshire
+supplier
+cables
+cotton
+bluetooth
+controlled
+requirement
+authorities
+biology
+dental
+killed
+border
+ancient
+debate
+representatives
+starts
+pregnancy
+causes
+arkansas
+biography
+leisure
+attractions
+learned
+transactions
+notebook
+explorer
+historic
+attached
+opened
+husband
+disabled
+authorized
+crazy
+upcoming
+britain
+concert
+retirement
+scores
+financing
+efficiency
+comedy
+adopted
+efficient
+weblog
+linear
+commitment
+specialty
+bears
+jean
+hop
+carrier
+edited
+constant
+visa
+mouth
+jewish
+meter
+linked
+portland
+interviews
+concepts
+gun
+reflect
+pure
+deliver
+wonder
+hell
+lessons
+fruit
+begins
+qualified
+reform
+lens
+alerts
+treated
+discovery
+draw
+mysql
+classified
+relating
+assume
+confidence
+alliance
+confirm
+warm
+neither
+lewis
+howard
+offline
+leaves
+engineer
+lifestyle
+consistent
+replace
+clearance
+connections
+inventory
+converter
+suck
+organisation
+babe
+checks
+reached
+becoming
+blowjob
+safari
+objective
+indicated
+sugar
+crew
+legs
+sam
+stick
+securities
+allen
+pdt
+relation
+enabled
+genre
+slide
+montana
+volunteer
+tested
+rear
+democratic
+enhance
+switzerland
+exact
+bound
+parameter
+adapter
+processor
+node
+formal
+dimensions
+lock
+hockey
+storm
+micro
+colleges
+laptops
+mile
+showed
+challenges
+editors
+mens
+threads
+bowl
+supreme
+brothers
+recognition
+presents
+ref
+tank
+submission
+dolls
+estimate
+encourage
+navy
+kid
+regulatory
+inspection
+consumers
+cancel
+limits
+territory
+transaction
+manchester
+weapons
+paint
+delay
+pilot
+outlet
+contributions
+continuous
+czech
+resulting
+cambridge
+initiative
+novel
+pan
+execution
+disability
+increases
+ultra
+winner
+idaho
+contractor
+episode
+examination
+potter
+dish
+plays
+bulletin
+indicates
+modify
+oxford
+adam
+truly
+epinions
+painting
+committed
+extensive
+affordable
+universe
+candidate
+databases
+patent
+slot
+psp
+outstanding
+eating
+perspective
+planned
+watching
+lodge
+messenger
+mirror
+tournament
+consideration
+discounts
+sterling
+sessions
+kernel
+boobs
+stocks
+buyers
+journals
+gray
+catalogue
+jennifer
+antonio
+charged
+broad
+taiwan
+und
+chosen
+demo
+greece
+swiss
+sarah
+clark
+labour
+hate
+terminal
+publishers
+nights
+behalf
+caribbean
+liquid
+rice
+nebraska
+loop
+salary
+reservation
+foods
+gourmet
+guard
+properly
+orleans
+saving
+nfl
+remaining
+empire
+resume
+twenty
+newly
+raise
+prepare
+avatar
+gary
+depending
+illegal
+expansion
+vary
+hundreds
+rome
+arab
+lincoln
+helped
+premier
+tomorrow
+purchased
+milk
+decide
+consent
+drama
+visiting
+performing
+downtown
+keyboard
+contest
+collected
+bands
+boot
+suitable
+absolutely
+millions
+lunch
+dildo
+audit
+push
+chamber
+guinea
+findings
+muscle
+featuring
+iso
+implement
+clicking
+scheduled
+polls
+typical
+tower
+yours
+sum
+misc
+calculator
+significantly
+chicken
+temporary
+attend
+shower
+alan
+sending
+jason
+tonight
+dear
+sufficient
+holdem
+shell
+province
+catholic
+oak
+vat
+awareness
+vancouver
+governor
+beer
+seemed
+contribution
+measurement
+swimming
+spyware
+formula
+constitution
+packaging
+solar
+jose
+catch
+jane
+pakistan
+reliable
+consultation
+northwest
+sir
+doubt
+earn
+finder
+unable
+periods
+classroom
+tasks
+democracy
+attacks
+kim
+wallpaper
+merchandise
+const
+resistance
+doors
+symptoms
+resorts
+biggest
+memorial
+visitor
+twin
+forth
+insert
+baltimore
+gateway
+dont
+alumni
+drawing
+candidates
+charlotte
+ordered
+biological
+fighting
+transition
+happens
+preferences
+spy
+romance
+instrument
+bruce
+split
+themes
+powers
+heaven
+bits
+pregnant
+twice
+classification
+focused
+egypt
+physician
+hollywood
+bargain
+wikipedia
+cellular
+norway
+vermont
+asking
+blocks
+normally
+spiritual
+hunting
+diabetes
+suit
+shift
+chip
+res
+sit
+bodies
+photographs
+cutting
+wow
+simon
+writers
+marks
+flexible
+loved
+favourites
+mapping
+numerous
+relatively
+birds
+satisfaction
+represents
+char
+indexed
+pittsburgh
+superior
+preferred
+saved
+paying
+cartoon
+shots
+intellectual
+moore
+granted
+choices
+carbon
+spending
+comfortable
+magnetic
+interaction
+listening
+effectively
+registry
+crisis
+outlook
+massive
+denmark
+employed
+bright
+treat
+header
+poverty
+formed
+piano
+echo
+que
+grid
+sheets
+patrick
+experimental
+puerto
+revolution
+consolidation
+displays
+plasma
+allowing
+earnings
+voip
+mystery
+landscape
+dependent
+mechanical
+journey
+delaware
+bidding
+consultants
+risks
+banner
+applicant
+charter
+fig
+barbara
+cooperation
+counties
+acquisition
+ports
+implemented
+directories
+recognized
+dreams
+blogger
+notification
+licensing
+stands
+teach
+occurred
+textbooks
+rapid
+pull
+hairy
+diversity
+cleveland
+reverse
+deposit
+seminar
+investments
+latina
+nasa
+wheels
+sexcam
+specify
+accessibility
+dutch
+sensitive
+templates
+formats
+tab
+depends
+boots
+holds
+router
+concrete
+editing
+poland
+folder
+womens
+css
+completion
+upload
+pulse
+universities
+technique
+contractors
+milfhunter
+voting
+courts
+notices
+subscriptions
+calculate
+detroit
+alexander
+broadcast
+converted
+metro
+toshiba
+anniversary
+improvements
+strip
+specification
+pearl
+accident
+nick
+accessible
+accessory
+resident
+plot
+qty
+possibly
+airline
+typically
+representation
+regard
+pump
+exists
+arrangements
+smooth
+conferences
+uniprotkb
+beastiality
+strike
+consumption
+birmingham
+flashing
+narrow
+afternoon
+threat
+surveys
+sitting
+putting
+consultant
+controller
+ownership
+committees
+penis
+legislative
+researchers
+vietnam
+trailer
+anne
+castle
+gardens
+missed
+malaysia
+unsubscribe
+antique
+labels
+willing
+bio
+molecular
+upskirt
+acting
+heads
+stored
+exam
+logos
+residence
+attorneys
+milfs
+antiques
+density
+hundred
+ryan
+operators
+strange
+sustainable
+philippines
+statistical
+beds
+breasts
+mention
+innovation
+pcs
+employers
+grey
+parallel
+honda
+amended
+operate
+bills
+bold
+bathroom
+stable
+opera
+definitions
+von
+doctors
+lesson
+cinema
+asset
+scan
+elections
+drinking
+blowjobs
+reaction
+blank
+enhanced
+entitled
+severe
+generate
+stainless
+newspapers
+hospitals
+deluxe
+humor
+aged
+monitors
+exception
+lived
+duration
+bulk
+successfully
+indonesia
+pursuant
+sci
+fabric
+edt
+visits
+primarily
+tight
+domains
+capabilities
+pmid
+contrast
+recommendation
+flying
+recruitment
+sin
+berlin
+cute
+organized
+para
+siemens
+adoption
+improving
+expensive
+meant
+capture
+pounds
+buffalo
+organisations
+plane
+explained
+seed
+programmes
+desire
+expertise
+mechanism
+camping
+jewellery
+meets
+welfare
+peer
+caught
+eventually
+marked
+driven
+measured
+medline
+bottle
+agreements
+considering
+innovative
+marshall
+massage
+rubber
+conclusion
+closing
+tampa
+thousand
+meat
+legend
+grace
+susan
+ing
+adams
+python
+monster
+alex
+bang
+villa
+bone
+columns
+disorders
+bugs
+collaboration
+hamilton
+detection
+ftp
+cookies
+inner
+formation
+tutorial
+med
+engineers
+entity
+cruises
+gate
+holder
+proposals
+moderator
+tutorials
+settlement
+portugal
+lawrence
+roman
+duties
+valuable
+erotic
+tone
+collectables
+ethics
+forever
+dragon
+busy
+captain
+fantastic
+imagine
+brings
+heating
+leg
+neck
+wing
+governments
+purchasing
+scripts
+abc
+stereo
+appointed
+taste
+dealing
+commit
+tiny
+operational
+rail
+airlines
+liberal
+livecam
+jay
+trips
+gap
+sides
+tube
+turns
+corresponding
+descriptions
+cache
+belt
+jacket
+determination
+animation
+oracle
+matthew
+lease
+productions
+aviation
+hobbies
+proud
+excess
+disaster
+console
+commands
+telecommunications
+instructor
+giant
+achieved
+injuries
+shipped
+bestiality
+seats
+approaches
+biz
+alarm
+voltage
+anthony
+nintendo
+usual
+loading
+stamps
+appeared
+franklin
+angle
+rob
+vinyl
+highlights
+mining
+designers
+melbourne
+ongoing
+worst
+imaging
+betting
+scientists
+liberty
+wyoming
+blackjack
+argentina
+era
+convert
+possibility
+analyst
+commissioner
+dangerous
+garage
+exciting
+reliability
+thongs
+gcc
+unfortunately
+respectively
+volunteers
+attachment
+ringtone
+finland
+morgan
+derived
+pleasure
+honor
+asp
+oriented
+eagle
+desktops
+pants
+columbus
+nurse
+prayer
+appointment
+workshops
+hurricane
+quiet
+luck
+postage
+producer
+represented
+mortgages
+dial
+responsibilities
+cheese
+comic
+carefully
+jet
+productivity
+investors
+crown
+par
+underground
+diagnosis
+maker
+crack
+principle
+picks
+vacations
+gang
+semester
+calculated
+cumshot
+fetish
+applies
+appearance
+smoke
+apache
+filters
+incorporated
+craft
+cake
+notebooks
+apart
+fellow
+blind
+lounge
+mad
+algorithm
+semi
+coins
+andy
+gross
+strongly
+cafe
+valentine
+hilton
+ken
+proteins
+horror
+exp
+familiar
+capable
+douglas
+debian
+till
+involving
+pen
+investing
+christopher
+admission
+epson
+shoe
+elected
+carrying
+victory
+sand
+madison
+terrorism
+joy
+editions
+cpu
+mainly
+ethnic
+ran
+parliament
+actor
+finds
+seal
+situations
+fifth
+allocated
+citizen
+vertical
+corrections
+structural
+municipal
+describes
+prize
+occurs
+jon
+absolute
+disabilities
+consists
+anytime
+substance
+prohibited
+addressed
+lies
+pipe
+soldiers
+guardian
+lecture
+simulation
+layout
+initiatives
+ill
+concentration
+classics
+lbs
+lay
+interpretation
+horses
+lol
+dirty
+deck
+wayne
+donate
+taught
+bankruptcy
+worker
+optimization
+alive
+temple
+substances
+prove
+discovered
+wings
+breaks
+genetic
+restrictions
+participating
+waters
+promise
+thin
+exhibition
+prefer
+ridge
+cabinet
+modem
+harris
+mph
+bringing
+sick
+dose
+evaluate
+tiffany
+tropical
+collect
+bet
+composition
+toyota
+streets
+nationwide
+vector
+definitely
+shaved
+turning
+buffer
+purple
+existence
+commentary
+larry
+limousines
+developments
+def
+immigration
+destinations
+lets
+mutual
+pipeline
+necessarily
+syntax
+attribute
+prison
+skill
+chairs
+everyday
+apparently
+surrounding
+mountains
+moves
+popularity
+inquiry
+ethernet
+checked
+exhibit
+throw
+trend
+sierra
+visible
+cats
+desert
+postposted
+oldest
+rhode
+nba
+busty
+coordinator
+obviously
+mercury
+steven
+handbook
+greg
+navigate
+worse
+summit
+victims
+epa
+spaces
+fundamental
+burning
+escape
+coupons
+somewhat
+receiver
+progressive
+cialis
+boats
+glance
+scottish
+championship
+arcade
+richmond
+sacramento
+impossible
+ron
+russell
+tells
+obvious
+fiber
+depression
+graph
+covering
+platinum
+judgment
+bedrooms
+talks
+filing
+foster
+modeling
+passing
+awarded
+testimonials
+trials
+tissue
+memorabilia
+clinton
+masters
+bonds
+cartridge
+alberta
+explanation
+folk
+org
+commons
+cincinnati
+subsection
+fraud
+electricity
+permitted
+spectrum
+arrival
+okay
+pottery
+emphasis
+roger
+aspect
+workplace
+awesome
+mexican
+confirmed
+counts
+priced
+wallpapers
+hist
+crash
+lift
+desired
+inter
+closer
+assumes
+heights
+shadow
+riding
+infection
+firefox
+lisa
+expense
+grove
+eligibility
+venture
+clinic
+korean
+healing
+princess
+mall
+entering
+packet
+spray
+studios
+involvement
+dad
+buttons
+placement
+observations
+vbulletin
+funded
+thompson
+winners
+extend
+roads
+subsequent
+pat
+dublin
+rolling
+fell
+motorcycle
+yard
+disclosure
+establishment
+memories
+nelson
+arrived
+creates
+faces
+tourist
+cocks
+mayor
+murder
+sean
+adequate
+senator
+yield
+presentations
+grades
+cartoons
+pour
+digest
+reg
+lodging
+tion
+dust
+hence
+wiki
+entirely
+replaced
+radar
+rescue
+undergraduate
+losses
+combat
+reducing
+stopped
+occupation
+lakes
+butt
+donations
+associations
+citysearch
+closely
+radiation
+diary
+seriously
+kings
+shooting
+kent
+adds
+nsw
+ear
+flags
+pci
+baker
+launched
+elsewhere
+pollution
+conservative
+guestbook
+shock
+effectiveness
+walls
+abroad
+ebony
+tie
+ward
+drawn
+arthur
+ian
+visited
+roof
+walker
+demonstrate
+atmosphere
+suggests
+kiss
+beast
+operated
+experiment
+targets
+overseas
+purchases
+dodge
+counsel
+federation
+pizza
+invited
+yards
+assignment
+chemicals
+gordon
+mod
+farmers
+queries
+bmw
+rush
+ukraine
+absence
+nearest
+cluster
+vendors
+mpeg
+whereas
+yoga
+serves
+woods
+surprise
+lamp
+rico
+partial
+shoppers
+phil
+everybody
+couples
+nashville
+ranking
+jokes
+cst
+http
+ceo
+simpson
+twiki
+sublime
+counseling
+palace
+acceptable
+satisfied
+glad
+wins
+measurements
+verify
+globe
+trusted
+copper
+milwaukee
+rack
+medication
+warehouse
+shareware
+rep
+dicke
+kerry
+receipt
+supposed
+ordinary
+nobody
+ghost
+violation
+configure
+stability
+mit
+applying
+southwest
+boss
+pride
+institutional
+expectations
+independence
+knowing
+reporter
+metabolism
+keith
+champion
+cloudy
+linda
+ross
+personally
+chile
+anna
+plenty
+solo
+sentence
+throat
+ignore
+maria
+uniform
+excellence
+wealth
+tall
+somewhere
+vacuum
+dancing
+attributes
+recognize
+brass
+writes
+plaza
+pdas
+outcomes
+survival
+quest
+publish
+sri
+screening
+toe
+thumbnail
+trans
+jonathan
+whenever
+nova
+lifetime
+api
+pioneer
+booty
+forgotten
+acrobat
+plates
+acres
+venue
+athletic
+thermal
+essays
+behaviour
+vital
+telling
+fairly
+coastal
+config
+charity
+intelligent
+edinburgh
+excel
+modes
+obligation
+campbell
+wake
+stupid
+harbor
+hungary
+traveler
+urw
+segment
+realize
+regardless
+lan
+enemy
+puzzle
+rising
+aluminum
+wells
+wishlist
+opens
+insight
+sms
+restricted
+republican
+secrets
+lucky
+latter
+merchants
+thick
+trailers
+repeat
+syndrome
+philips
+attendance
+penalty
+drum
+glasses
+enables
+nec
+iraqi
+builder
+vista
+jessica
+chips
+terry
+flood
+foto
+ease
+arguments
+amsterdam
+orgy
+arena
+adventures
+pupils
+stewart
+announcement
+tabs
+outcome
+appreciate
+expanded
+casual
+grown
+polish
+lovely
+extras
+centres
+jerry
+clause
+smile
+lands
+troops
+indoor
+bulgaria
+armed
+broker
+charger
+regularly
+believed
+pine
+cooling
+tend
+gulf
+rick
+trucks
+mechanisms
+divorce
+laura
+shopper
+tokyo
+partly
+nikon
+customize
+tradition
+candy
+pills
+tiger
+donald
+folks
+sensor
+exposed
+telecom
+hunt
+angels
+deputy
+indicators
+sealed
+thai
+emissions
+physicians
+loaded
+fred
+complaint
+scenes
+experiments
+balls
+afghanistan
+boost
+spanking
+scholarship
+governance
+mill
+founded
+supplements
+chronic
+icons
+tranny
+moral
+den
+catering
+aud
+finger
+keeps
+pound
+locate
+camcorder
+trained
+burn
+implementing
+roses
+labs
+ourselves
+bread
+tobacco
+wooden
+motors
+tough
+roberts
+incident
+gonna
+dynamics
+lie
+crm
+conversation
+decrease
+cumshots
+chest
+pension
+billy
+revenues
+emerging
+worship
+bukkake
+capability
+craig
+herself
+producing
+churches
+precision
+damages
+reserves
+contributed
+solve
+shorts
+reproduction
+minority
+diverse
+amp
+ingredients
+johnny
+sole
+franchise
+recorder
+complaints
+facing
+nancy
+promotions
+tones
+passion
+rehabilitation
+maintaining
+sight
+laid
+clay
+defence
+patches
+weak
+refund
+usc
+towns
+environments
+trembl
+divided
+blvd
+reception
+amd
+wise
+emails
+cyprus
+odds
+correctly
+insider
+seminars
+consequences
+makers
+hearts
+geography
+appearing
+integrity
+worry
+discrimination
+eve
+carter
+legacy
+marc
+pleased
+danger
+vitamin
+widely
+processed
+phrase
+genuine
+raising
+implications
+functionality
+paradise
+hybrid
+reads
+roles
+intermediate
+emotional
+sons
+leaf
+pad
+glory
+platforms
+bigger
+billing
+diesel
+versus
+combine
+overnight
+geographic
+exceed
+rod
+saudi
+fault
+cuba
+hrs
+preliminary
+districts
+introduce
+silk
+promotional
+kate
+chevrolet
+babies
+karen
+compiled
+romantic
+revealed
+specialists
+generator
+albert
+examine
+jimmy
+graham
+suspension
+bristol
+margaret
+compaq
+sad
+correction
+wolf
+slowly
+authentication
+communicate
+rugby
+supplement
+showtimes
+cal
+portions
+infant
+promoting
+sectors
+samuel
+fluid
+grounds
+fits
+kick
+regards
+meal
+hurt
+machinery
+bandwidth
+unlike
+equation
+baskets
+probability
+pot
+dimension
+wright
+img
+barry
+proven
+schedules
+admissions
+cached
+warren
+slip
+studied
+reviewer
+involves
+quarterly
+rpm
+profits
+devil
+grass
+comply
+marie
+florist
+illustrated
+cherry
+continental
+alternate
+deutsch
+achievement
+limitations
+kenya
+cuts
+funeral
+nutten
+earrings
+enjoyed
+automated
+chapters
+pee
+charlie
+quebec
+nipples
+passenger
+convenient
+dennis
+mars
+francis
+tvs
+sized
+manga
+noticed
+socket
+silent
+literary
+egg
+mhz
+signals
+caps
+orientation
+pill
+theft
+childhood
+swing
+symbols
+lat
+meta
+humans
+analog
+facial
+choosing
+talent
+dated
+flexibility
+seeker
+wisdom
+shoot
+boundary
+mint
+packard
+offset
+payday
+philip
+elite
+spin
+holders
+believes
+swedish
+poems
+deadline
+jurisdiction
+robot
+displaying
+witness
+collins
+equipped
+stages
+encouraged
+sur
+winds
+powder
+broadway
+acquired
+assess
+wash
+cartridges
+stones
+entrance
+gnome
+roots
+declaration
+losing
+attempts
+gadgets
+noble
+glasgow
+automation
+impacts
+rev
+gospel
+advantages
+shore
+loves
+induced
+knight
+preparing
+loose
+aims
+recipient
+linking
+extensions
+appeals
+earned
+illness
+islamic
+athletics
+southeast
+ieee
+alternatives
+pending
+parker
+determining
+lebanon
+corp
+personalized
+kennedy
+conditioning
+teenage
+soap
+triple
+cooper
+nyc
+vincent
+jam
+secured
+unusual
+answered
+partnerships
+destruction
+slots
+increasingly
+migration
+disorder
+routine
+toolbar
+basically
+rocks
+conventional
+titans
+applicants
+wearing
+axis
+sought
+genes
+mounted
+habitat
+firewall
+median
+guns
+scanner
+herein
+occupational
+animated
+horny
+judicial
+rio
+adjustment
+hero
+integer
+treatments
+bachelor
+attitude
+camcorders
+engaged
+falling
+basics
+montreal
+carpet
+struct
+lenses
+binary
+genetics
+attended
+difficulty
+punk
+collective
+coalition
+dropped
+enrollment
+duke
+walter
+pace
+besides
+wage
+producers
+collector
+arc
+hosts
+interfaces
+advertisers
+moments
+atlas
+strings
+dawn
+representing
+observation
+feels
+torture
+carl
+deleted
+coat
+mitchell
+mrs
+rica
+restoration
+convenience
+returning
+ralph
+opposition
+container
+defendant
+warner
+confirmation
+app
+embedded
+inkjet
+supervisor
+wizard
+corps
+actors
+liver
+peripherals
+liable
+brochure
+morris
+bestsellers
+petition
+eminem
+recall
+antenna
+picked
+assumed
+departure
+minneapolis
+belief
+killing
+bikini
+memphis
+shoulder
+decor
+lookup
+texts
+harvard
+brokers
+roy
+ion
+diameter
+ottawa
+doll
+podcast
+tit
+seasons
+peru
+interactions
+refine
+bidder
+singer
+evans
+herald
+literacy
+fails
+aging
+nike
+intervention
+pissing
+fed
+plugin
+attraction
+diving
+invite
+modification
+alice
+latinas
+suppose
+customized
+reed
+involve
+moderate
+terror
+younger
+thirty
+mice
+opposite
+understood
+rapidly
+dealtime
+ban
+temp
+intro
+mercedes
+zus
+assurance
+fisting
+clerk
+happening
+vast
+mills
+outline
+amendments
+tramadol
+holland
+receives
+jeans
+metropolitan
+compilation
+verification
+fonts
+ent
+odd
+wrap
+refers
+mood
+favor
+veterans
+quiz
+sigma
+attractive
+xhtml
+occasion
+recordings
+jefferson
+victim
+demands
+sleeping
+careful
+ext
+beam
+gardening
+obligations
+arrive
+orchestra
+sunset
+tracked
+moreover
+minimal
+polyphonic
+lottery
+tops
+framed
+aside
+outsourcing
+licence
+adjustable
+allocation
+michelle
+essay
+discipline
+amy
+demonstrated
+dialogue
+identifying
+alphabetical
+camps
+declared
+dispatched
+aaron
+handheld
+trace
+disposal
+shut
+florists
+packs
+installing
+switches
+romania
+voluntary
+ncaa
+thou
+consult
+phd
+greatly
+blogging
+mask
+cycling
+midnight
+commonly
+photographer
+inform
+turkish
+coal
+cry
+messaging
+pentium
+quantum
+murray
+intent
+zoo
+largely
+pleasant
+announce
+constructed
+additions
+requiring
+spoke
+aka
+arrow
+engagement
+sampling
+rough
+weird
+tee
+refinance
+lion
+inspired
+holes
+weddings
+blade
+suddenly
+oxygen
+cookie
+meals
+canyon
+goto
+meters
+merely
+calendars
+arrangement
+conclusions
+passes
+bibliography
+pointer
+compatibility
+stretch
+durham
+furthermore
+permits
+cooperative
+muslim
+neil
+sleeve
+netscape
+cleaner
+cricket
+beef
+feeding
+stroke
+township
+rankings
+measuring
+cad
+hats
+robin
+robinson
+jacksonville
+strap
+headquarters
+sharon
+crowd
+tcp
+transfers
+surf
+olympic
+transformation
+remained
+attachments
+dir
+entities
+customs
+administrators
+personality
+rainbow
+hook
+roulette
+gloves
+israeli
+medicare
+cord
+skiing
+cloud
+facilitate
+subscriber
+valve
+val
+hewlett
+explains
+proceed
+flickr
+feelings
+knife
+jamaica
+priorities
+shelf
+bookstore
+timing
+liked
+parenting
+adopt
+denied
+fotos
+incredible
+britney
+freeware
+fucked
+donation
+outer
+crop
+deaths
+rivers
+commonwealth
+pharmaceutical
+manhattan
+tales
+katrina
+workforce
+islam
+nodes
+thumbs
+seeds
+cited
+lite
+ghz
+hub
+targeted
+organizational
+skype
+realized
+twelve
+founder
+decade
+gamecube
+dispute
+portuguese
+tired
+titten
+adverse
+everywhere
+excerpt
+eng
+steam
+discharge
+drinks
+ace
+voices
+acute
+halloween
+climbing
+stood
+sing
+tons
+perfume
+carol
+honest
+albany
+hazardous
+restore
+stack
+methodology
+somebody
+sue
+housewares
+reputation
+resistant
+democrats
+recycling
+hang
+gbp
+curve
+creator
+amber
+qualifications
+museums
+coding
+slideshow
+tracker
+variation
+passage
+transferred
+trunk
+hiking
+damn
+pierre
+jelsoft
+headset
+photograph
+oakland
+colombia
+waves
+camel
+distributor
+lamps
+underlying
+hood
+wrestling
+suicide
+archived
+photoshop
+chi
+arabia
+gathering
+projection
+juice
+chase
+mathematical
+logical
+sauce
+fame
+extract
+specialized
+diagnostic
+panama
+indianapolis
+payable
+corporations
+courtesy
+criticism
+automobile
+confidential
+rfc
+statutory
+accommodations
+athens
+northeast
+downloaded
+judges
+seo
+retired
+isp
+remarks
+detected
+decades
+paintings
+walked
+arising
+nissan
+bracelet
+ins
+eggs
+juvenile
+injection
+yorkshire
+populations
+protective
+afraid
+acoustic
+railway
+cassette
+initially
+indicator
+pointed
+jpg
+causing
+mistake
+norton
+locked
+eliminate
+fusion
+mineral
+sunglasses
+ruby
+steering
+beads
+fortune
+preference
+canvas
+threshold
+parish
+claimed
+screens
+cemetery
+planner
+croatia
+flows
+stadium
+venezuela
+exploration
+mins
+fewer
+sequences
+coupon
+nurses
+ssl
+stem
+proxy
+gangbang
+astronomy
+lanka
+opt
+edwards
+drew
+contests
+flu
+translate
+announces
+mlb
+costume
+tagged
+berkeley
+voted
+killer
+bikes
+gates
+adjusted
+rap
+tune
+bishop
+pulled
+corn
+shaped
+compression
+seasonal
+establishing
+farmer
+counters
+puts
+constitutional
+grew
+perfectly
+tin
+slave
+instantly
+cultures
+norfolk
+coaching
+examined
+trek
+encoding
+litigation
+submissions
+oem
+heroes
+painted
+lycos
+zdnet
+broadcasting
+horizontal
+artwork
+cosmetic
+resulted
+portrait
+terrorist
+informational
+ethical
+carriers
+ecommerce
+mobility
+floral
+builders
+ties
+struggle
+schemes
+suffering
+neutral
+fisher
+rat
+spears
+prospective
+dildos
+bedding
+ultimately
+joining
+heading
+equally
+artificial
+bearing
+spectacular
+coordination
+connector
+brad
+combo
+seniors
+worlds
+guilty
+affiliated
+activation
+naturally
+haven
+tablet
+jury
+dos
+tail
+subscribers
+charm
+lawn
+violent
+mitsubishi
+underwear
+basin
+soup
+potentially
+ranch
+constraints
+crossing
+inclusive
+dimensional
+cottage
+drunk
+crimes
+resolved
+mozilla
+byte
+toner
+nose
+latex
+branches
+anymore
+oclc
+delhi
+holdings
+alien
+locator
+selecting
+processors
+pantyhose
+plc
+broke
+nepal
+zimbabwe
+difficulties
+juan
+complexity
+msg
+constantly
+browsing
+resolve
+barcelona
+presidential
+documentary
+cod
+territories
+melissa
+moscow
+thesis
+thru
+jews
+nylon
+palestinian
+discs
+rocky
+bargains
+frequent
+trim
+nigeria
+ceiling
+pixels
+ensuring
+hispanic
+legislature
+hospitality
+gen
+anybody
+procurement
+diamonds
+espn
+fleet
+untitled
+bunch
+totals
+marriott
+singing
+theoretical
+afford
+exercises
+starring
+referral
+nhl
+surveillance
+optimal
+quit
+distinct
+protocols
+lung
+highlight
+substitute
+inclusion
+hopefully
+brilliant
+turner
+sucking
+cents
+reuters
+gel
+todd
+spoken
+omega
+evaluated
+stayed
+civic
+assignments
+manuals
+doug
+sees
+termination
+watched
+saver
+thereof
+grill
+households
+redeem
+rogers
+grain
+aaa
+authentic
+regime
+wanna
+wishes
+bull
+montgomery
+architectural
+louisville
+depend
+differ
+macintosh
+movements
+ranging
+monica
+repairs
+breath
+amenities
+virtually
+cole
+mart
+candle
+hanging
+colored
+authorization
+tale
+verified
+lynn
+formerly
+projector
+situated
+comparative
+std
+seeks
+herbal
+loving
+strictly
+routing
+docs
+stanley
+psychological
+surprised
+retailer
+vitamins
+elegant
+gains
+renewal
+vid
+genealogy
+opposed
+deemed
+scoring
+expenditure
+panties
+brooklyn
+liverpool
+sisters
+critics
+connectivity
+spots
+algorithms
+hacker
+madrid
+similarly
+margin
+coin
+bbw
+solely
+fake
+salon
+collaborative
+norman
+fda
+excluding
+turbo
+headed
+voters
+cure
+madonna
+commander
+arch
+murphy
+thinks
+thats
+suggestion
+hdtv
+soldier
+phillips
+asin
+aimed
+justin
+bomb
+harm
+interval
+mirrors
+spotlight
+tricks
+reset
+brush
+investigate
+thy
+expansys
+panels
+repeated
+assault
+connecting
+spare
+logistics
+deer
+kodak
+tongue
+bowling
+tri
+danish
+pal
+monkey
+proportion
+filename
+skirt
+florence
+invest
+honey
+analyses
+drawings
+significance
+scenario
+lovers
+atomic
+approx
+symposium
+arabic
+gauge
+essentials
+junction
+protecting
+faced
+mat
+rachel
+solving
+transmitted
+weekends
+screenshots
+produces
+oven
+ted
+intensive
+chains
+kingston
+sixth
+engage
+deviant
+noon
+switching
+quoted
+adapters
+correspondence
+farms
+imports
+supervision
+cheat
+bronze
+expenditures
+sandy
+separation
+testimony
+suspect
+celebrities
+macro
+sender
+mandatory
+boundaries
+syndication
+gym
+celebration
+kde
+adjacent
+filtering
+tuition
+spouse
+exotic
+viewer
+signup
+threats
+luxembourg
+puzzles
+reaching
+damaged
+cams
+receptor
+piss
+laugh
+joel
+surgical
+destroy
+citation
+pitch
+autos
+premises
+perry
+proved
+offensive
+imperial
+dozen
+benjamin
+deployment
+teeth
+cloth
+studying
+colleagues
+stamp
+lotus
+salmon
+olympus
+separated
+proc
+cargo
+tan
+directive
+salem
+mate
+starter
+upgrades
+likes
+butter
+pepper
+weapon
+luggage
+burden
+chef
+tapes
+zones
+races
+isle
+stylish
+slim
+maple
+luke
+grocery
+offshore
+governing
+retailers
+depot
+kenneth
+comp
+alt
+pie
+blend
+harrison
+julie
+occasionally
+cbs
+attending
+emission
+pete
+spec
+finest
+realty
+janet
+bow
+penn
+recruiting
+apparent
+instructional
+phpbb
+autumn
+traveling
+probe
+midi
+permissions
+biotechnology
+toilet
+ranked
+jackets
+routes
+packed
+excited
+outreach
+helen
+mounting
+recover
+tied
+lopez
+balanced
+prescribed
+catherine
+timely
+talked
+upskirts
+debug
+delayed
+chuck
+reproduced
+hon
+dale
+explicit
+calculation
+villas
+ebook
+consolidated
+boob
+exclude
+peeing
+occasions
+brooks
+equations
+newton
+oils
+sept
+exceptional
+anxiety
+bingo
+whilst
+spatial
+respondents
+unto
+ceramic
+prompt
+precious
+minds
+annually
+considerations
+scanners
+atm
+xanax
+pays
+cox
+fingers
+sunny
+ebooks
+delivers
+queensland
+necklace
+musicians
+leeds
+composite
+unavailable
+cedar
+arranged
+lang
+theaters
+advocacy
+raleigh
+stud
+fold
+essentially
+designing
+threaded
+qualify
+fingering
+blair
+hopes
+assessments
+cms
+mason
+diagram
+burns
+pumps
+slut
+ejaculation
+footwear
+vic
+beijing
+peoples
+victor
+mario
+pos
+attach
+licenses
+utils
+removing
+advised
+brunswick
+spider
+phys
+ranges
+pairs
+sensitivity
+trails
+preservation
+hudson
+isolated
+calgary
+interim
+assisted
+divine
+streaming
+approve
+chose
+compound
+intensity
+technological
+syndicate
+abortion
+dialog
+venues
+blast
+wellness
+calcium
+newport
+antivirus
+addressing
+pole
+discounted
+indians
+shield
+harvest
+membrane
+prague
+previews
+bangladesh
+constitute
+locally
+concluded
+pickup
+desperate
+mothers
+nascar
+iceland
+demonstration
+governmental
+manufactured
+candles
+graduation
+mega
+bend
+sailing
+variations
+moms
+sacred
+addiction
+morocco
+chrome
+tommy
+springfield
+refused
+brake
+exterior
+greeting
+ecology
+oliver
+congo
+glen
+botswana
+nav
+delays
+synthesis
+olive
+undefined
+unemployment
+cyber
+verizon
+scored
+enhancement
+newcastle
+clone
+dicks
+velocity
+lambda
+relay
+composed
+tears
+performances
+oasis
+baseline
+cab
+angry
+societies
+silicon
+brazilian
+identical
+petroleum
+compete
+ist
+norwegian
+lover
+belong
+honolulu
+beatles
+lips
+escort
+retention
+exchanges
+pond
+rolls
+thomson
+barnes
+soundtrack
+wondering
+malta
+daddy
+ferry
+rabbit
+profession
+seating
+dam
+cnn
+separately
+physiology
+lil
+collecting
+das
+exports
+omaha
+tire
+participant
+scholarships
+recreational
+dominican
+chad
+electron
+loads
+friendship
+heather
+passport
+motel
+unions
+treasury
+warrant
+sys
+solaris
+frozen
+occupied
+josh
+royalty
+scales
+rally
+observer
+sunshine
+strain
+drag
+ceremony
+somehow
+arrested
+expanding
+provincial
+investigations
+icq
+ripe
+yamaha
+rely
+medications
+hebrew
+gained
+rochester
+dying
+laundry
+stuck
+solomon
+placing
+stops
+homework
+adjust
+assessed
+advertiser
+enabling
+encryption
+filling
+downloadable
+sophisticated
+imposed
+silence
+scsi
+focuses
+soviet
+possession
+laboratories
+treaty
+vocal
+trainer
+organ
+stronger
+volumes
+advances
+vegetables
+lemon
+toxic
+dns
+thumbnails
+darkness
+pty
+nuts
+nail
+bizrate
+vienna
+implied
+span
+stanford
+sox
+stockings
+joke
+respondent
+packing
+statute
+rejected
+satisfy
+destroyed
+shelter
+chapel
+gamespot
+manufacture
+layers
+wordpress
+guided
+vulnerability
+accountability
+celebrate
+accredited
+appliance
+compressed
+bahamas
+powell
+mixture
+zoophilia
+bench
+univ
+tub
+rider
+scheduling
+radius
+perspectives
+mortality
+logging
+hampton
+christians
+borders
+therapeutic
+pads
+butts
+inns
+bobby
+impressive
+sheep
+accordingly
+architect
+railroad
+lectures
+challenging
+wines
+nursery
+harder
+cups
+ash
+microwave
+cheapest
+accidents
+travesti
+relocation
+stuart
+contributors
+salvador
+ali
+salad
+monroe
+tender
+violations
+foam
+temperatures
+paste
+clouds
+competitions
+discretion
+tft
+tanzania
+preserve
+jvc
+poem
+vibrator
+unsigned
+staying
+cosmetics
+easter
+theories
+repository
+praise
+jeremy
+venice
+concentrations
+vibrators
+estonia
+christianity
+veteran
+streams
+landing
+signing
+executed
+katie
+negotiations
+realistic
+cgi
+showcase
+integral
+asks
+relax
+namibia
+generating
+christina
+congressional
+synopsis
+hardly
+prairie
+reunion
+composer
+bean
+sword
+absent
+photographic
+sells
+ecuador
+hoping
+accessed
+spirits
+modifications
+coral
+pixel
+float
+colin
+bias
+imported
+paths
+bubble
+por
+acquire
+contrary
+millennium
+tribune
+vessel
+acids
+focusing
+viruses
+cheaper
+admitted
+dairy
+admit
+mem
+fancy
+equality
+samoa
+achieving
+tap
+stickers
+fisheries
+exceptions
+reactions
+leasing
+lauren
+beliefs
+macromedia
+companion
+squad
+analyze
+ashley
+scroll
+relate
+divisions
+swim
+wages
+additionally
+suffer
+forests
+fellowship
+nano
+invalid
+concerts
+martial
+males
+victorian
+retain
+colours
+execute
+tunnel
+genres
+cambodia
+patents
+copyrights
+chaos
+lithuania
+mastercard
+wheat
+chronicles
+obtaining
+beaver
+updating
+distribute
+readings
+decorative
+kijiji
+confused
+compiler
+enlargement
+eagles
+bases
+vii
+accused
+bee
+campaigns
+unity
+loud
+conjunction
+bride
+rats
+defines
+airports
+instances
+indigenous
+begun
+cfr
+brunette
+packets
+anchor
+socks
+validation
+parade
+corruption
+stat
+trigger
+incentives
+cholesterol
+gathered
+essex
+slovenia
+notified
+differential
+beaches
+folders
+dramatic
+surfaces
+terrible
+routers
+cruz
+pendant
+dresses
+baptist
+scientist
+starsmerchant
+hiring
+clocks
+arthritis
+bios
+females
+wallace
+nevertheless
+reflects
+taxation
+fever
+pmc
+cuisine
+surely
+practitioners
+transcript
+myspace
+theorem
+inflation
+thee
+ruth
+pray
+stylus
+compounds
+pope
+drums
+contracting
+topless
+arnold
+structured
+reasonably
+jeep
+chicks
+bare
+hung
+cattle
+mba
+radical
+graduates
+rover
+recommends
+controlling
+treasure
+reload
+distributors
+flame
+levitra
+tanks
+assuming
+monetary
+elderly
+pit
+arlington
+mono
+particles
+floating
+extraordinary
+tile
+indicating
+bolivia
+spell
+hottest
+stevens
+coordinate
+kuwait
+exclusively
+emily
+alleged
+limitation
+widescreen
+compile
+squirting
+webster
+struck
+illustration
+plymouth
+warnings
+construct
+apps
+inquiries
+bridal
+annex
+mag
+gsm
+inspiration
+tribal
+curious
+affecting
+freight
+rebate
+meetup
+eclipse
+sudan
+ddr
+downloading
+rec
+shuttle
+aggregate
+stunning
+cycles
+affects
+forecasts
+sluts
+actively
+ciao
+ampland
+knee
+prep
+complicated
+chem
+fastest
+butler
+shopzilla
+injured
+decorating
+payroll
+cookbook
+expressions
+ton
+courier
+uploaded
+shakespeare
+hints
+collapse
+americas
+connectors
+twinks
+unlikely
+gif
+pros
+conflicts
+techno
+beverage
+tribute
+wired
+elvis
+immune
+latvia
+travelers
+forestry
+barriers
+cant
+rarely
+gpl
+infected
+offerings
+martha
+genesis
+barrier
+argue
+incorrect
+trains
+metals
+bicycle
+furnishings
+letting
+arise
+guatemala
+celtic
+thereby
+irc
+jamie
+particle
+perception
+minerals
+advise
+humidity
+bottles
+boxing
+bangkok
+renaissance
+pathology
+sara
+bra
+ordinance
+hughes
+photographers
+infections
+jeffrey
+chess
+operates
+brisbane
+configured
+survive
+oscar
+festivals
+menus
+joan
+possibilities
+duck
+reveal
+canal
+amino
+phi
+contributing
+herbs
+clinics
+mls
+cow
+manitoba
+analytical
+missions
+watson
+lying
+costumes
+strict
+dive
+saddam
+circulation
+drill
+offense
+threesome
+bryan
+cet
+protest
+handjob
+assumption
+jerusalem
+hobby
+tries
+transexuales
+invention
+nickname
+fiji
+technician
+inline
+executives
+enquiries
+washing
+audi
+staffing
+cognitive
+exploring
+trick
+enquiry
+closure
+raid
+ppc
+timber
+volt
+intense
+div
+playlist
+registrar
+showers
+supporters
+ruling
+steady
+dirt
+statutes
+withdrawal
+myers
+drops
+predicted
+wider
+saskatchewan
+cancellation
+plugins
+enrolled
+sensors
+screw
+ministers
+publicly
+hourly
+blame
+geneva
+freebsd
+veterinary
+acer
+prostores
+reseller
+dist
+handed
+suffered
+intake
+informal
+relevance
+incentive
+butterfly
+tucson
+mechanics
+heavily
+swingers
+fifty
+headers
+mistakes
+numerical
+ons
+geek
+uncle
+defining
+xnxx
+counting
+reflection
+sink
+accompanied
+assure
+invitation
+devoted
+princeton
+jacob
+sodium
+randy
+spirituality
+hormone
+meanwhile
+proprietary
+timothy
+childrens
+brick
+grip
+naval
+thumbzilla
+medieval
+porcelain
+avi
+bridges
+pichunter
+captured
+watt
+thehun
+decent
+casting
+dayton
+translated
+shortly
+cameron
+columnists
+pins
+carlos
+reno
+donna
+andreas
+warrior
+diploma
+cabin
+innocent
+bdsm
+scanning
+ide
+consensus
+polo
+valium
+copying
+rpg
+delivering
+cordless
+patricia
+horn
+eddie
+uganda
+fired
+journalism
+prot
+trivia
+adidas
+perth
+frog
+grammar
+intention
+syria
+disagree
+klein
+harvey
+tires
+logs
+undertaken
+tgp
+hazard
+retro
+leo
+livesex
+statewide
+semiconductor
+gregory
+episodes
+boolean
+circular
+anger
+diy
+mainland
+illustrations
+suits
+chances
+interact
+snap`.trim().split(/\s+/);
+  const corpusChapterIds = `8,8,8,8,8,8,8,8,20,8,8,21,21,21,15,15,17,13,12,21,2,4,14,20,8,8,19,21,17,22,8,13,2,8,8,8,8,15,16,21,1,21,21,8,8,15,19,16,12,3,8,22,19,15,21,6,9,20,8,8,20,4,21,8,8,6,19,17,8,20,16,22,3,22,12,21,8,15,17,4,12,4,22,8,8,10,12,4,4,1,12,22,21,10,9,16,6,20,8,8,10,10,14,8,13,15,15,9,21,20,21,17,18,8,22,19,8,22,22,10,8,3,8,8,12,12,16,15,5,14,21,15,8,12,22,17,21,8,16,8,18,8,10,15,21,19,15,3,10,15,19,6,5,22,8,11,1,12,15,15,21,3,11,22,16,19,8,19,21,13,16,8,21,13,8,12,16,4,8,20,1,5,15,12,8,8,16,22,13,20,14,12,8,8,14,8,1,15,15,5,15,2,10,4,15,6,13,16,8,12,3,15,8,6,14,19,8,8,13,13,22,20,8,15,22,15,15,12,16,13,8,15,19,21,13,17,15,4,22,16,13,17,4,8,2,8,15,19,2,9,13,20,17,21,15,8,19,3,12,15,22,21,8,3,19,10,10,20,21,15,14,6,8,8,8,17,17,13,16,22,14,21,14,12,17,4,12,9,11,5,12,8,17,8,16,8,12,4,15,17,12,11,18,16,15,19,8,18,8,5,16,16,22,13,10,10,15,22,12,4,21,22,13,12,3,22,8,1,17,8,8,15,21,8,8,16,5,2,17,9,21,8,8,12,18,21,22,20,19,14,8,19,22,20,9,17,5,16,17,13,3,8,16,12,3,2,19,21,4,5,15,8,9,5,16,1,3,19,4,16,5,8,16,8,16,6,3,21,20,19,15,8,8,12,20,12,9,15,20,14,19,10,22,21,8,11,11,13,12,13,8,22,22,22,15,13,8,18,9,8,19,9,19,16,20,3,12,8,20,9,21,11,16,9,13,22,22,19,15,8,22,16,14,12,5,19,2,4,12,13,5,3,5,17,8,8,8,15,8,12,22,22,19,20,14,8,8,8,11,21,8,16,15,12,8,1,21,15,8,17,16,10,8,5,17,15,8,17,8,22,13,16,12,12,15,16,20,21,9,21,22,8,8,13,16,17,20,16,20,9,3,3,1,15,4,21,13,8,19,22,12,14,8,19,21,8,11,8,14,16,8,15,22,21,15,22,16,10,15,2,12,4,13,16,13,22,22,15,8,10,8,17,22,8,11,10,21,20,17,4,15,8,15,6,15,19,9,15,19,8,15,22,22,5,4,3,8,4,19,8,4,9,15,13,13,20,8,15,17,19,15,19,15,16,21,13,5,21,15,8,18,20,22,5,11,9,11,3,15,8,9,13,11,19,16,5,17,13,13,8,5,15,4,22,3,8,8,15,19,19,12,21,17,9,21,8,7,22,8,9,8,8,21,15,22,2,15,19,21,8,16,15,2,8,16,15,20,15,15,12,21,12,19,9,22,13,13,9,13,14,3,21,16,22,15,22,16,8,16,5,1,20,15,14,20,8,16,9,8,1,8,8,8,16,21,10,8,22,20,12,15,15,15,12,15,20,20,9,14,19,8,3,1,9,15,8,8,1,9,1,17,16,2,8,19,9,15,19,22,22,6,8,22,8,16,16,5,8,21,16,8,2,11,17,22,8,15,17,20,17,5,3,14,10,12,21,8,21,3,16,20,8,8,5,14,12,16,18,15,8,21,19,16,20,14,19,8,20,16,8,8,12,19,8,1,15,1,5,20,3,16,16,4,8,8,16,15,18,16,14,17,15,8,12,20,8,8,16,21,18,8,8,17,8,17,21,13,12,15,21,20,12,8,8,8,8,16,9,9,8,19,22,13,3,17,4,9,21,4,20,8,20,16,15,16,21,19,19,1,4,4,19,8,19,19,21,22,17,10,14,18,2,12,22,8,17,19,22,12,21,2,15,22,5,8,15,17,8,12,20,16,19,18,15,20,18,12,11,4,17,3,21,19,15,8,15,11,22,8,12,16,8,8,16,5,16,20,21,16,12,22,20,15,20,20,15,18,4,1,17,16,8,21,14,20,16,11,16,11,4,17,8,1,8,9,21,20,8,15,9,22,19,12,5,8,10,9,12,16,18,16,15,11,2,1,15,8,8,21,16,14,14,8,21,14,20,20,12,12,2,21,20,9,3,12,10,13,8,8,16,8,8,4,8,16,20,22,1,19,15,8,19,12,21,17,12,17,20,8,21,22,8,8,19,14,12,4,3,8,16,21,16,15,8,4,8,21,19,8,22,16,14,20,8,21,8,17,15,20,21,18,10,20,12,8,8,8,16,8,15,13,22,15,6,10,2,1,8,19,18,14,9,8,19,22,8,21,22,19,13,8,9,21,16,22,16,8,8,4,16,18,14,22,8,19,15,16,4,8,13,5,6,19,8,15,14,10,3,14,20,22,22,1,15,9,22,14,18,19,14,9,12,22,22,5,19,10,21,19,1,13,10,12,5,11,8,9,22,13,16,22,19,5,17,2,15,22,13,13,3,4,16,18,8,4,13,21,19,20,8,10,16,17,21,3,8,8,8,21,8,22,9,9,4,3,21,15,8,16,16,18,3,3,9,15,19,8,22,5,17,8,18,8,16,8,19,9,12,2,17,8,15,14,9,5,12,18,19,1,5,16,15,18,13,12,16,21,8,19,20,21,20,10,21,8,22,8,9,16,12,3,2,1,3,11,20,14,15,8,3,8,14,19,22,8,15,8,17,5,1,8,8,8,14,12,13,15,12,16,1,20,15,16,5,11,15,8,4,3,8,14,15,13,15,8,1,20,16,12,18,8,14,12,17,12,21,16,22,20,3,8,3,15,21,18,13,8,14,19,17,4,3,19,16,20,10,1,20,8,8,8,19,16,20,8,15,17,18,20,8,20,19,3,12,13,1,8,12,4,3,12,14,2,4,8,16,17,16,3,21,22,16,11,22,8,12,17,10,13,4,21,22,15,8,14,10,17,19,17,20,15,8,14,5,16,8,18,3,19,17,8,13,5,1,5,4,10,12,17,12,1,8,19,20,17,8,16,14,3,5,10,10,9,8,8,17,13,10,8,16,8,16,21,21,21,19,19,21,17,20,8,12,19,21,15,18,8,16,4,20,5,8,19,12,16,6,9,22,5,20,20,3,9,8,8,15,19,19,10,14,22,18,1,12,12,10,22,14,22,20,8,8,12,17,12,8,16,10,20,16,20,7,19,21,22,8,21,19,15,12,2,20,10,14,16,11,15,19,17,19,10,5,17,3,12,19,1,14,8,20,9,15,8,21,10,20,19,8,8,22,8,3,17,19,8,20,9,8,12,21,8,19,14,8,21,8,21,8,8,1,21,8,8,22,2,10,15,15,15,13,19,15,8,14,8,21,10,1,19,8,10,9,2,8,8,8,8,9,17,16,4,19,21,8,2,17,13,18,22,15,22,21,2,20,5,8,20,21,20,20,16,15,17,21,3,3,5,8,3,18,13,8,19,20,1,16,18,13,8,3,20,17,22,13,16,22,15,6,5,2,15,15,18,20,20,3,12,8,18,14,8,17,8,14,14,16,22,8,8,20,13,10,14,22,19,17,16,5,1,15,3,1,18,18,22,5,3,15,13,1,16,20,16,8,15,17,12,20,8,5,8,14,19,4,14,13,14,7,8,21,14,21,8,19,20,17,22,20,6,10,1,13,3,13,8,10,21,12,14,22,15,12,21,3,8,15,5,15,2,19,16,21,21,8,21,12,9,8,15,8,20,14,8,19,19,20,12,16,8,18,8,12,11,3,5,18,19,15,3,12,14,8,11,19,22,17,21,8,17,8,8,8,2,10,1,8,8,13,20,8,8,4,17,8,21,16,20,3,18,15,14,19,18,19,17,18,12,16,1,8,8,13,10,22,15,17,3,3,9,15,21,1,13,21,5,6,17,15,15,8,11,8,19,8,18,16,2,3,8,16,19,8,20,21,10,8,19,18,21,8,17,21,14,21,16,8,16,21,13,6,15,21,8,15,20,17,21,15,16,3,20,8,12,2,15,12,21,8,12,11,16,8,8,12,21,6,4,20,5,13,16,9,20,21,8,8,19,2,6,15,2,19,21,8,8,8,9,3,10,21,2,20,17,12,2,13,15,20,5,8,19,13,8,16,17,14,8,17,20,12,21,20,17,8,14,16,21,8,21,16,1,15,19,3,21,4,18,16,8,8,14,5,8,20,12,11,8,4,3,12,17,19,3,9,8,19,8,16,13,21,17,3,8,12,8,15,15,17,22,15,8,10,5,20,15,15,8,8,6,20,16,3,21,21,16,19,16,7,3,21,12,21,20,9,14,3,8,17,14,15,14,8,10,20,8,10,8,22,20,4,19,2,8,18,16,20,8,10,12,18,16,21,9,17,14,19,15,8,12,13,2,17,21,15,20,16,22,20,20,11,15,21,2,8,22,20,19,14,9,16,15,8,21,5,22,19,21,21,13,20,20,8,2,8,14,14,2,16,15,22,8,12,18,15,19,9,18,4,15,8,22,20,21,16,5,19,8,16,1,13,12,8,8,15,2,20,14,15,9,10,14,18,20,10,17,5,8,9,15,15,17,8,8,17,18,21,15,4,21,8,14,19,15,21,2,12,19,16,15,9,3,21,8,20,19,8,8,3,20,20,20,1,12,6,15,3,22,3,8,21,15,11,5,17,12,12,8,9,21,8,12,8,8,2,21,16,13,20,10,21,21,8,19,8,8,14,4,4,20,21,20,22,4,9,4,18,21,13,4,17,6,16,8,5,8,16,12,19,13,8,4,19,14,22,16,18,1,8,15,15,9,14,19,4,9,8,11,9,20,8,14,8,9,15,5,19,14,6,4,19,20,20,16,12,16,12,3,12,19,4,8,15,19,4,8,22,20,20,20,10,15,14,8,21,8,5,9,18,8,20,18,9,13,18,8,19,8,20,10,17,8,21,9,15,10,8,14,20,13,10,22,16,16,15,8,8,13,15,8,20,17,8,15,20,22,13,21,12,3,17,15,12,21,15,19,15,20,21,10,2,3,19,17,12,20,2,9,8,12,17,20,15,8,15,15,20,14,2,20,19,20,8,10,15,14,22,8,3,11,16,6,10,16,17,10,17,20,20,13,21,14,19,9,12,15,21,14,4,19,15,20,13,8,9,8,12,10,9,20,3,8,16,21,16,8,12,8,8,8,8,15,8,8,20,16,14,21,8,2,8,15,17,11,12,17,8,8,3,16,22,6,12,14,19,13,15,15,15,21,20,6,12,14,8,19,14,15,12,21,8,21,13,15,21,20,1,21,9,12,21,14,1,22,8,13,16,5,20,12,14,14,17,20,8,12,15,20,18,18,21,2,8,9,16,15,8,11,16,8,11,16,12,11,8,17,8,13,20,8,19,21,18,17,12,6,10,6,16,4,10,18,13,19,17,10,15,17,1,20,20,12,15,11,15,20,20,15,2,1,12,9,15,12,9,14,9,5,21,13,13,22,18,19,8,9,12,8,8,11,16,12,21,13,14,17,12,15,16,8,8,5,13,20,22,2,20,21,16,9,8,8,16,8,9,9,20,10,8,12,8,9,11,12,16,15,13,8,4,13,12,6,15,15,12,17,20,20,21,14,13,22,19,19,14,1,12,20,12,19,15,6,21,22,9,1,10,11,17,12,22,13,17,17,19,19,17,22,16,20,8,21,14,8,15,3,9,12,4,8,9,9,13,19,10,21,19,5,18,21,15,15,12,5,15,8,12,21,12,8,12,2,15,21,8,10,10,8,4,16,19,16,8,8,17,5,17,14,20,14,9,20,18,12,10,3,22,16,12,12,8,10,8,16,10,21,10,19,19,14,20,17,20,20,8,10,9,6,8,15,15,22,20,6,12,8,15,9,22,8,5,8,3,9,8,22,22,22,20,8,17,15,3,11,12,20,15,8,8,21,18,20,3,13,17,20,5,1,16,12,21,20,4,3,8,16,4,19,15,19,15,10,17,3,15,15,8,17,14,16,8,22,8,10,13,12,11,9,13,10,10,20,8,15,14,18,18,2,1,3,8,20,4,11,16,9,22,4,15,21,21,14,20,13,8,3,8,11,16,20,19,12,13,11,20,8,22,12,8,8,16,3,14,3,20,22,20,21,8,15,8,2,19,8,14,15,18,8,8,8,4,8,9,22,2,13,22,1,8,8,8,3,20,22,8,3,19,8,8,21,20,21,13,8,17,8,6,8,10,8,10,8,6,4,19,5,8,8,3,20,8,10,8,17,3,12,13,20,20,4,3,3,20,13,8,8,11,15,8,18,10,20,21,8,19,5,8,12,13,12,17,13,12,12,9,11,8,5,8,10,9,18,19,8,8,19,15,20,21,4,12,12,17,10,14,21,22,12,14,21,13,21,16,16,13,12,8,16,2,8,8,4,20,20,21,2,21,20,9,14,16,12,14,8,10,3,19,14,15,18,20,21,10,8,8,8,14,21,11,8,21,19,19,8,11,8,12,8,5,20,8,19,1,18,20,20,21,21,2,3,20,15,8,8,8,19,1,14,8,14,6,8,16,6,19,14,21,1,18,9,8,19,21,16,21,18,20,16,8,19,15,15,17,8,4,15,21,4,14,8,21,20,20,15,19,1,16,22,20,12,19,12,21,15,15,20,20,19,12,15,9,6,9,12,8,20,8,14,8,12,16,19,17,15,12,9,22,8,21,19,3,6,20,8,2,8,8,17,19,20,12,21,13,19,10,8,13,15,3,1,4,8,8,4,9,15,1,5,6,21,19,14,15,17,8,21,15,1,11,16,18,19,8,3,15,3,10,21,5,12,15,16,3,21,20,11,21,20,19,7,18,9,22,12,20,3,1,10,1,12,8,10,20,20,8,4,14,19,10,20,5,10,3,16,8,8,15,2,13,8,20,17,12,8,8,20,11,12,13,16,4,3,16,8,2,8,20,21,17,3,8,20,1,22,8,13,9,15,17,18,8,9,15,5,8,8,8,7,17,15,19,12,15,19,21,1,9,15,5,16,22,8,20,22,8,2,12,20,3,10,2,14,20,22,8,12,7,8,14,13,8,21,18,20,6,8,5,1,8,2,18,20,17,2,15,9,17,19,8,8,20,19,15,15,19,20,21,4,19,8,2,14,11,21,19,4,15,16,15,20,12,22,15,15,15,20,14,21,15,12,14,10,1,2,17,19,8,17,20,11,9,15,18,12,12,21,20,1,15,1,9,11,16,2,11,4,14,9,15,21,5,6,22,20,8,8,19,11,12,15,19,15,16,19,14,12,3,8,20,18,3,21,20,19,8,22,15,20,13,18,4,22,14,16,16,4,8,15,5,20,8,3,17,21,20,21,19,15,17,9,5,22,12,15,15,15,20,5,15,17,8,13,19,21,21,4,15,12,17,3,8,21,12,21,20,12,13,19,20,20,16,16,16,5,2,19,3,19,16,3,8,8,8,18,19,15,8,19,8,13,19,19,17,15,21,14,16,22,20,1,13,2,15,8,16,8,3,12,19,17,13,16,8,15,12,5,16,8,14,14,3,13,20,17,8,20,22,13,3,3,12,15,22,20,12,20,8,9,9,9,13,10,18,20,9,14,21,8,8,12,10,5,10,4,3,11,3,9,8,10,20,22,3,19,13,8,16,8,19,8,3,19,5,22,8,14,19,22,19,21,8,3,15,19,2,16,15,13,15,12,21,16,20,14,8,8,14,16,4,8,8,8,7,21,8,13,19,15,16,19,21,22,5,20,12,18,8,10,16,8,12,4,12,1,21,15,19,22,22,9,13,10,8,5,8,15,12,15,21,19,15,20,17,18,8,17,18,17,9,15,18,22,12,8,15,20,13,12,16,16,8,21,1,15,8,13,8,12,12,12,17,22,12,8,20,3,9,2,8,22,19,5,21,20,21,20,21,8,3,17,18,3,20,5,19,20,16,16,9,19,21,19,20,19,10,16,18,1,20,21,8,8,20,21,10,1,1,1,12,8,15,20,9,11,8,3,8,22,6,8,15,20,15,15,19,16,8,17,9,19,21,14,15,9,19,20,8,16,8,2,8,20,15,16,14,20,8,15,15,19,17,20,19,5,21,8,22,10,21,8,13,6,16,20,3,8,15,9,8,20,8,8,19,21,8,8,20,14,15,19,13,8,18,8,8,10,20,6,12,5,9,17,8,20,13,15,16,17,13,2,8,15,14,8,22,20,8,17,16,20,20,21,11,12,9,8,8,10,8,12,8,12,20,9,20,8,8,8,20,12,13,10,20,8,8,8,17,11,19,16,17,19,19,17,19,18,14,19,13,13,21,1,8,22,16,20,8,21,8,9,3,20,5,16,13,17,8,22,8,22,8,16,21,8,8,8,12,3,8,22,22,19,15,1,8,17,18,17,8,13,13,13,8,8,5,8,9,8,20,15,20,20,12,4,20,17,21,20,10,16,12,21,12,20,18,8,11,22,20,8,1,21,8,11,8,22,8,21,4,21,8,20,8,14,18,17,19,21,20,13,19,17,20,21,21,4,16,3,12,14,20,2,5,15,21,10,20,10,20,15,19,15,22,20,14,20,6,10,8,20,21,17,12,10,8,8,13,21,2,8,15,8,8,19,3,3,8,21,13,5,8,18,3,20,13,15,8,12,21,1,8,5,14,8,14,16,19,8,18,8,12,1,19,8,17,16,19,9,10,17,22,3,20,14,13,21,15,13,3,3,3,15,20,9,21,10,20,12,8,19,21,18,3,10,15,8,3,14,4,12,14,9,20,8,4,12,12,21,15,8,8,16,17,14,3,21,15,15,10,18,8,5,3,20,12,14,3,4,14,9,8,8,19,8,21,14,16,20,19,4,20,10,20,10,11,13,21,20,12,20,19,15,15,2,3,8,15,1,16,15,21,13,21,8,11,8,8,8,18,15,8,1,18,15,8,15,3,16,3,6,11,5,12,8,14,10,8,15,8,16,9,18,16,20,20,2,19,8,10,22,19,15,15,14,20,16,10,17,2,9,12,5,17,8,12,1,17,8,18,10,20,4,12,8,22,16,8,13,21,21,14,16,8,16,8,10,8,8,21,12,21,8,3,21,19,8,15,20,3,15,22,17,8,11,15,14,20,19,5,18,21,15,6,8,19,4,9,9,20,8,13,8,20,15,17,17,13,15,20,16,21,8,17,21,20,8,16,17,8,8,10,3,19,15,6,20,20,12,21,19,8,8,9,3,8,8,14,9,20,5,17,3,20,21,10,16,20,5,3,1,6,17,20,4,8,20,15,20,1,11,10,18,14,15,21,22,17,19,1,8,16,8,13,14,21,3,8,12,10,18,20,4,8,8,14,1,8,12,14,17,21,14,8,21,20,10,6,19,21,8,20,1,16,8,15,6,20,17,10,11,3,21,3,18,8,22,8,8,12,19,8,4,8,8,8,14,12,1,19,1,4,16,10,14,8,8,17,15,16,14,20,8,20,10,18,13,21,8,9,15,21,2,15,8,10,10,17,13,15,17,17,20,9,20,8,17,10,8,19,15,17,9,1,8,9,8,13,13,10,19,21,20,8,19,17,10,8,8,8,10,21,19,19,19,5,10,8,16,10,20,20,4,19,19,8,3,12,8,8,16,10,15,16,12,8,12,19,15,19,8,2,4,20,19,2,20,12,8,15,19,19,4,14,22,20,13,14,3,14,13,8,12,21,19,20,20,8,19,3,13,20,8,21,19,16,8,14,9,20,12,8,15,8,10,22,8,8,19,10,17,5,16,18,15,15,13,12,2,16,15,8,4,20,8,8,9,18,19,15,19,2,2,8,19,22,8,15,15,8,12,10,1,1,2,16,12,21,22,8,9,4,11,20,12,21,12,3,18,20,8,1,16,8,17,15,12,13,13,17,10,8,11,19,8,8,2,15,15,4,20,16,6,8,12,19,2,21,10,17,21,19,8,8,19,15,9,8,22,8,19,19,8,17,8,19,21,20,2,16,20,17,4,20,3,13,12,12,20,8,19,8,8,8,20,17,19,8,17,20,8,5,1,13,15,21,21,21,13,21,19,8,8,4,21,8,19,19,12,8,1,14,17,3,20,2,11,21,15,11,1,4,9,20,15,12,8,13,10,20,15,9,15,8,12,20,8,8,12,8,4,22,8,9,16,21,19,12,16,17,12,21,8,21,12,15,8,21,8,2,21,1,20,11,17,19,1,15,1,1,19,8,10,16,21,8,18,9,18,10,13,8,4,21,8,20,12,8,21,21,16,1,14,15,12,19,22,16,10,10,20,12,19,13,21,8,12,19,12,8,15,18,16,7,4,20,5,9,15,8,20,20,20,21,1,15,19,8,12,19,17,8,15,16,13,1,18,19,3,8,17,2,20,20,1,20,14,10,17,8,19,13,8,8,20,21,12,19,3,8,19,10,12,8,9,19,19,8,20,8,12,12,21,8,12,9,20,10,1,20,20,5,12,2,2,8,21,8,8,17,13,12,8,20,15,16,13,10,5,12,20,2,6,8,12,2,10,14,9,15,15,8,21,8,8,8,20,8,11,16,3,15,20,21,8,21,8,8,20,12,9,18,18,20,20,9,10,17,21,10,12,18,3,17,17,12,13,13,8,9,21,19,15,8,20,12,17,8,21,16,8,13,1,8,20,8,8,8,19,8,1,8,17,19,20,20,16,12,1,17,8,18,19,22,19,17,12,21,1,10,4,17,8,21,19,8,8,18,3,8,19,4,21,8,2,2,15,14,21,8,19,8,20,22,6,20,3,19,10,15,22,20,1,19,3,8,8,8,22,8,8,19,15,19,19,19,20,20,12,14,13,8,8,21,17,3,9,16,20,20,8,22,8,16,22,20,18,17,13,13,20,8,8,12,12,6,6,21,15,10,8,10,4,19,8,8,20,8,17,20,17,2,5,22,20,8,22,16,8,2,20,8,19,20,2,18,19,8,20,17,1,16,19,8,10,20,6,8,10,8,1,10,14,21,8,4,8,8,10,8,20,10,21,8,3,22,8,2,22,19,20,15,11,8,8,8,3,10,10,20,19,22,8,19,8,2,1,2,8,2,22,19,16,14,19,17,8,8,22,17,10,12,17,12,15,8,20,1,8,12,1,6,19,14,9,12,20,8,2,17,19,20,10,19,13,10,12,22,12,20,12,21,20,19,14,20,14,8,20,8,17,16,12,8,9,13,8,21,21,11,20,1,15,19,13,14,21,3,20,13,8,8,12,20,21,20,16,15,3,8,22,18,9,8,8,12,21,19,16,8,2,20,8,20,1,14,3,18,19,8,16,20,21,17,13,11,22,1,12,19,14,10,17,12,5,13,10,8,2,8,21,5,15,9,15,12,20,12,19,19,22,8,16,9,4,20,3,8,16,22,8,14,22,18,12,15,21,8,20,3,18,8,8,15,15,15,8,12,14,17,19,8,8,2,8,8,4,12,9,3,10,17,8,18,8,15,8,8,3,20,19,20,13,21,16,13,13,14,10,8,12,5,19,8,8,8,19,3,10,3,22,1,20,15,19,19,19,8,21,20,22,19,12,20,12,8,15,20,13,11,8,8,20,20,2,20,15,15,22,21,3,8,8,8,8,8,19,15,8,3,15,8,17,20,21,2,8,8,8,1,21,10,19,8,17,11,8,19,12,20,15,21,19,8,8,21,8,22,10,19,19,8,15,16,8,13,20,17,20,10,16,14,8,21,21,20,22,11,8,20,17,21,16,8,8,6,8,20,8,20,8,18,15,20,9,8,14,15,20,19,9,10,14,1,18,8,8,20,8,8,8,20,9,22,8,19,15,8,22,3,8,8,6,19,8,13,8,21,20,1,16,20,8,8,8,18,6,1,19,1,20,3,20,4,20,2,8,10,12,12,1,8,8,8,17,9,8,18,8,3,21,10,3,8,3,20,19,8,11,8,19,3,3,12,20,1,9,20,13,19,3,9,13,14,18,8,12,8,14,20,8,8,15,15,8,8,16,17,21,21,10,9,9,19,12,10,14,8,20,16,3,8,8,20,4,8,21,18,14,22,1,10,17,20,19,20,20,8,21,8,8,20,16,12,2,15,1,12,12,12,8,8,19,22,2,2,2,20,21,22,14,20,8,8,16,21,19,22,8,18,8,21,8,21,8,8,8,14,12,12,4,8,8,22,20,15,20,8,20,8,21,15,21,20,8,6,19,13,8,15,12,19,20,11,8,14,19,10,8,7,8,8,9,8,14,20,3,20,20,15,8,10,9,13,8,12,3,15,10,20,2,9,19,20,8,12,1,20,9,3,17,21,21,12,15,8,3,12,1,13,21,15,8,8,14,21,8,21,12,5,13,6,17,8,16,8,8,21,22,13,20,20,22,10,17,3,19,12,1,3,21,21,6,14,10,8,8,19,8,20,8,8,20,12,12,3,10,16,14,20,16,17,11,4,1,17,10,1,19,1,22,10,1,14,8,21,9,8,12,8,2,8,8,4,8,20,22,21,18,12,4,20,8,11,9,5,20,3,14,16,20,9,8,12,20,3,20,20,16,2,19,4,11,17,1,8,12,19,22,15,13,14,20,14,6,17,12,8,22,20,8,8,8,21,9,12,15,8,18,8,19,14,8,8,2,13,16,18,8,15,18,3,3,3,21,10,10,8,16,14,8,9,12,9,17,10,20,19,5,4,21,16,10,1,1,10,12,15,3,16,8,1,18,8,10,12,3,8,1,15,14,21,19,13,19,17,20,8,6,10,14,10,2,8,8,13,16,19,19,20,16,10,8,20,1,1,15,8,8,12,8,2,8,13,21,9,3,15,2,13,5,8,19,10,19,9,21,16,16,14,1,4,6,20,8,17,8,8,8,20,16,8,14,21,12,20,8,9,21,20,16,4,16,8,19,21,15,21,15,8,20,19,12,8,21,19,20,16,8,10,19,8,8,17,15,13,17,18,8,21,8,21,18,8,12,13,16,9,12,8,21,12,8,8,3,18,13,13,20,20,10,8,12,8,1,8,16,8,2,15,12,20,21,17,8,17,8,22,10,13,8,8,6,12,21,8,20,12,19,21,21,19,10,11,16,1,8,7,20,21,9,16,10,13,13,19,9,8,8,21,19,13,8,4,16,8,8,9,13,21,19,12,20,8,14,17,12,19,18,13,12,17,8,8,8,3,8,22,14,8,10,12,8,20,15,22,10,3,20,8,8,17,15,3,8,14,20,3,8,8,9,8,12,19,3,8,8,3,13,15,12,8,8,8,9,19,21,8,15,8,14,8,15,16,20,8,19,20,14,22,8,12,10,11,8,16,13,8,17,19,22,16,20,11,8,1,8,9,2,10,16,21,15,8,17,15,8,19,18,1,22,13,15,8,4,20,5,19,21,19,8,8,13,9,15,20,1,10,10,8,8,21,3,17,8,14,8,12,20,20,6,21,19,18,3,11,5,19,16,2,3,7,20,8,14,17,8,13,3,12,14,19,12,2,18,10,8,19,21,1,3,8,11,20,2,8,16,1,15,19,14,8,5,10,12,8,4,8,8,8,5,12,8,8,21,16,8,14,5,18,21,8,8,22,14,12,11,8,6,13,20,12,14,12,21,20,18,20,12,9,8,15,20,19,22,8,8,6,20,12,3,8,1,21,20,13,8,6,19,20,20,22,19,15,17,12,22,21,15,9,8,4,19,8,10,8,21,21,16,16,19,16,16,16,14,20,21,8,8,15,10,9,13,2,21,2,11,8,13,20,15,3,19,8,19,20,20,6,15,21,16,10,9,20,9,12,19,8,11,8,13,12,19,8,18,17,17,8,17,20,5,3,8,4,20,21,20,20,22,22,13,22,20,19,20,17,20,13,8,21,20,20,8,17,20,12,10,13,8,8,19,20,8,3,2,10,13,15,1,2,12,20,12,19,19,8,1,18,15,1,12,5,8,14,14,8,19,19,17,10,8,8,13,20,2,13,8,1,11,12,8,1,8,22,10,2,21,15,8,8,9,20,13,19,19,22,8,19,9,20,9,1,17,14,21,15,10,19,21,10,20,8,8,19,17,13,19,3,22,21,13,8,2,16,8,9,20,1,19,14,3,5,20,3,8,8,21,8,20,3,6,3,21,9,5,21,19,8,8,14,15,2,14,10,18,15,17,8,8,20,18,20,17,2,12,19,1,3,11,20,8,20,20,19,20,8,17,8,20,12,8,20,13,22,11,20,22,13,14,5,20,19,16,17,6,4,8,1,20,15,6,21,19,15,6,8,9,19,3,15,4,16,2,2,21,8,8,15,8,2,10,8,13,15,14,5,8,10,8,19,10,12,20,20,3,16,10,8,16,3,8,20,15,8,20,20,10,20,1,15,12,20,17,8,12,3,22,19,21,15,20,19,19,1,12,2,2,10,19,21,3,8,19,14,15,17,12,13,21,2,2,12,21,20,8,16,19,16,1,17,12,9,14,17,10,12,12,8,16,17,8,1,12,8,8,10,21,15,12,22,21,13,8,8,1,21,10,1,12,19,12,1,8,11,8,16,21,8,10,21,20,20,1,20,8,8,8,22,1,20,9,2,18,21,21,16,1,20,10,12,11,3,6,12,8,17,6,14,10,8,6,21,17,19,12,10,20,3,21,17,10,17,8,21,15,7,20,11,2,3,8,12,16,8,21,8,16,17,10,8,2,20,18,14,16,8,20,2,5,8,12,9,18,3,19,21,19,11,3,11,1,17,17,4,1,8,2,8,20,19,15,20,15,21,8,20,8,15,3,18,21,19,3,14,8,9,4,19,3,8,10,20,21,20,8,19,8,19,11,20,20,15,8,10,16,3,20,1,1,20,10,1,8,11,15,21,19,8,10,11,19,19,8,20,2,8,8,3,17,8,20,15,12,8,12,8,19,5,8,8,4,8,17,10,11,13,19,10,12,21,19,20,8,14,3,15,20,3,16,12,5,19,20,20,16,20,15,20,16,14,19,16,21,2,13,12,12,20,21,9,15,1,15,21,17,20,1,8,8,20,17,8,8,20,19,18,8,1,8,1,8,15,20,13,8,8,21,8,5,20,14,16,8,12,1,8,6,8,3,10,20,22,21,17,19,8,8,8,3,5,20,8,22,19,8,20,11,16,8,11,8,19,6,19,8,16,1,10,8,21,8,8,18,11,12,18,20,10,12,1,19,6,10,14,8,8,12,16,8,8,10,20,14,14,10,14,13,16,20,1,8,8,8,8,12,20,10,20,8,10,20,13,22,12,8,10,13,17,19,12,8,2,18,13,20,20,9,22,12,8,1,3,15,4,10,8,20,2,12,8,3,1,21,19,21,15,11,21,4,18,2,3,17,19,5,8,15,8,12,13,3,17,8,21,8,15,19,8,17,15,12,8,20,8,14,22,15,12,16,8,2,8,21,8,9,5,22,19,17,19,14,12,16,8,1,20,21,1,8,8,19,10,19,15,15,22,8,12,8,19,2,8,8,8,20,20,12,8,8,16,3,12,14,8,19,16,8,8,21,8,19,19,8,8,20,17,10,14,20,8,19,5,19,10,21,16,8,22,16,2,8,13,14,8,8,22,10,8,14,8,4,16,8,21,10,13,4,22,8,19,11,19,13,19,8,19,8,4,19,8,6,8,8,9,16,20,8,8,8,8,3,8,1,18,8,8,5,8,15,3,8,20,13,20,11,3,21,2,20,8,20,11,19,8,15,10,15,9,6,8,15,8,1,8,17,20,20,12`.split(",").map(Number);
 
-h1,h2,h3,p { margin-top:0; }
-h1,h2 { font-family: Fredoka, "Be Vietnam Pro", sans-serif; }
-.hero {
-  min-height: 520px; border-radius: 34px; overflow:hidden; display:grid; grid-template-columns:1.12fr .88fr;
-  background: linear-gradient(110deg, #fffdfa 0 58%, #f8dbe3 58%); border:1px solid white; box-shadow:var(--shadow);
-}
-.hero-copy { padding:clamp(42px,6vw,86px); }
-.eyebrow { color:var(--pink-deep); text-transform:uppercase; letter-spacing:.13em; font-size:11px; font-weight:800; display:flex; align-items:center; gap:8px; margin-bottom:12px; }
-.eyebrow span { width:20px; height:2px; background:var(--pink); }
-.hero h1 { font-size:clamp(46px,5.8vw,82px); letter-spacing:-.045em; line-height:.98; margin-bottom:24px; text-shadow: 0 4px 0 white; }
-.hero h1 em { color:var(--pink-deep); font-style:normal; position:relative; }
-.hero h1 em:after { content:""; position:absolute; height:8px; left:2%; right:0; bottom:4px; background:var(--butter); z-index:-1; border-radius:99px; }
-.hero-copy>p { color:var(--muted); max-width:560px; }
-.hero-actions { display:flex; gap:12px; margin:28px 0 38px; flex-wrap:wrap; }
-.button { border:0; padding:12px 19px; border-radius:14px; font-size:12px; font-weight:800; transition:.2s ease; }
-.button:hover { transform:translateY(-2px); box-shadow:0 9px 20px rgba(80,55,60,.12); }
-.button.primary { background:var(--navy); color:white; } .button.primary span { margin-left:12px; }
-.button.ghost { background:var(--paper); border:1px solid var(--line); }
-.button.soft { background:var(--blush); color:#9e3e60; }
-.button.danger { background:#fee4e1; color:#a7433b; }
-.button.full { width:100%; }
-.hero-stats { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
-.hero-stats div { border-left:1px solid var(--line); padding-left:13px; }
-.hero-stats b,.hero-stats span { display:block; }.hero-stats b { font:600 22px Fredoka; }.hero-stats span { color:var(--muted); font-size:9px; }
-.hero-visual { position:relative; min-height:440px; display:grid; place-items:center; }
-.rabbit-mascot { width:250px; height:310px; position:relative; animation:float 4s ease-in-out infinite; }
-@keyframes float { 50% { transform:translateY(-10px) rotate(1deg); } }
-.rabbit-mascot .ear { position:absolute; top:0; width:58px; height:150px; background:#fff9f5; border:6px solid var(--navy); border-radius:60% 60% 30% 30%; z-index:0; }
-.rabbit-mascot .ear:after { content:""; position:absolute; inset:15px; background:var(--blush); border-radius:inherit; }
-.rabbit-mascot .ear.left { left:43px; transform:rotate(-10deg); }.rabbit-mascot .ear.right { right:43px; transform:rotate(10deg); }
-.rabbit-head { position:absolute; width:214px; height:180px; border:6px solid var(--navy); background:#fff9f5; border-radius:48%; top:84px; left:18px; z-index:2; }
-.rabbit-head .eye { position:absolute; width:14px; height:19px; top:69px; background:var(--navy); border-radius:50%; }
-.rabbit-head .eye.left { left:55px; }.rabbit-head .eye.right { right:55px; }
-.rabbit-head .nose { position:absolute; width:18px; height:12px; left:92px; top:101px; background:var(--pink); border-radius:50% 50% 60% 60%; }
-.book { position:absolute; z-index:3; bottom:0; left:3px; width:244px; height:112px; background:var(--pink); border:6px solid var(--navy); border-radius:14px 14px 22px 22px; transform:perspective(200px) rotateX(5deg); display:grid; place-items:center; color:white; font:700 19px Fredoka; letter-spacing:.15em; }
-.book:after { content:""; position:absolute; width:5px; height:100%; background:var(--navy); left:50%; top:0; }
-.speech { position:absolute; top:42px; right:28px; background:white; padding:10px 14px; border-radius:16px 16px 16px 3px; font-size:10px; font-weight:700; transform:rotate(4deg); }
-.orbit { position:absolute; border:1px dashed rgba(39,49,67,.2); border-radius:50%; inset:12%; animation:spin 20s linear infinite; }
-.orbit-b { inset:22%; animation-direction:reverse; animation-duration:15s; }
-.orbit span { position:absolute; background:white; padding:6px 11px; border-radius:20px; font-size:10px; box-shadow:var(--shadow); }
-.orbit-a span { right:-10px; top:30%; }.orbit-b span { bottom:2%; left:5%; }
-@keyframes spin { to { transform:rotate(360deg); } }.orbit span { animation:spin 20s linear infinite reverse; }
 
-.home-grid { display:grid; grid-template-columns:1.5fr 1fr; gap:22px; margin-top:22px; }
-.daily-path,.continue-card,.constellation-card,.reading-info,.passage-panel,.question-panel,.sentence-workbench,.structure-panel,.analysis-panel,.rebuild-panel,.review-card,.chart-card,.skills-card,.settings-group {
-  background:var(--paper); border:1px solid var(--line); border-radius:24px; box-shadow:0 10px 30px rgba(80,60,55,.05);
-}
-.daily-path,.continue-card { padding:28px; }
-.daily-path header,.chart-card header,.question-panel header,.rebuild-panel header { display:flex; justify-content:space-between; align-items:flex-start; gap:16px; }
-.section-label { font-size:9px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:var(--pink-deep); }
-.daily-path h2,.continue-card h2,.constellation-card h2 { margin:5px 0 8px; }
-.date-chip,.pill { display:inline-block; padding:6px 10px; border-radius:999px; font-size:9px; font-weight:800; }
-.date-chip { background:var(--blush); }.pill.coral { background:#fee3dc;color:#a54c3e; }.pill.mint { background:var(--mint);color:var(--mint-deep); }.pill.butter { background:var(--butter);color:#745e1a; }
-.path-line,.progress-track,.lesson-progress,.review-progress { height:6px; background:#f0e9e4; border-radius:99px; overflow:hidden; }
-.path-line i,.progress-track i,.lesson-progress i,.review-progress i { display:block; height:100%; background:var(--pink); border-radius:inherit; transition:width .5s ease; }
-.path-steps { display:grid; grid-template-columns:repeat(4,1fr); margin-top:24px; }
-.path-steps button { position:relative; border:0; background:transparent; text-align:left; padding:0 12px 0 0; }
-.path-steps b,.path-steps small { display:block; }.path-steps b { margin-top:9px;font-size:12px; }.path-steps small { color:var(--muted);font-size:9px; }
-.step-num { display:grid;place-items:center;width:27px;height:27px;border-radius:50%;background:#eee6e0;font-weight:800;font-size:10px; }
-.step-num.done { background:var(--mint); color:var(--mint-deep); }.step-num.current { background:var(--navy);color:white;box-shadow:0 0 0 6px #e8e7eb; }
-.card-top { display:flex;justify-content:space-between;align-items:center;font-size:11px;font-weight:800; }
-.continue-card p { color:var(--muted);font-size:11px; }.weak-words { display:flex;gap:6px;flex-wrap:wrap;margin:18px 0; }.weak-words span { background:#f4f0ed;border-radius:8px;padding:5px 8px;font-size:9px; }
-.text-button { border:0;background:transparent;color:var(--pink-deep);font-weight:800;font-size:11px;margin-top:16px;padding:0; }
-.constellation-card { margin-top:22px;min-height:320px;display:grid;grid-template-columns:.75fr 1.25fr;overflow:hidden; }
-.constellation-copy { padding:44px; }.constellation-copy p { color:var(--muted);font-size:12px;max-width:400px; }
-.constellation { position:relative;background:radial-gradient(circle at 50% 50%,#fff 0,#fbf1f3 70%);min-height:320px; }
-.constellation:before,.constellation:after { content:"";position:absolute;background:#d8cbd0;height:1px;width:52%;left:24%;top:50%;transform:rotate(24deg); }.constellation:after { transform:rotate(-28deg); }
-.node { position:absolute;border:1px solid var(--line);background:white;border-radius:999px;padding:8px 12px;font-size:10px;font-weight:700;box-shadow:0 8px 20px rgba(50,30,40,.08);z-index:2; }
-.node:hover { transform:scale(1.05); }.node.main { left:42%;top:43%;background:var(--navy);color:white;border:0;padding:13px 18px; }.node.n1 { left:10%;top:22%; }.node.n2 { right:10%;top:19%; }.node.n3 { right:7%;bottom:23%; }.node.n4 { left:13%;bottom:17%;background:var(--mint); }.node.n5 { right:30%;top:7%;background:var(--butter); }
 
-.page-heading { display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:28px;gap:24px; }
-.page-heading h1 { font-size:clamp(36px,4vw,56px);line-height:1;margin:0 0 10px; }.page-heading p { color:var(--muted);font-size:12px;margin:0; }
-.lesson-picker { display:grid;font-size:9px;text-transform:uppercase;font-weight:800;color:var(--muted);gap:5px; }
-select { background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:9px 34px 9px 12px;font-size:11px; }
-.lesson-shell { display:grid;grid-template-columns:220px 1fr;gap:24px;align-items:start; }
-.lesson-shell,.lesson-rail,.lesson-stage { min-width:0; }
-.lesson-rail { position:sticky;top:100px;padding:22px;background:#f5ebe7;border-radius:22px; }
-.lesson-meta { display:flex;justify-content:space-between;align-items:center;font-size:10px;margin-bottom:13px; }.lesson-meta span { color:var(--pink-deep);font-weight:800; }
-#lesson-steps { display:grid;gap:5px;margin-top:18px; }
-#lesson-steps button { border:0;background:transparent;text-align:left;padding:10px 11px;border-radius:10px;font-size:10px;color:var(--muted); }
-#lesson-steps button.active { background:white;color:var(--navy);font-weight:800;box-shadow:0 5px 16px rgba(70,50,50,.07); }
-#lesson-steps button.done:after { content:"✓";float:right;color:var(--mint-deep); }
-.lesson-stage { min-height:650px;background:var(--paper);border-radius:28px;border:1px solid var(--line);padding:clamp(28px,5vw,62px);box-shadow:var(--shadow); }
-.lesson-stage h2 { font-size:32px;margin-bottom:9px; }.lesson-stage .lead { color:var(--muted);max-width:700px; }
-.target-strip { display:flex;gap:8px;flex-wrap:wrap;margin:25px 0; }.target-strip button { border:1px solid var(--line);background:white;border-radius:99px;padding:7px 11px;font-size:10px; }
-.encounter-box,.context-box,.grammar-box,.network-box,.paraphrase-box { margin:28px 0;padding:26px;border-radius:20px;background:#faf6f2;border-left:5px solid var(--pink); }
-.encounter-sentence { font:500 clamp(20px,2.3vw,29px)/1.55 "Be Vietnam Pro"; }
-mark.word { background:linear-gradient(transparent 55%,var(--butter) 55%);color:inherit;padding:0 2px; }
-.choice-list { display:grid;gap:9px;max-width:700px;margin:20px 0; }.choice-list button { border:1px solid var(--line);background:white;padding:12px 14px;border-radius:12px;text-align:left;font-size:11px; }
-.choice-list button.selected { border-color:var(--pink);background:var(--blush); }.choice-list button.correct { border-color:#72b69e;background:var(--mint); }
-.clue { background:var(--butter);padding:10px 13px;border-radius:10px;font-size:11px; }
-.tri-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:22px 0; }.tri-grid div { padding:18px;border-radius:16px;background:#f8f4f0; }.tri-grid .zh { background:var(--mint); }.tri-grid b,.tri-grid span { display:block; }.tri-grid b { font-size:10px;text-transform:uppercase;color:var(--muted);margin-bottom:7px; }.tri-grid span { font-size:14px;font-weight:700; }
-.lesson-nav { display:flex;justify-content:space-between;margin-top:36px;border-top:1px solid var(--line);padding-top:22px; }
-.source-note { font-size:9px;color:var(--muted);margin-top:20px; }
-.context-box { border-color:var(--mint-deep); }.context-box p { font-size:15px;line-height:1.9; }
-.translation-drawer { border-top:1px solid var(--line);margin-top:16px;padding-top:16px;font-size:12px; }
-.network-tags { display:flex;gap:8px;flex-wrap:wrap; }.network-tags span { background:white;border:1px solid var(--line);border-radius:99px;padding:7px 11px;font-size:10px; }
-.grammar-box { border-color:var(--lavender-deep);background:#f8f6fd; }
-.chunk { display:inline-block;padding:5px 7px;margin:3px;border-radius:8px;font-size:13px;border-bottom:3px solid transparent;cursor:pointer; }.chunk.subject{background:#fce0e7;border-color:#d76084}.chunk.verb{background:#dff1eb;border-color:#3f806a}.chunk.object{background:#f9ebbd;border-color:#b89426}.chunk.clause{background:#e7e1f7;border-color:#7d68b3}.chunk.phrase{background:#e2edf7;border-color:#5381a8}
+  const topicChinese = {
+    "Climate and Environment":"气候与环境", "Science and Technology":"科学与技术",
+    "History and Archaeology":"历史与考古", "Business and Economics":"商业与经济",
+    "Society":"社会", "Psychology":"心理学", "Health":"健康",
+    "Natural Geography":"自然地理", "Education":"教育"
+  };
 
-.reading-modes,.view-switch { display:flex;background:#efe8e3;padding:4px;border-radius:13px; }.reading-modes button,.view-switch button,.translation-tabs button { border:0;background:transparent;padding:8px 12px;border-radius:9px;font-size:10px;font-weight:700; }.reading-modes button.active,.view-switch button.active,.translation-tabs button.active { background:white;box-shadow:0 3px 10px rgba(70,50,50,.08); }
-.reading-info { padding:25px 28px;display:flex;align-items:center;justify-content:space-between;margin-bottom:18px; }.reading-info h2 { margin:8px 0 0; }
-.reading-facts { display:flex;gap:28px; }.reading-facts span,.reading-facts b { display:block; }.reading-facts span { color:var(--muted);font-size:9px; }.reading-facts b { color:var(--navy);font-size:12px; }
-.reading-layout { display:grid;grid-template-columns:minmax(0,1.35fr) minmax(320px,.65fr);gap:20px;align-items:start; }
-.passage-panel { padding:30px; }.reader-toolbar { display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:20px;font-size:9px;color:var(--muted); }.reader-toolbar button { border:1px solid var(--line);background:white;border-radius:8px;font-size:9px;padding:6px 8px;margin-left:4px; }
-.passage { font-size:var(--reader-size);line-height:var(--reader-line); }.passage-block { position:relative;padding-left:40px;margin-bottom:28px; }.passage-label { position:absolute;left:0;top:3px;width:26px;height:26px;border-radius:50%;background:var(--blush);display:grid;place-items:center;font:700 11px Fredoka; }
-.passage-word { border:0;border-bottom:2px dotted var(--pink);background:transparent;padding:0;color:inherit;font:inherit; }.passage-word:hover { background:var(--blush); }
-.connector { transition:.2s; }.show-connectors .connector { background:var(--butter);border-radius:5px;padding:1px 3px; }
-.passage-translation { display:none;color:var(--muted);font-size:.8em;border-left:3px solid var(--mint);padding-left:14px; }.show-translation .passage-translation { display:block; }
-.question-panel { position:sticky;top:96px;padding:23px;max-height:calc(100vh - 120px);overflow:auto; }.question-panel h2 { margin:4px 0 0; }.question-item { border-top:1px solid var(--line);padding:17px 0; }.question-item>p { font-size:11px;font-weight:600; }.question-item label { display:block;font-size:10px;margin:7px 0;padding:7px 9px;border-radius:8px; }.question-item label:hover { background:#f8f2ef; }.question-item input[type=text] { width:100%;border:1px solid var(--line);border-radius:9px;padding:9px; }
-.question-explanation { margin-top:10px;padding:11px;border-radius:10px;background:#f3f0ed;font-size:9px; }.question-explanation.correct { background:var(--mint); }.question-explanation.wrong { background:#fee5e0; }
-.results-box { margin-top:14px;padding:14px;background:var(--butter);border-radius:12px;font-size:11px; }
-.exam-clock { position:sticky;top:84px;z-index:10;background:var(--navy);color:white;padding:10px 18px;border-radius:14px;margin-bottom:14px;display:flex;align-items:center;gap:14px; }.exam-clock span { font-size:9px;text-transform:uppercase;letter-spacing:.1em; }.exam-clock b { font:600 18px Fredoka; }.exam-clock button { margin-left:auto;background:white;border:0;border-radius:8px;padding:5px 9px;font-size:9px; }
-.exam-mode .reader-toolbar,.exam-mode .passage-translation { display:none!important; }.focus-reading .question-panel,.focus-reading .reading-info { display:none; }.focus-reading .reading-layout { grid-template-columns:minmax(0,800px);justify-content:center; }
+  const vocabulary = wordSeeds.map((w, index) => ({
+    id:w[0], word:w[0], ipaUK:w[1], ipaUS:w[1].replace("ɒ","ɑː"), partOfSpeech:w[2],
+    vietnameseMeaning:w[3], chineseMeaning:w[4], pinyin:w[5], englishDefinition:w[6],
+    level:w[7], ieltsUse:"Academic Reading and Writing", register:"neutral/formal",
+    topic:[w[8]], topicChinese:topicChinese[w[8]], nuance:index % 3 === 0 ? "Thường dùng khi người viết muốn giữ giọng khách quan." : "Phù hợp văn phong học thuật; cần kiểm tra collocation.",
+    synonyms:w[9], antonyms:w[10], collocations:w[11], wordFamily:w[12],
+    commonPrepositions: w[0] === "contribute" ? ["contribute to"] : w[0] === "impact" ? ["impact on"] : w[0] === "emerge" ? ["emerge from"] : [],
+    patterns:[`${w[0]} + noun / complement`, `${w[11][0]} in academic context`],
+    commonMistakes:[w[0] === "evidence" ? "Evidence là danh từ không đếm được; không dùng an evidence." : `Không thay ${w[0]} bằng mọi synonym nếu collocation thay đổi.`],
+    confusingWords:index % 2 ? [w[9][0] || "related term"] : [w[10][0] || "near opposite"],
+    memoryTip:w[13], morphology:w[12].length ? `Liên hệ họ từ: ${w[12].join(", ")}.` : "Ghi nhớ qua cụm từ thay vì tách riêng.",
+    chineseCollocation:`${w[4].split("；")[0]} + ${topicChinese[w[8]] || "学术语境"}`,
+    chineseExample:`研究结果${index % 2 ? "表明这一变化值得关注。" : "为这一结论提供了新的证据。"}`,
+    chineseNuance:index % 2 ? "Cách diễn đạt tiếng Trung ưu tiên tự nhiên theo ngữ cảnh, không bám từng từ." : "Hai nghĩa Trung có thể nhấn mạnh mức độ hoặc chức năng khác nhau.",
+    examples:[
+      {en:`Researchers found ${w[0]} patterns in the data, although the causes remained uncertain.`,vi:`Các nhà nghiên cứu tìm thấy những dấu hiệu liên quan đến “${w[3]}” trong dữ liệu, dù nguyên nhân vẫn chưa chắc chắn.`,zh:`研究人员在数据中发现了相关模式，尽管原因仍不确定。`,source:"AI-generated example"},
+      {en:`The report uses ${w[0]} in a new social context to test whether the meaning transfers.`,vi:`Báo cáo dùng từ này trong một bối cảnh xã hội mới để kiểm tra khả năng chuyển nghĩa.`,zh:`报告在新的社会语境中使用该词，以检验意义迁移。`,source:"AI-generated example"}
+    ]
+  }));
 
-.sentence-workbench { padding:35px;display:flex;gap:28px;align-items:flex-start; }.sentence-number { font:700 54px Fredoka;color:var(--blush);line-height:1; }.sentence-main { flex:1; }.original-sentence { font-size:clamp(19px,2.2vw,29px);line-height:1.55;font-weight:500; }.translation-tabs { display:inline-flex;background:#f1ebe6;padding:3px;border-radius:10px;margin-bottom:9px; }.sentence-controls { display:flex;gap:8px;flex-wrap:wrap;margin-top:22px; }
-.syntax-legend { display:flex;gap:18px;flex-wrap:wrap;margin:18px 0;font-size:9px;font-weight:700; }.syntax-legend i { display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px; }.syntax-legend .subject{background:#d76084}.syntax-legend .verb{background:#3f806a}.syntax-legend .object{background:#b89426}.syntax-legend .clause{background:#7d68b3}.syntax-legend .phrase{background:#5381a8}
-.sentence-grid { display:grid;grid-template-columns:1.2fr .8fr;gap:18px; }.structure-panel,.analysis-panel,.rebuild-panel { padding:28px; }.structure-panel h2,.analysis-panel h2 { margin:5px 0 20px; }
-#sentence-chunks { line-height:2.3; }.chunk.active { outline:3px solid rgba(39,49,67,.18);transform:translateY(-2px); }
-#sentence-analysis { font-size:11px; }.analysis-row { display:grid;grid-template-columns:100px 1fr;gap:12px;padding:10px 0;border-bottom:1px solid var(--line); }.analysis-row b { color:var(--pink-deep); }
-.rebuild-panel { margin-top:18px; }.rebuild-panel header button { border:0;background:transparent;color:var(--pink-deep);font-size:10px; }.rebuild-drop,.rebuild-options { min-height:64px;border:2px dashed var(--line);border-radius:14px;padding:12px;margin:12px 0; }.rebuild-token { border:1px solid var(--line);background:white;border-radius:9px;padding:7px 9px;margin:4px;font-size:10px; }
+  const importedVocabRows = [["Monday","/ˈmʌndeɪ/","thứ hai",["DAY – WEEK - MONTH"],22],["Tuesday","/ˈtuːzdeɪ/","thứ ba",["DAY – WEEK - MONTH"],22],["Wednesday","/ˈwenzdeɪ/","thứ tư",["DAY – WEEK - MONTH"],22],["Thursday","/ˈθɜːrzdeɪ/","thứ năm",["DAY – WEEK - MONTH"],22],["Friday","/ˈfraɪdeɪ/","thứ sáu",["DAY – WEEK - MONTH"],22],["Saturday","/ˈsætərdeɪ/","thứ bảy",["DAY – WEEK - MONTH"],22],["Sunday","/ˈsʌndeɪ/","chủ nhật",["DAY – WEEK - MONTH"],22],["weekday","/ˈwiːkdeɪ/","ngày trong tuần",["DAY – WEEK - MONTH"],22],["weekend","/ˈwiːkend/","cuối tuần",["DAY – WEEK - MONTH"],22],["January","/ˈdʒænjueri/","tháng Một",["DAY – WEEK - MONTH"],22],["February","/ˈfebrueri/","tháng Hai",["DAY – WEEK - MONTH"],22],["March","/mɑːrtʃ/","tháng Ba",["DAY – WEEK - MONTH"],22],["April","/ˈeɪprəl/","tháng Tư",["DAY – WEEK - MONTH"],22],["May","/meɪ/","tháng Năm",["DAY – WEEK - MONTH"],22],["June","/dʒuːn/","tháng Sáu",["DAY – WEEK - MONTH"],22],["July","/dʒuˈlaɪ/","tháng Bảy",["DAY – WEEK - MONTH"],22],["August","/ˈɔːɡəst/","tháng Tám",["DAY – WEEK - MONTH"],22],["September","/sepˈtembər/","tháng Chín",["DAY – WEEK - MONTH"],22],["October","/ɑːkˈtəʊbər/","tháng Mười",["DAY – WEEK - MONTH"],22],["November","/nəʊˈvembər/","tháng Mười Một",["DAY – WEEK - MONTH"],22],["December","/dɪˈsembər/","tháng Mười Hai",["DAY – WEEK - MONTH"],22],["Agriculture","/ˈæɡrɪkʌltʃər/; /ˈæɡrɪkʌltʃə(r)/","Nông nghiệp",["SUBJECTS","AGRICULTURE"],5],["Anthropology","/ˌænθrəˈpɑːlədʒi/","Nhân chủng học",["SUBJECTS","ANTHROPOLOGY","PHILOSOPHY"],5],["Archaeology","/ˌɑːrkiˈɑːlədʒi/","Khảo cổ học",["SUBJECTS","ARCHAEOLOGY"],5],["Architecture","/ˈɑːrkɪtektʃər/","Kiến trúc xây dựng",["SUBJECTS","ARCHITECTURE - BUILDINGS"],5],["Biology","/baɪˈɑːlədʒi/","Sinh học",["SUBJECTS","BIOLOGY","SCIENCE"],5],["Business management","/ˈbɪznəs ˈmænɪdʒmənt/","Quản trị kinh doanh",["SUBJECTS"],5],["Chemistry","/ˈkemɪstri/","Hóa học",["SUBJECTS","CHEMISTRY"],5],["Economics","/ˌiːkəˈnɑːmɪks/; /ˌiːkəˈnɒmɪks/","Kinh tế học; Kinh tế",["SUBJECTS","ECONOMICS"],5],["Geography","/dʒiˈɑːɡrəfi/","Địa lý",["SUBJECTS"],5],["History","/ˈhɪs.tər.i/; /ˈhɪstri/","Lịch sử",["SUBJECTS","HISTORY"],5],["Humanities","/hjuːˈmænətiz/; /hjuːˈmænəti/","Khoa học nhân văn",["SUBJECTS","ARCHAEOLOGY"],5],["Law","/lɔː/","Pháp luật học; Luật",["SUBJECTS","LAW"],5],["Literature","/ˈlɪtrətʃər/","Văn học",["SUBJECTS","LITERATURE"],5],["Logic","/ˈlɑːdʒɪk/","Lý luận học",["SUBJECTS"],5],["Mathematics","/ˌmæθəˈmætɪks/","Toán học",["SUBJECTS"],5],["Performing arts","/pərˌfɔːrmɪŋ ˈɑːrts/","Nghệ thuật biểu diễn",["SUBJECTS"],5],["Philosophy","/fəˈlɑːsəfi/; /fəˈlɒsəfi/","Triết học",["SUBJECTS","PHILOSOPHY"],5],["Physics","/ˈfɪzɪks/","Vật lý; Vật lý học",["SUBJECTS","ASTROPHYSICS"],5],["Politics","/ˈpɑːlətɪks/; /ˈpɒlətɪks/","Chính trị",["SUBJECTS","POLITICS"],5],["Psychology","/saɪˈkɑːlədʒi/","Tâm lý học; Tâm lý học, nghiên cứu tâm lý; Tâm lý",["SUBJECTS","PSYCHOLOGY","FORENSICS"],5],["Science","/ˈsaɪəns/","Khoa học",["SUBJECTS","SCIENCE"],5],["Statistics","/stəˈtɪstɪks/","Khoa học thống kê",["SUBJECTS"],5],["Visual arts","/ˈvɪʒuəl ˈɑːrts/","Nghệ thuật thị giác",["SUBJECTS"],5],["advertisement","/ˌædvərˈtaɪzmənt/","quảng cáo",["MARKETING"],16],["business card","/ˈbɪznəs kɑːrd/","danh thiếp",["MARKETING"],16],["campaign","/kæmˈpeɪn/","chiến dịch; vận động tranh cử",["MARKETING","POLITICS"],16],["catalogue","/ˈkætəlɔːɡ/","danh mục liệt kê",["MARKETING"],16],["collect data","/kəˈlekt ˈdeɪtə/","thu thập dữ liệu",["MARKETING"],16],["competition","/ˌkɑːmpəˈtɪʃn/","cuộc thi",["MARKETING"],16],["customer","/ˈkʌstəmər/","khách hàng",["MARKETING"],16],["display","/dɪˈspleɪ/","trưng bày",["MARKETING"],16],["entertainment industry","/ˌentərˈteɪnmənt ˈɪndəstri/","ngành công nghiệp giải trí",["MARKETING"],16],["interview","/ˈɪntərvjuː/","phỏng vấn",["MARKETING"],16],["leadership","/ˈliːdərʃɪp/","khả năng lãnh đạo",["MARKETING"],16],["management","/ˈmænɪdʒmənt/","sự quản lý",["MARKETING"],16],["manufacture","/ˌmænjuˈfæktʃər/","sự sản xuất",["MARKETING"],16],["mass media","/ˌmæs ˈmiːdiə/","phương tiện truyền thông",["MARKETING"],16],["merchandise","/ˈmɜːrtʃəndaɪs/","hàng hóa",["MARKETING"],16],["newsletter","/ˈnuːzletər/","bản tin",["MARKETING"],16],["poll","/pəʊl/","cuộc thăm dò ý kiến",["MARKETING"],16],["product","/ˈprɑːdʌkt/","sản phẩm",["MARKETING"],16],["profit margin","/ˈprɑːfɪt mɑːrdʒɪn/","tỷ suất lợi nhuận",["MARKETING"],16],["questionnaire","/ˌkwestʃəˈner/","bản câu hỏi, thăm dò ý kiến",["MARKETING"],16],["recruitment","/rɪˈkruːtmənt/","sự tuyển dụng, chiêu mộ",["MARKETING"],16],["research method","/rɪˈsɜːrtʃ ˈmeθəd/","phương pháp nghiên cứu",["MARKETING"],16],["special offer","/ˈspeʃl ˈɔːfər/","giá chào đặc biệt",["MARKETING"],16],["statistic","/stəˈtɪstɪk/","số liệu",["MARKETING"],16],["strategy","/ˈstrætədʒi/","chiến lược",["MARKETING"],16],["survey","/ˈsɜːrveɪ/","cuộc khảo sát",["MARKETING"],16],["TV programme","/ˌtiː ˌviː ˈprəʊɡræm/","chương trình truyền hình",["MARKETING"],16],["website","/ˈwebsaɪt/","trang web",["MARKETING"],16],["continent","/ˈkɑːntɪnənt/","lục địa",["CONTINENTS - OCEANS"],1],["Africa","/ˈæfrɪkə/","Châu Phi",["CONTINENTS - OCEANS"],1],["Antarctica","/ænˈtɑːrktɪkə/","Châu Nam Cực",["CONTINENTS - OCEANS"],1],["Asia","/ˈeɪʒə/","Châu Á",["CONTINENTS - OCEANS"],1],["Australia","/ɔːˈstreɪliə/","Châu Úc (Châu Đại Dương)",["CONTINENTS - OCEANS"],1],["Europe","/ˈjʊrəp/","Châu Âu",["CONTINENTS - OCEANS"],1],["North America","/ˌnɔːrθ əˈmerɪkə/","Bắc Mỹ",["CONTINENTS - OCEANS"],1],["South America","/ˌsaʊθ əˈmerɪkə/","Nam Mỹ",["CONTINENTS - OCEANS"],1],["ocean","/ˈəʊʃn/","đại dương",["CONTINENTS - OCEANS"],1],["Arctic Ocean","/ˌɑːrktɪk ˈəʊʃn/","Bắc Băng Dương",["CONTINENTS - OCEANS"],1],["Atlantic Ocean","/ətˌlæntɪk ˈəʊʃn/","Đại Tây Dương",["CONTINENTS - OCEANS"],1],["Indian Ocean","/ˌɪndiən ˈəʊʃn/","Ấn Độ Dương",["CONTINENTS - OCEANS"],1],["Pacific Ocean","/pəˌsɪfɪk ˈəʊʃn/","Thái Bình Dương",["CONTINENTS - OCEANS"],1],["Southern Ocean","/ˈsʌðərn ˈəʊʃn/","Nam Băng Dương",["CONTINENTS - OCEANS"],1],["annual fee","/ˈænjuəl fiː/","phí thường niên",["MONEY"],16],["annuity","/əˈnuːəti/","tiền trợ cấp hàng năm; Bảo hiểm niên kim",["MONEY","INSURANCE"],16],["bank statement","/ˈbæŋk steɪtmənt/","bản sao kê ngân hàng",["MONEY"],16],["budget deficit","/ˈbʌdʒɪt ˈdefɪsɪt/; /ˈbʌʤɪt ˈdefɪsɪt/","thâm hụt ngân sách; Thâm hụt ngân sách",["MONEY","ECONOMICS"],16],["cash","/kæʃ/","tiền mặt",["MONEY"],16],["cheque","/tʃek/","séc",["MONEY"],16],["counterfeit money","/ˈkaʊntərfɪt mʌni/","tiền giả",["MONEY"],16],["coupon","/ˈkuːpɑːn/","phiếu mua hàng",["MONEY"],16],["credit card","/ˈkredɪt kɑːrd/","thẻ tín dụng",["MONEY"],16],["currency","/ˈkɜːrənsi/","tiền tệ",["MONEY"],16],["current account","/ˈkɜːrənt əkaʊnt/","tài khoản vãng lai",["MONEY"],16],["debit card","/ˈdebɪt kɑːrd/","thẻ ghi nợ",["MONEY"],16],["debt","/det/","khoản nợ",["MONEY"],16],["deposit","/dɪˈpɑːzɪt/","tiền đặt cọc",["MONEY"],16],["duty-free store","/ˌduːti ˈfriː stɔːr/","cửa hàng miễn thuế",["MONEY"],16],["Finance Department","/faɪˈnæns dɪˈpɑːrtmənt/","Bộ Tài Chính",["MONEY"],16],["in advance","/ ɪn ədˈvæns/","trả trước",["MONEY"],16],["income","/ˈɪnkʌm/","thu nhập",["MONEY"],16],["interest rate","/ˈɪntrəst reɪt/","lãi suất",["MONEY"],16],["interest-free credit","/ˌɪntrəst ˈfriː ˈkredɪ/","tín dụng không lãi suất",["MONEY"],16],["invest","/ɪnˈvest/","đầu tư",["MONEY"],16],["low-risk investment","/ˌləʊ ˈrɪsk ɪnˈvestmənt/","đầu tư rủi ro thấp",["MONEY"],16],["MasterCard","/ˈmæstərkɑːrd/","thẻ MasterCard",["MONEY"],16],["money management","/ˈmʌni ˈmænɪdʒmənt/","quản lý tiền bạc",["MONEY"],16],["monthly membership","/ ˈmʌnθli ˈmembərʃɪp/","hội viên theo tháng",["MONEY"],16],["mortgage","/ˈmɔːrɡɪdʒ/","tiền thế chấp; thế chấp",["MONEY","HOMES"],16],["non-refundable","/ˌnɑːn rɪˈfʌndəbl/","không hoàn tiền",["MONEY"],16],["poverty","/ˈpɑːvərti/","sự thiếu thốn",["MONEY"],16],["profitable","/ˈprɑːfɪtəbl/","sinh lãi, có lợi",["MONEY"],16],["public money","/ˈpʌblɪk mʌni/","tiền công quỹ",["MONEY"],16],["purchase","/ˈpɜːrtʃəs/","mua",["MONEY"],16],["student account","/ˈstuːdnt əkaʊnt/","tài khoản dành cho sinh viên",["MONEY"],16],["tuition fee","/tuˈɪʃn fiː/","học phí",["MONEY"],16],["VISA","/ˈviːzə/","thẻ VISA",["MONEY"],16],["voucher","/ˈvaʊtʃər/","phiếu giảm giá, biên lai",["MONEY"],16],["withdraw","/wɪθˈdrɔː/","rút tiền",["MONEY"],16],["avalanche","/ˈævəlæntʃ/","tuyết lở",["NATURE"],1],["biodiversity","/ˌbaɪəʊdaɪˈvɜːrsəti/; /ˌbaɪ.əʊ.daɪˈvɜː.sə.ti/","sự đa dạng sinh học",["NATURE","ENVIRONMENT"],1],["canyon","/ˈkænjən/","hẻm núi",["NATURE"],1],["catastrophe","/kəˈtæstrəfi/","thảm họa, tai ương",["NATURE"],1],["cliff","/klɪf/","vách đá",["NATURE"],1],["climate","/ˈklaɪmət/; /ˈklaɪ.mət/","khí hậu",["NATURE","ENVIRONMENT"],1],["coast","/kəʊst/","bờ biển",["NATURE"],1],["dam","/dæm/","đập (ngăn nước)",["NATURE"],1],["desertification","/dɪˌzɜːrtɪfɪˈkeɪʃn/","sự sa mạc hóa",["NATURE"],1],["disaster","/dɪˈzæstər/; /dɪˈzɑː.stər/","thảm họa",["NATURE","ENVIRONMENT"],1],["earthquake","/ˈɜːrθkweɪk/","động đất",["NATURE"],1],["environment","/ɪnˈvaɪrənmənt/","môi trường",["NATURE"],1],["erosion","/ɪˈrəʊʒn/; /ɪˈrəʊ.ʒən/","sự xói mòn",["NATURE","ENVIRONMENT"],1],["eruption","/ɪˈrʌpʃn/","sự phun trào",["NATURE"],1],["field","/fiːld/","cánh đồng; sân (bóng)",["NATURE","SPORTS"],1],["flood","/flʌd/","lũ lụt",["NATURE"],1],["forest","/ˈfɔːrɪst/","rừng",["NATURE"],1],["hill","/hɪl/","đồi",["NATURE"],1],["hurricane","/ˈhɜːrəkeɪn/","bão (có gió giật)",["NATURE"],1],["island","/ˈaɪlənd/","hòn đảo",["NATURE"],1],["jungle","/ˈdʒʌŋɡl/","rừng nhiệt đới",["NATURE"],1],["lake","/leɪk/","hồ",["NATURE","CITY"],1],["landslide","/ˈlændslaɪd/","sự lở đất",["NATURE"],1],["mountain","/ˈmaʊntn/","núi",["NATURE"],1],["oasis","/əʊˈeɪsɪs/","ốc đảo",["NATURE"],1],["peninsula","/pəˈnɪnsələ/","bán đảo",["NATURE"],1],["pond","/pɑːnd/","ao",["NATURE"],1],["reef","/riːf/","đá ngầm",["NATURE"],1],["river","/ˈrɪvər/","sông",["NATURE"],1],["storm","/stɔːrm/","bão",["NATURE"],1],["tornado","/tɔːrˈneɪdəʊ/","lốc xoáy",["NATURE"],1],["typhoon","/taɪˈfuːn/","bão nhiệt đới",["NATURE"],1],["valley","/ˈvæli/","thung lũng",["NATURE"],1],["village","/ˈvɪlɪdʒ/","làng",["NATURE"],1],["volcano","/vɑːlˈkeɪnəʊ/","núi lửa",["NATURE"],1],["waterfall","/ˈwɔːtərfɔːl/","thác nước",["NATURE"],1],["amphibian","/æmˈfɪbiən/; /æmˈfɪb.i.ən/","động vật lưỡng cư; Động vật lưỡng cư",["NATURE","BIOLOGY"],1],["bark","/bɑːrk/; /bɑːk/","vỏ cây; Vỏ cây",["NATURE","BIOLOGY"],1],["bird of prey","/ˌbɜːrd əv ˈpreɪ/","chim săn mồi",["NATURE"],1],["branch","/bræntʃ/","cành cây",["NATURE"],1],["bush","/bʊʃ/","bụi cây",["NATURE"],1],["cetacean","/sɪˈteɪʃn/","động vật biển có vú",["NATURE"],1],["class","/klæs/","lớp (sinh vật)",["NATURE"],1],["cluster","/ˈklʌstər/","bó",["NATURE"],1],["core","/kɔːr/","hạch",["NATURE"],1],["creature","/ˈkriːtʃər/","sinh vật",["NATURE"],1],["family","/ˈfæməli/","họ",["NATURE"],1],["fertilizer","/ˈfɜːrtəlaɪzər/","phân bón",["NATURE"],1],["fish","/fɪʃ/","cá",["NATURE"],1],["flower","/ˈflaʊər/; /flaʊər/","hoa; Hoa",["NATURE","BIOLOGY"],1],["fungus","/ˈfʌŋɡəs/","nấm",["NATURE"],1],["genus","/ˈdʒiːnəs/","giống",["NATURE"],1],["insect","/ˈɪnsekt/","côn trùng",["NATURE"],1],["leaves","/liːvz/","lá cây",["NATURE"],1],["lion","/ˈlaɪən/","sư tử",["NATURE"],1],["livestock","/ˈlaɪvstɑːk/","thú nuôi",["NATURE"],1],["mammal","/ˈmæml/; /ˈmæm.əl/","động vật có vú; Động vật có vú",["NATURE","BIOLOGY"],1],["mushroom","/ˈmʌʃruːm/","nấm",["NATURE"],1],["octopus","/ˈɑːktəpʊs/","bạch tuộc",["NATURE"],1],["order","/ˈɔːrdər/","bậc",["NATURE"],1],["penguin","/ˈpeŋɡwɪn/","chim cánh cụt",["NATURE"],1],["phylum","/ˈfaɪləm/","ngành, hệ",["NATURE"],1],["plant","/plænt/","thực vật",["NATURE"],1],["primate","/ˈpraɪmeɪt/; /ˈpraɪ.meɪt/","động vật linh trưởng; Động vật linh trưởng",["NATURE","BIOLOGY"],1],["reptile","/ˈreptaɪl/; /ˈrep.taɪl/","loài bò sát; Bò sát",["NATURE","BIOLOGY"],1],["rodent","/ˈrəʊdnt/","loài gặm nhấm",["NATURE"],1],["root","/ruːt/","rễ cây; Rễ cây",["NATURE","BIOLOGY"],1],["seabird","/ˈsiːbɜːrd/","chim biển",["NATURE"],1],["seed","/siːd/","hạt giống",["NATURE"],1],["species","/ˈspiːʃiːz/; /ˈspiː.ʃiːz/","loài; Loài động vật",["NATURE","BIOLOGY"],1],["stem","/stem/","thân cây; Thân cây",["NATURE","BIOLOGY"],1],["trunk","/trʌŋk/","thân cây; Gốc cây",["NATURE","BIOLOGY"],1],["twig","/twɪɡ/","cành con",["NATURE"],1],["whale","/weɪl/","cá voi",["NATURE"],1],["antenna","/ænˈtenə/","ăng-ten",["NATURE"],1],["breeze","/briːz/","gió nhẹ",["NATURE"],1],["breezy","/ˈbriːzi/","thoáng mát, có gió hiu hiu",["NATURE"],1],["chilly","/ˈtʃɪli/","lạnh lẽo",["NATURE"],1],["cold","/kəʊld/","lạnh",["NATURE"],1],["cool","/kuːl/","mát mẻ",["NATURE"],1],["degree Celsius","/ dɪˈɡriː ˈselsiəs/","độ C",["NATURE"],1],["degree Fahrenheit","/ dɪˈɡriː ˈfærənhaɪt/","độ F",["NATURE"],1],["dry","/draɪ/","khô",["NATURE"],1],["dusty","/ˈdʌsti/","bụi",["NATURE"],1],["freezing","/ˈfriːzɪŋ/","rét mướt",["NATURE"],1],["hot","/hɑːt/","nóng",["NATURE"],1],["humid","/ˈhjuːmɪd/","ẩm",["NATURE"],1],["humidity","/hjuːˈmɪdəti/","độ ẩm",["NATURE"],1],["moisture","/ˈmɔɪstʃər/","hơi ẩm",["NATURE"],1],["sticky","/ˈstɪki/","nồm",["NATURE"],1],["temperature","/ˈtemprətʃər/","nhiệt độ; Nhiệt độ",["NATURE","SCIENCE"],1],["thermometer","/θərˈmɑːmɪtər/","nhiệt kế; Máy, thiết bị đo nhiệt độ",["NATURE","SCIENCE"],1],["warm","/wɔːrm/","ấm",["NATURE"],1],["weather forecast","/ˈweðər fɔːrkæst/","dự báo thời tiết",["NATURE"],1],["wet","/wet/","ẩm ướt",["NATURE"],1],["Brazil","/brəˈzɪl/","Brazil",["COUNTRIES"],15],["Burma (Myanmar)","/ˈbɜːrmə/ (/ˈmjɑːnmɑːr/)","Miến Điện",["COUNTRIES"],15],["China","/ˈtʃaɪnə/","Trung Quốc",["COUNTRIES"],15],["Denmark","/ˈdenmɑːrk/","Đan Mạch",["COUNTRIES"],15],["Egypt","/ˈiːdʒɪpt/","Ai Cập",["COUNTRIES"],15],["England","/ˈɪŋɡlənd/","Anh",["COUNTRIES"],15],["France","/fræns/","Pháp",["COUNTRIES"],15],["Germany","/ˈdʒɜːrməni/","Đức",["COUNTRIES"],15],["Greece","/ɡriːs/","Hy Lạp",["COUNTRIES"],15],["Holland (the Netherlands)","/ˈhɑlənd/ (/ðə ˈneðərləndz/)","Hà Lan",["COUNTRIES"],15],["India","/ˈɪndiə/","Ấn Độ",["COUNTRIES"],15],["Indonesia","/ˌɪndəˈniːʒə/","Indonesia",["COUNTRIES"],15],["Italy","/ˈɪtəli/","Ý",["COUNTRIES"],15],["Japan","/dʒəˈpæn/","Nhật Bản",["COUNTRIES"],15],["Malaysia","/məˈleɪʒə/","Malaysia",["COUNTRIES"],15],["Mexico","/ˈmeksɪkəʊ/","Mê-hi-cô",["COUNTRIES"],15],["New Zealand","/ˌnuː ˈziːlənd/","New Zealand",["COUNTRIES"],15],["Nigeria","/naɪˈdʒɪriə/","Nigeria",["COUNTRIES"],15],["North Korea","/ˌnɔːrθ kəˈriːə/","Triều Tiên",["COUNTRIES"],15],["Pakistan","/ˈpækɪstæn/","Pakistan",["COUNTRIES"],15],["Portugal","/ˈpɔːrtʃʊɡl/","Bồ Đào Nha",["COUNTRIES"],15],["Russia","/ˈrʌʃə/","Nga",["COUNTRIES"],15],["Singapore","/ˈsɪŋəpɔːr/","Singapore",["COUNTRIES"],15],["South Korea","/ˌsaʊθ kəˈriːə/","Hàn Quốc",["COUNTRIES"],15],["Sweden","/ˈswiːdn/","Thụy Điển",["COUNTRIES"],15],["Switzerland","/ˈswɪtsərlənd/","Thụy Sĩ",["COUNTRIES"],15],["Thailand","/ˈtaɪlænd/","Thái Lan",["COUNTRIES"],15],["the Dominican Republic","/ðəˌmɪnɪkən rɪˈpʌblɪk/","Cộng hòa Dominica",["COUNTRIES"],15],["the Philippines","/ðə ˈfɪlɪpiːnz/","Philippine",["COUNTRIES"],15],["the United Kingdom","/ðə juˌnaɪtɪd ˈkɪŋdəm/","Vương quốc Anh",["COUNTRIES"],15],["the United States (of America)","/ðə juˌnaɪtɪd ˌsteɪts əv əˈmerɪkə/","Hợp chủng quốc Hoa Kỳ",["COUNTRIES"],15],["Turkey","/ˈtɜːrki/","Thổ Nhĩ Kỳ",["COUNTRIES"],15],["Vietnam","/ˌviːetˈnɑːm/","Việt Nam",["COUNTRIES"],15],["bilingual","/ˌbaɪˈlɪŋɡwəl/","song ngữ",["LANGUAGES"],8],["Cantonese","/ˌkæntəˈniːz/","tiếng Quảng Đông",["LANGUAGES"],8],["Dutch","/dʌtʃ/","tiếng Hà Lan",["LANGUAGES"],8],["English","/ˈɪŋɡlɪʃ/","tiếng Anh",["LANGUAGES"],8],["Filipino","/ˌfɪlɪˈpiːnəʊ/","tiếng Philippine",["LANGUAGES"],8],["French","/frentʃ/","tiếng Pháp",["LANGUAGES"],8],["German","/ˈdʒɜːrmən/","tiếng Đức",["LANGUAGES"],8],["Greek","/ɡriːk/","tiếng Hy Lạp",["LANGUAGES"],8],["Hindi","/ˈhɪndi/","tiếng Hindi (Ấn Độ)",["LANGUAGES"],8],["Italian","/ɪˈtæliən/","tiếng Ý",["LANGUAGES"],8],["Japanese","/ˌdʒæpəˈniːz/","tiếng Nhật",["LANGUAGES"],8],["Korean","/kəˈriːən/","tiếng Hàn",["LANGUAGES"],8],["linguistics","/lɪŋˈɡwɪstɪks/","ngôn ngữ học; Ngôn ngữ học",["LANGUAGES","LINGUISTICS"],8],["Mandarin","/ˈmændərɪn/","tiếng Hoa phổ thông",["LANGUAGES"],8],["native","/ˈneɪtɪv/","bản xứ",["LANGUAGES"],8],["non-native","/ˌnɑːn ˈneɪtɪv/","không phải tiếng mẹ đẻ",["LANGUAGES"],8],["Persian","/ˈpɜːrʒn/","tiếng Ba Tư",["LANGUAGES"],8],["polyglot","/ˈpɑːliɡlɑːt/","bằng nhiều thứ tiếng",["LANGUAGES"],8],["Portuguese","/ˌpɔːrtʃʊˈɡiːz/","tiếng Bồ Đào Nha",["LANGUAGES"],8],["Russian","/ˈrʌʃn/","tiếng Nga",["LANGUAGES"],8],["Thai","/taɪ/","tiếng Thái",["LANGUAGES"],8],["trilingual","/traɪˈlɪŋɡwəl/","thông thạo 3 thứ tiếng",["LANGUAGES"],8],["agree","/əˈɡriː/","đồng ý, bằng lòng",["VERBS"],20],["arrange","/əˈreɪndʒ/","sắp xếp",["VERBS"],20],["borrow","/ˈbɔːrəʊ/","mượn",["VERBS"],20],["choose","/tʃuːz/","lựa chọn",["VERBS"],20],["collect","/kəˈlekt/","thu thập, sưu tầm",["VERBS"],20],["concentrate","/ˈkɑːnsntreɪt/","tập trung",["VERBS"],20],["consider","/kənˈsɪdər/","nghĩ đến, tính đến điều gì",["VERBS"],20],["decide","/dɪˈsaɪd/","quyết định",["VERBS"],20],["develop","/dɪˈveləp/","phát triển, khai thác",["VERBS"],20],["disagree","/ˌdɪsəˈɡriː/","không đồng ý, bất hòa",["VERBS"],20],["discuss","/dɪˈskʌs/","thảo luận, tranh luận",["VERBS"],20],["donate","/ˈdəʊneɪt/","tặng",["VERBS"],20],["edit","/ˈedɪt/","biên tập",["VERBS"],20],["exhibit","/ɪɡˈzɪbɪt/","trưng bày",["VERBS"],20],["hunt","/hʌnt/","săn, tìm kiếm",["VERBS"],20],["immigrate","/ˈɪmɪɡreɪt/","nhập cư; Nhập cư",["VERBS","ANTHROPOLOGY"],20],["learn","/lɜːrn/","học",["VERBS"],20],["mark","/mɑːrk/","đánh dấu, chứng tỏ",["VERBS"],20],["mean","/miːn/","có ý định, nghĩa là",["VERBS"],20],["occur","/əˈkɜːr/","xảy ra",["VERBS"],20],["persuade","/pərˈsweɪd/","thuyết phục",["VERBS"],20],["plan","/plæn/","dự kiến, đặt kế hoạch",["VERBS"],20],["present","/prɪˈzent/","trình bày, giới thiệu",["VERBS"],20],["register","/ˈredʒɪstər/","đăng ký",["VERBS"],20],["review","/rɪˈvjuː/","xem xét lại",["VERBS"],20],["revise","/rɪˈvaɪz/","xem lại, ôn tập",["VERBS"],20],["show","/ʃəʊ/","tỏ ra, cho thấy",["VERBS"],20],["speak","/spiːk/","nói",["VERBS"],20],["suggest","/səˈdʒest/","gợi ý",["VERBS"],20],["summarize","/ˈsʌməraɪz/","tóm tắt",["VERBS"],20],["supervise","/ˈsuːpərvaɪz/","giám sát, quản lý",["VERBS"],20],["support","/səˈpɔːrt/; /səˈpɔːt/","ủng hộ, khuyến khích; hold something firmly, carry its weight, prevent it from falling, giữ chặt cái gì đó, ko để nó rơi, chịu trọng lượng của nó",["VERBS","ARCHITECTURE - BUILDINGS"],20],["surpass","/sərˈpæs/","vượt trội hơn",["VERBS"],20],["talk","/tɔːk/","nói chuyện, nói về",["VERBS"],20],["think","/θɪŋk/","nghĩ, nghĩ là",["VERBS"],20],["touch","/tʌtʃ/","chạm",["VERBS"],20],["train","/treɪn/","đào tạo, luyện tập",["VERBS"],20],["use","/juːz/","sử dụng",["VERBS"],20],["affordable","/əˈfɔːrdəbl/","phải chăng",["ADJECTIVES"],21],["ancient","/ˈeɪnʃənt/","xưa, cổ; Cổ đại, cổ xưa",["ADJECTIVES","ARCHAEOLOGY"],21],["comfortable","/ˈkʌmftəbl/","thoải mái, tiện lợi",["ADJECTIVES"],21],["compulsory","/kəmˈpʌlsəri/","bắt buộc, ép buộc",["ADJECTIVES"],21],["confident","/ˈkɑːnfɪdənt/","tự tin",["ADJECTIVES"],21],["convenient","/kənˈviːniənt/","thuận tiện",["ADJECTIVES"],21],["different","/ˈdɪfrənt/","khác biệt",["ADJECTIVES"],21],["dull","/dʌl/","chán ngắt, uể oải",["ADJECTIVES"],21],["energetic","/ˌenərˈdʒetɪk/","mạnh mẽ, đầy năng lượng",["ADJECTIVES"],21],["exciting","/ɪkˈsaɪtɪŋ/","hứng thú, thích thích",["ADJECTIVES"],21],["extinct","/ɪkˈstɪŋkt/","tuyệt chủng, mai một; Tuyệt chủng",["ADJECTIVES","BIOLOGY"],21],["fabulous","/ˈfæbjələs/","khó tin",["ADJECTIVES"],21],["fair","/fer/","công bằng, thuận lợi",["ADJECTIVES"],21],["fantastic","/fænˈtæstɪk/","dị thường, không tưởng",["ADJECTIVES"],21],["flexible","/ˈfleksəbl/","linh hoạt",["ADJECTIVES"],21],["immense","/ɪˈmens/","rộng lớn",["ADJECTIVES"],21],["intact","/ɪnˈtækt/","còn nguyên vẹn",["ADJECTIVES"],21],["intensive","/ɪnˈtensɪv/","cao độ, chuyên sâu",["ADJECTIVES"],21],["knowledgeable","/ˈnɑːlɪdʒəbl/","am hiểu, thành thạo",["ADJECTIVES"],21],["logical","/ˈlɑːdʒɪkl/","hợp lý",["ADJECTIVES"],21],["mandatory","/ˈmændətɔːri/","có tính bắt buộc",["ADJECTIVES"],21],["necessary","/ˈnesəseri/","cần thiết",["ADJECTIVES"],21],["optimistic","/ˌɑːptɪˈmɪstɪk/","lạc quan",["ADJECTIVES"],21],["permanent","/ˈpɜːrmənənt/","lâu dài, vĩnh cửu",["ADJECTIVES"],21],["pessimistic","/ˌpesɪˈmɪstɪk/","bi quan",["ADJECTIVES"],21],["practical","/ˈpræktɪkl/","thiết thực",["ADJECTIVES"],21],["realistic","/ˌriːəˈlɪstɪk/","hiện thực, thực tế",["ADJECTIVES"],21],["salty","/ˈsɔːlti/","mặn",["ADJECTIVES"],21],["similar","/ˈsɪmələr/","tương tự",["ADJECTIVES"],21],["social","/ˈsəʊʃl/","thuộc xã hội",["ADJECTIVES"],21],["spectacular","/spekˈtækjələr/","ngoạn mục, hùng vĩ",["ADJECTIVES"],21],["suitable","/ˈsuːtəbl/","phù hợp",["ADJECTIVES"],21],["temporary","/ˈtempəreri/","tạm thời",["ADJECTIVES"],21],["tranquil","/ˈtræŋkwɪl/","yên bình",["ADJECTIVES"],21],["various","/ˈværiəs/","không giống nhau, nhiều loại",["ADJECTIVES"],21],["vast","/væst/","mênh mông",["ADJECTIVES"],21],["voluntary","/ˈvɑːlənteri/","tự nguyện",["ADJECTIVES"],21],["vulnerable","/ˈvʌlnərəbl/","có thể bị làm hại",["ADJECTIVES"],21],["Western","/ˈwestərn/","phía Tây, phương Tây",["ADJECTIVES"],21],["altitude","/ˈæltɪtuːd/","độ cao so với mặt biển",["SHAPES"],10],["breadth","/bredθ/","bề ngang",["SHAPES"],10],["circle","/ˈsɜːrkl/","hình tròn",["SHAPES"],10],["circular","/ˈsɜːrkjələr/","tròn",["SHAPES"],10],["curved","/kɜːrvd/","cong; Cong",["SHAPES"],10],["cylinder","/ˈsɪlɪndər/","hình trụ; Hình trụ",["SHAPES"],10],["cylindrical","/səˈlɪndrɪkl/","có hình trụ",["SHAPES"],10],["depth","/depθ/","chiều sâu, độ dày",["SHAPES"],10],["dimension","/daɪˈmenʃn/; /dɪˈmenʃən/","chiều; Hướng",["SHAPES","INFORMATION TECHNOLOGY"],10],["frequency","/ˈfriːkwənsi/","tần số; Tần số",["SHAPES","COSMOLOGY"],10],["imperial system","/ɪmˈpɪriəl ˈsɪstəm/","hệ thống đo lường",["SHAPES"],10],["length","/leŋkθ/","chiều dài",["SHAPES"],10],["mass","/mæs/","khối lượng; Khối lượng",["SHAPES","SCIENCE"],10],["metric system","/ˈmetrɪk sɪstəm/","hệ mét",["SHAPES"],10],["oval","/ˈəʊvl/","hình bầu dục; Hình trái xoan",["SHAPES"],10],["polygon","/ˈpɑːliɡɑːn/","hình đa giác",["SHAPES"],10],["rectangle","/ˈrektæŋɡl/","hình chữ nhật",["SHAPES"],10],["rectangular","/rekˈtæŋɡjələr/","vuông góc, có dạng hình chữ nhật",["SHAPES"],10],["size","/saɪz/","kích thước",["SHAPES"],10],["sphere","/sfɪr/","hình cầu; Hình cầu",["SHAPES"],10],["spherical","/ˈsferɪkl/","có hình cầu",["SHAPES"],10],["spiral","/ˈspaɪrəl/","có dạng xoắn",["SHAPES"],10],["square","/skwer/","hình vuông",["SHAPES"],10],["triangle","/ˈtraɪæŋɡl/","hình tam giác",["SHAPES"],10],["triangular","/traɪˈæŋɡjələr/","ba mặt, có dạng hình tam giác",["SHAPES"],10],["width","/wɪdθ/","bề rộng",["SHAPES"],10],["Parallelogram","/ˌpærəˈleləɡræm/","Hình bình hành",["SHAPES"],10],["Semicircle","/ˈsemisɜːrkl/","Hình bán nguyệt",["SHAPES"],10],["Equilateral triangle","/ˌiːkwɪˌlætərəl ˈtraɪæŋɡl/","Tam giác đều",["SHAPES"],10],["Isosceles triangle","/aɪˌsɑːsəliːz ˈtraɪæŋɡl/","Tam giác cân",["SHAPES"],10],["Right-angled triangle","/ˌraɪt æŋɡld ˈtraɪæŋɡl/","Tam giác vuông",["SHAPES"],10],["Pentagon","/ˈpentəɡɑːn/","Hình ngũ giác / Lầu năm góc",["SHAPES"],10],["Diamond","/ˈdaɪmənd/","Hình thoi",["SHAPES"],10],["Symmetrical","/sɪˈmetrɪkl/","Cân xứng",["SHAPES"],10],["Pyramid","/ˈpɪrəmɪd/","Hình chóp; kim tự tháp",["SHAPES","ARCHITECTURE - BUILDINGS"],10],["black","/blæk/","màu đen",["COLOR"],10],["blue","/bluː/","màu xanh dương",["COLOR"],10],["brown","/braʊn/","màu nâu",["COLOR"],10],["green","/ɡriːn/","màu xanh lá",["COLOR"],10],["grey","/ɡreɪ/","màu xám",["COLOR"],10],["orange","/ˈɔːrɪndʒ/","màu cam",["COLOR"],10],["pink","/pɪŋk/","màu hồng",["COLOR"],10],["purple","/ˈpɜːrpl/","màu tía",["COLOR"],10],["red","/red/","màu đỏ",["COLOR"],10],["vibrant","/ˈvaɪbrənt/","rực rỡ",["COLOR"],10],["visual","/ˈvɪʒuəl/","thuộc thị giác",["COLOR"],10],["white","/waɪt/","màu trắng",["COLOR"],10],["yellow","/ˈjeləʊ/","màu vàng",["COLOR"],10],["afterwards","/ˈæftərwərdz/","về sau",["TIME"],22],["century","/ˈsentʃəri/","thế kỷ",["TIME"],22],["decade","/ˈdekeɪd/","thập kỷ",["TIME"],22],["eventually","/ɪˈventʃuəli/","cuối cùng là",["TIME"],22],["fortnight","/ˈfɔːrtnaɪt/","hai tuần lễ",["TIME"],22],["full-time","/ˌfʊl ˈtaɪm/","toàn thời gian",["TIME"],22],["gap year","/ˈɡæp jɪr/","năm nghỉ ngơi; Năm tạm nghỉ (để làm việc khác ngoài đi học và quay lại say khi hoàn thành)",["TIME","EDUCATION (Detailed)"],22],["later on","/ˈleɪtər ɒn/","sau này",["TIME"],22],["midday","/ˌmɪdˈdeɪ/","giữa ngày, buổi trưa",["TIME"],22],["midnight","/ˈmɪdnaɪt/","nửa đêm",["TIME"],22],["millennium","/mɪˈleniəm/","thiên niên kỷ",["TIME"],22],["once","/wʌns/","một lần, trước đây",["TIME"],22],["part-time","/ˌpɑːrt ˈtaɪm/","bán thời gian",["TIME"],22],["three times","/θriː taɪmz/","ba lần",["TIME"],22],["three times per week","/ θriː taɪmz pər wiːk/","ba lần một tuần",["TIME"],22],["twice a month","/twaɪs ə mʌnθ/","hai lần một tháng",["TIME"],22],["avenue","/ˈævənuː/","đại lộ",["CITY"],13],["bank","/bæŋk/","ngân hàng",["CITY"],13],["bridge","/brɪdʒ/","cái cầu",["CITY"],13],["building","/ˈbɪldɪŋ/","tòa nhà",["CITY"],13],["bus stop","/ˈbʌs stɑːp/","điểm dừng xe buýt",["CITY"],13],["café","/kæˈfeɪ/","tiệm cà phê",["CITY"],13],["car park","/ˈkɑːr pɑːrk/","bãi đỗ xe",["CITY"],13],["central station","/ˌsentrəl ˈsteɪʃn/","ga trung tâm",["CITY"],13],["city","/ˈsɪti/","thành phố",["CITY"],13],["city centre","/ˈsɪti ˈsentər/","trung tâm thành phố",["CITY"],13],["department store","/dɪˈpɑːrtmənt stɔːr/","cửa hàng tạp hóa",["CITY"],13],["embassy","/ˈembəsi/","đại sứ quán",["CITY"],13],["footpath","/ˈfʊtpæθ/","lối đi bộ",["CITY"],13],["garden","/ˈɡɑːrdn/","vườn",["CITY"],13],["hospital","/ˈhɑːspɪtl/","bệnh viện",["CITY"],13],["lane","/leɪn/","làn đường",["CITY"],13],["mall","/mɔːl/","trung tâm mua sắm",["CITY"],13],["park","/pɑːrk/","công viên",["CITY"],13],["post office","/ˈpəʊst ɑːfɪs/","bưu điện",["CITY"],13],["railway","/ˈreɪlweɪ/","đường sắt",["CITY"],13],["restaurant","/ˈrestrɑːnt/","nhà hàng",["CITY"],13],["road system","/rəʊd ˈsɪstəm/","hệ thống đường xá",["CITY"],13],["roundabout","/ˈraʊndəbaʊt/","bùng binh",["CITY"],13],["school","/skuːl/","trường học",["CITY"],13],["street","/striːt/","đường phố",["CITY"],13],["temple","/ˈtempl/","đền",["CITY"],13],["theatre","/ˈθiːətər/; /ˈθɪətə/","rạp, nhà hát; Sân khấu",["CITY","LITERATURE"],13],["acupuncture","/ˈækjupʌŋktʃər/","châm cứu",["HEALTH"],12],["check-up","/ˈtʃek ʌp/","kiểm tra",["HEALTH"],12],["disease","/dɪˈziːz/","bệnh",["HEALTH"],12],["healthcare system","/ˈhelθ ker ˈsɪstəm/","hệ thống chăm sóc sức khỏe",["HEALTH"],12],["healthy","/ˈhelθi/","khỏe mạnh",["HEALTH"],12],["injury","/ˈɪndʒəri/","chấn thương",["HEALTH"],12],["keep-fit","/ˌkiːp ˈfɪt/","những bài tập giữ dáng",["HEALTH"],12],["leisure time","/ˈliːʒər taɪm/","thời gian rảnh",["HEALTH"],12],["medical","/ˈmedɪkl/","sự khám sức khỏe",["HEALTH"],12],["medicine","/ˈmedɪsn/","thuốc uống",["HEALTH"],12],["nursery","/ˈnɜːrsəri/","nhà trẻ",["HEALTH"],12],["nursing care","/ˈnɜːrsɪŋ ker/","chăm sóc điều dưỡng",["HEALTH"],12],["nutrient","/ˈnuːtriənt/","chất dinh dưỡng",["HEALTH"],12],["nutrition","/nuˈtrɪʃn/","sự dinh dưỡng",["HEALTH"],12],["nutritional","/nuˈtrɪʃənl/","dinh dưỡng",["HEALTH"],12],["outdoor activities","/ˈaʊtdɔːr ækˈtɪvəti/","hoạt động ngoài trời",["HEALTH"],12],["regular exercise","/ˈreɡjələr ˈeksərsaɪz/","thể dục thường xuyên",["HEALTH"],12],["remedy","/ˈremədi/","phương thuốc",["HEALTH"],12],["therapy","/ˈθerəpi/","liệu pháp",["HEALTH"],12],["treatment","/ˈtriːtmənt/","sự điều trị",["HEALTH"],12],["vaccinate","/ˈvæksɪneɪt/","tiêm chủng",["HEALTH"],12],["vaccine","/vækˈsiːn/","vắc-xin",["HEALTH"],12],["yoga","/ˈjəʊɡə/","yoga",["HEALTH"],12],["balanced diet","/ˈbælənst ˈdaɪət/","chế độ ăn kiêng cân bằng",["HEALTH"],12],["bean","/biːn/","đậu",["HEALTH"],12],["blackcurrant","/ˈblækkɜːrənt/","quả lý chua đen",["HEALTH"],12],["bread","/bred/","bánh mỳ",["HEALTH"],12],["carbohydrate","/ˌkɑːrbəʊˈhaɪdreɪt/","tinh bột",["HEALTH"],12],["cereal","/ˈsɪriəl/","ngũ cốc",["HEALTH"],12],["cheese","/tʃiːz/","phô mai",["HEALTH"],12],["dairy","/ˈderi/","sản phẩm bơ sữa",["HEALTH"],12],["egg","/eɡ/","trứng",["HEALTH"],12],["egg yolk","/eɡ jəʊk/","lòng đỏ trứng",["HEALTH"],12],["food pyramid","/fuːd ˈpɪrəmɪd/","tháp dinh dưỡng",["HEALTH"],12],["fruit","/fruːt/","hoa quả",["HEALTH"],12],["green pepper","/ˌɡriːn ˈpepər/","ớt xanh",["HEALTH"],12],["liver","/ˈlɪvər/","gan",["HEALTH"],12],["meal","/miːl/","bữa ăn",["HEALTH"],12],["meat","/miːt/","thịt",["HEALTH"],12],["milk","/mɪlk/","sữa",["HEALTH"],12],["mineral","/ˈmɪnərəl/","chất khoáng; Khoáng chất",["HEALTH","SCIENCE"],12],["nut","/nʌt/","quả hạch",["HEALTH"],12],["pasta","/ˈpɑːstə/","món mỳ",["HEALTH"],12],["pizza","/ˈpiːtsə/","bánh pizza",["HEALTH"],12],["potato","/pəˈteɪtəʊ/","khoai tây",["HEALTH"],12],["protein","/ˈprəʊtiːn/","chất đạm",["HEALTH"],12],["rice","/raɪs/","cơm",["HEALTH"],12],["salad bar","/ˈsæləd bɑːr/","quầy salad",["HEALTH"],12],["seafood","/ˈsiːfuːd/","hải sản",["HEALTH"],12],["tomato","/təˈmeɪtəʊ/","cà chua",["HEALTH"],12],["vegetable","/ˈvedʒtəbl/","rau củ",["HEALTH"],12],["vegetarian","/ˌvedʒəˈteriən/","người ăn chay",["HEALTH"],12],["vitamin","/ˈvaɪtəmɪn/","vitamin",["HEALTH"],12],["yoghurt","/ˈjəʊɡərt/","sữa chua",["HEALTH"],12],["zinc","/zɪŋk/","kẽm",["HEALTH"],12],["accommodation","/əˌkɑːməˈdeɪʃn/","phòng ở",["PLACES"],13],["amusement park","/əˈmjuːzmənt pɑːrk/","công viên giải trí",["PLACES"],13],["bakery","/ˈbeɪkəri/","tiệm bánh",["PLACES"],13],["bookshop","/ˈbʊkʃɑːp/","hiệu sách",["PLACES"],13],["boutique","/buːˈtiːk/","cửa hàng nhỏ",["PLACES"],13],["bus station","/ˈbʌs steɪʃn/","bến xe buýt",["PLACES"],13],["cafeteria","/ˌkæfəˈtɪriə/","quán ăn tự phục vụ",["PLACES"],13],["canteen","/kænˈtiːn/","căng-tin",["PLACES"],13],["church","/tʃɜːrtʃ/","nhà thờ",["PLACES"],13],["clinic","/ˈklɪnɪk/","phòng khám",["PLACES"],13],["cottage","/ˈkɑːtɪdʒ/; /'kɒtidʒ/","nhà tranh; Nhà tranh",["PLACES","REAL ESTATE"],13],["court","/kɔːrt/","tòa án; sân (thể thao)",["PLACES","SPORTS"],13],["dance studio","/dæns ˈstuːdiəʊ/","phòng tập nhảy",["PLACES"],13],["factory","/ˈfæktri/","nhà máy",["PLACES"],13],["fire station","/ˈfaɪər steɪʃn/","trạm cứu hỏa",["PLACES"],13],["gas station","/ˈɡæs steɪʃn/","trạm xăng",["PLACES"],13],["grocery","/ˈɡrəʊsəri/","cửa hàng tạp hóa",["PLACES"],13],["hotel","/həʊˈtel/","khách sạn",["PLACES"],13],["kindergarten","/ˈkɪndərɡɑːrtn/","trường mẫu giáo",["PLACES"],13],["library","/ˈlaɪbreri/","thư viện; Thư viện",["PLACES","EDUCATION (Detailed)"],13],["parliament","/ˈpɑːrləmənt/; /ˈpɑː.lɪ.mənt/","nghị viện; quốc hội",["PLACES","POLITICS"],13],["pharmacy","/ˈfɑːrməsi/","hiệu thuốc",["PLACES"],13],["playground","/ˈpleɪɡraʊnd/","sân chơi",["PLACES"],13],["police station","/pəˈliːs steɪʃn/","đồn cảnh sát",["PLACES"],13],["showroom","/ˈʃəʊruːm/","phòng trưng bày",["PLACES"],13],["sports centre","/ˈspɔːrts sentər/","trung tâm thể thao",["PLACES"],13],["supermarket","/ˈsuːpərmɑːrkɪt/","siêu thị",["PLACES"],13],["swimming pool","/ˈswɪmɪŋ puːl/","bể bơi",["PLACES"],13],["train station","/ˈtreɪn steɪʃn/","ga xe lửa",["PLACES"],13],["zoo","/zuː/","sở thú",["PLACES"],13],["apartment block","/əˈpɑːrtmənt blɑːk/","khối căn hộ",["HOMES"],13],["basement","/ˈbeɪsmənt/; /ˈbeɪs.mənt/","tầng hầm",["HOMES","ARCHITECTURE - BUILDINGS"],13],["bathroom","/ˈbæθrʊm/","phòng tắm",["HOMES"],13],["bedroom","/ˈbedrʊm/","phòng ngủ",["HOMES"],13],["block of flats","/blɑːk əv flætz/","khối căn hộ",["HOMES"],13],["bungalow","/ˈbʌŋɡələʊ/; /ˈbʌŋgələʊ/","nhà gỗ một tầng; Nhà 1 trệt",["HOMES","REAL ESTATE"],13],["chimney","/ˈtʃɪmni/","ống khói",["HOMES"],13],["coffee table","/ˈkɔːfi teɪbl/","bàn cà phê",["HOMES"],13],["condominium","/ˌkɑːndəˈmɪniəm/","căn hộ chung cư; Chung cư cao cấp",["HOMES","REAL ESTATE"],13],["couch","/kaʊtʃ/","ghế dài",["HOMES"],13],["dormitory","/ˈdɔːrmətɔːri/","ký túc xá",["HOMES"],13],["duplex","/ˈduːpleks/","nhà cho hai hộ ở",["HOMES"],13],["ground floor","/ˌɡraʊnd ˈflɔːr/","tầng trệt",["HOMES"],13],["hallway","/ˈhɔːlweɪ/","hành lang",["HOMES"],13],["houseboat","/ˈhaʊsbəʊt/","nhà thuyền",["HOMES"],13],["insurance","/ɪnˈʃʊrəns/; /ɪnˈʃʊərəns/","bảo hiểm; Bảo hiểm",["HOMES","INSURANCE"],13],["kitchen","/ˈkɪtʃɪn/","phòng bếp",["HOMES"],13],["landlord","/ˈlændlɔːrd/","chủ nhà",["HOMES"],13],["lease","/liːs/","cho thuê",["HOMES"],13],["lounge","/laʊndʒ/","buồng đợi (khách sạn, sân bay)",["HOMES"],13],["microwave","/ˈmaɪkrəweɪv/","lò vi sóng",["HOMES"],13],["mobile home","/ˌməʊbl ˈhəʊm/","nhà lưu động",["HOMES"],13],["neighbor","/ˈneɪbər/","hàng xóm",["HOMES"],13],["neighborhood","/ˈneɪbərhʊd/","vùng lân cận",["HOMES"],13],["oven","/ˈʌvn/","lò",["HOMES"],13],["refrigerator","/rɪˈfrɪdʒəreɪtər/","tủ lạnh",["HOMES"],13],["rent","/rent/","thuê",["HOMES"],13],["rooftop","/ˈruːftɑːp/","sân thượng",["HOMES"],13],["row house","/ˈrəʊ haʊs/","nhà ở liền kề",["HOMES"],13],["semi-detached house","/ˌsemi dɪˈtætʃt haʊs/; /ˌsem.i.dɪˈtætʃt haʊs/","nhà song lập; nhà bán biệt lập, chỉ chung 1 bức tường với nhà bên cạnh",["HOMES","ARCHITECTURE - BUILDINGS"],13],["sofa","/ˈsəʊfə/","ghế xô-fa",["HOMES"],13],["stairs","/sterz/","cầu thang",["HOMES"],13],["storey","/ˈstɔːri/; /ˈstɔː.ri/","tầng; tầng của 1 tòa nhà",["HOMES","ARCHITECTURE - BUILDINGS"],13],["suburb","/ˈsʌbɜːrb/","ngoại thành",["HOMES"],13],["tenant","/ˈtenənt/","người thuê nhà",["HOMES"],13],["terraced house","/ˌterəst ˈhaʊs/; /ˈterəst haʊs/","nhà liền kề; Nhà theo dãy có cùng kiến trúc",["HOMES","REAL ESTATE"],13],["thatched cottage","/θætʃt ˈkɑːtɪdʒ/","nhà tranh",["HOMES"],13],["town house","/ˈtaʊn haʊs/","nhà phố",["HOMES"],13],["cheap","/tʃiːp/","rẻ",["RATING - QUALITIES"],21],["colored","/ˈkʌlərd/","có màu sắc",["RATING - QUALITIES"],21],["dangerous","/ˈdeɪndʒərəs/","nguy hiểm",["RATING - QUALITIES"],21],["disappointed","/ˌdɪsəˈpɔɪntɪd/","thất vọng",["RATING - QUALITIES"],21],["efficient","/ɪˈfɪʃnt/","có hiệu quả",["RATING - QUALITIES"],21],["expensive","/ɪkˈspensɪv/","đắt đỏ",["RATING - QUALITIES"],21],["luxurious","/lʌɡˈʒʊriəs/","sang trọng, xa xỉ",["RATING - QUALITIES"],21],["poor quality","/pɔːr ˈkwɑːləti/","chất lượng thấp",["RATING - QUALITIES"],21],["reasonable","/ˈriːznəbl/","hợp lý, phải chăng",["RATING - QUALITIES"],21],["safe","/seɪf/","an toàn",["RATING - QUALITIES"],21],["satisfactory","/ˌsætɪsˈfæktəri/","thỏa đáng",["RATING - QUALITIES"],21],["satisfied","/ˈsætɪsfaɪd/","thỏa mãn, hài lòng",["RATING - QUALITIES"],21],["spotted","/ˈspɑːtɪd/","có đốm",["RATING - QUALITIES"],21],["striped","/straɪpt/","có sọc",["RATING - QUALITIES"],21],["strongly recommended","/ˈstrɔːŋli ˌrekəˈmendɪd/","rất được khuyến khích",["RATING - QUALITIES"],21],["castle","/ˈkæsl/","lâu đài",["ARCHITECTURE - BUILDINGS"],13],["dome","/dəʊm/","mái vòm",["ARCHITECTURE - BUILDINGS"],13],["fort","/fɔːrt/","pháo đài",["ARCHITECTURE - BUILDINGS"],13],["glasshouse","/ˈɡlæshaʊs/","nhà kính",["ARCHITECTURE - BUILDINGS"],13],["hut","/hʌt/","túp lều",["ARCHITECTURE - BUILDINGS"],13],["lighthouse","/ˈlaɪthaʊs/","hải đăng",["ARCHITECTURE - BUILDINGS"],13],["log cabin","/ˌlɔːɡ ˈkæbɪn/","nhà làm bằng cây gỗ ghép",["ARCHITECTURE - BUILDINGS"],13],["mansion","/ˈmænʃn/","dinh thự",["ARCHITECTURE - BUILDINGS"],13],["palace","/ˈpæləs/","cung điện",["ARCHITECTURE - BUILDINGS"],13],["sculpture","/ˈskʌlptʃər/; /ˈskʌlptʃə(r)/","công trình điêu khắc; tượng; Điêu khắc",["ARCHITECTURE - BUILDINGS","ART"],13],["skyscraper","/ˈskaɪskreɪpər/","tòa nhà chọc trời",["ARCHITECTURE - BUILDINGS"],13],["Architectural","/ˌɑː.kɪˈtek.tʃər.əl/","thuộc về kiến trúc",["ARCHITECTURE - BUILDINGS"],13],["Architect","/ˈɑː.kɪ.tekt/; /ˈɑːrkɪtekt/","kiến trúc sư",["ARCHITECTURE - BUILDINGS","WORKS"],13],["Construct","/kənˈstrʌkt/","xây dựng",["ARCHITECTURE - BUILDINGS"],13],["Construction","/kənˈstrʌk.ʃən/","xây dựng, [n]: 1 công trình đã đc xây dựng",["ARCHITECTURE - BUILDINGS"],13],["Design","/dɪˈzaɪn/","thiết kế",["ARCHITECTURE - BUILDINGS"],13],["Base","/beɪs/","phần chân, đế của 1 đồ vật",["ARCHITECTURE - BUILDINGS"],13],["Foundations [plural noun]","/faʊnˈdeɪ.ʃənz/","Hầm móng của 1 công trình, tòa nhà",["ARCHITECTURE - BUILDINGS"],13],["Floor","/flɔːr/","",["ARCHITECTURE - BUILDINGS"],13],["Level","/ˈlev.əl/","",["ARCHITECTURE - BUILDINGS"],13],["Construction materials","/kənˈstrʌk.ʃən/ /məˈtɪə.ri.əl/","vật liệu xây dựng",["ARCHITECTURE - BUILDINGS"],13],["Building materials","/ˈbɪl.dɪŋ məˈtɪə.ri.əlz/","vật liệu xây dựng",["ARCHITECTURE - BUILDINGS"],13],["Gravel","/ˈɡræv.əl/","sỏi",["ARCHITECTURE - BUILDINGS"],13],["Marble","/ˈmɑː.bəl/","đá hoa/ cẩm thạch",["ARCHITECTURE - BUILDINGS"],13],["Concrete","/ˈkɒŋ.kriːt/; /ˈkɑːnkriːt/","bê tông; bê-tông",["ARCHITECTURE - BUILDINGS","MATERIALS"],13],["Cement","/sɪˈment/","xi măng; xi-măng",["ARCHITECTURE - BUILDINGS","MATERIALS"],13],["Reinforced concrete","/ˌriː.ɪnˈfɔːst ˈkɒŋ.kriːt/","bê tông cốt thép",["ARCHITECTURE - BUILDINGS"],13],["Asphalt","/ˈæs.fɔːlt/","nhựa đường",["ARCHITECTURE - BUILDINGS"],13],["Terraced house / Rowhouse","/ˈter.əst haʊs/ /ˈrəʊˌhaʊs/","nhà liền kề, là loại nhà ở mặt đất, đc xây dựng sát vách tường với 2 nhà khác ở 2 bên trên cùng 1 dãy phố",["ARCHITECTURE - BUILDINGS"],13],["Detached house","/dɪˈtætʃt haʊs/","nhà biệt lập, hoàn toàn không chung bức tường với nhà khác, thường đc ngăn cách với nhà khác bằng sân, vườn, hàng rào v.v",["ARCHITECTURE - BUILDINGS"],13],["Complex","/ˈkɒm.pleks/","khu phức hợp, gồm nhiều công trình liên kết với nhau",["ARCHITECTURE - BUILDINGS"],13],["Balcony","/ˈbæl.kə.ni/","ban công",["ARCHITECTURE - BUILDINGS"],13],["Attic","/ˈæt.ɪk/","gác mái",["ARCHITECTURE - BUILDINGS"],13],["En-suite","/ˌɒn ˈswiːt/","1 nhà vệ sinh khép kín bên trong phòng ngủ",["ARCHITECTURE - BUILDINGS"],13],["Interior","/ɪnˈtɪə.ri.ər/","nội thất, phần bên trong tòa nhà, bao gồm các cơ sở vật chất, đồ đạc",["ARCHITECTURE - BUILDINGS"],13],["Exterior","/ɪkˈstɪə.ri.ər/","ngoại thất, phần bên ngoài tòa nhà, bao gồm không gian sân, vườn, màu sơn bên ngoài v.v",["ARCHITECTURE - BUILDINGS"],13],["advanced","/ədˈvænst/","tiên tiến",["EDUCATION"],5],["assessment","/əˈsesmənt/","sự đánh giá",["EDUCATION"],5],["attendance","/əˈtendəns/","sự có mặt",["EDUCATION"],5],["attendance rate","/əˈtendəns reɪt/","tỷ lệ chuyên cần",["EDUCATION"],5],["bachelor's degree","/ˈbætʃələrz dɪɡriː/","cử nhân; Bằng cử nhân",["EDUCATION","EDUCATION (Detailed)"],5],["background","/ˈbækɡraʊnd/","bối cảnh",["EDUCATION"],5],["certificate","/sərˈtɪfɪkət/","chứng chỉ",["EDUCATION"],5],["classroom","/ˈklæsruːm/","lớp học",["EDUCATION"],5],["college","/ˈkɑːlɪdʒ/","trường đại học; Cao đẳng",["EDUCATION","EDUCATION (Detailed)"],5],["college preparatory","/ˈkɑːlɪdʒ prɪˈpærətɔːri/","dự bị đại học",["EDUCATION"],5],["commencement","/kəˈmensmənt/","lễ phát bằng",["EDUCATION"],5],["computer centre","/kəmˈpjuːtər ˈsentər/","trung tâm máy tính",["EDUCATION"],5],["course outline","/kɔːrs ˈaʊtlaɪn/","tóm tắt nội dung học",["EDUCATION"],5],["deadline","/ˈdedlaɪn/","hạn chót",["EDUCATION"],5],["department","/dɪˈpɑːrtmənt/","khoa",["EDUCATION"],5],["dictionary","/ˈdɪkʃəneri/","từ điển",["EDUCATION"],5],["dining room","/ˈdaɪnɪŋ rʊm/","phòng ăn",["EDUCATION"],5],["diploma","/dɪˈpləʊmə/","văn bằng",["EDUCATION"],5],["dissertation","/ˌdɪsərˈteɪʃn/","luận văn, luận án; Luận án (để lấy bằng tiến sĩ)",["EDUCATION","EDUCATION (Detailed)"],5],["exchange student","/ɪksˈtʃeɪndʒ ˈstuːdnt/","sinh viên trao đổi",["EDUCATION"],5],["experience","/ɪkˈspɪriəns/; /ɪkˈspɪə.ri.əns/","kinh nghiệm; go through, trải qua",["EDUCATION","POLITICS"],5],["experiential learning","/ɪkˌspɪriˈenʃl ˈlɜːrnɪŋ/","học tập qua trải nghiệm",["EDUCATION"],5],["experiment","/ɪkˈsperɪmənt/","thí nghiệm",["EDUCATION"],5],["facilities","/fəˈsɪlətiz/","những tiện nghi",["EDUCATION"],5],["faculty","/ˈfæklti/; /ˈfæk.əl.ti/","khoa; khoa (trong 1 trường đại học, bệnh viện v.v)",["EDUCATION","POLITICS"],5],["feedback","/ˈfiːdbæk/","phản hồi",["EDUCATION"],5],["foreign student","/ˈfɔːrən ˈstuːdnt/","sinh viên ngoại quốc",["EDUCATION"],5],["give a talk","/ɡɪv ə tɔːk/","nói",["EDUCATION"],5],["graduate","/ˈɡrædʒuət/","tốt nghiệp; Tốt nghiệp",["EDUCATION","EDUCATION (Detailed)"],5],["graduation ceremony","/ˌɡrædʒuˈeɪʃn ˈserəməʊni/","lễ tốt nghiệp",["EDUCATION"],5],["graduation rate","/ˌɡrædʒuˈeɪʃn reɪt/","tỷ lệ tốt nghiệp",["EDUCATION"],5],["group discussion","/ɡruːp dɪˈskʌʃn/","thảo luận nhóm",["EDUCATION"],5],["guideline","/ˈɡaɪdlaɪn/","nguyên tắc chỉ đạo",["EDUCATION"],5],["handout","/ˈhændaʊt/","tài liệu, bài tập phôtô; Tài liệu được phát",["EDUCATION","EDUCATION (Detailed)"],5],["higher education","/ˌhaɪər edʒuˈkeɪʃn/","giáo dục bậc đại học",["EDUCATION"],5],["homestay","/ˈhəʊmsteɪ/","căn hộ kiểu studio",["EDUCATION"],5],["intermediate","/ˌɪntərˈmiːdiət/","trung cấp",["EDUCATION"],5],["international","/ˌɪntərˈnæʃnəl/","quốc tế",["EDUCATION"],5],["introductory","/ˌɪntrəˈdʌktəri/","mở đầu",["EDUCATION"],5],["junior","/ˈdʒuːniər/","sinh viên năm ba; Sinh viên năm ba",["EDUCATION","EDUCATION (Detailed)"],5],["knowledge","/ˈnɑːlɪdʒ/","kiến thức",["EDUCATION"],5],["laptop","/ˈlæptɑːp/","máy tính xách tay",["EDUCATION"],5],["leaflet","/ˈliːflət/","tờ truyền đơn",["EDUCATION","ARTS - MEDIA"],5],["lecture","/ˈlektʃər/","bài giảng; Buổi học",["EDUCATION","EDUCATION (Detailed)"],5],["lecturer","/ˈlektʃərər/","giảng viên",["EDUCATION"],5],["main hall","/meɪn hɔːl/","sảnh chính",["EDUCATION"],5],["module","/ˈmɑːdʒuːl/","học phần",["EDUCATION"],5],["national","/ˈnæʃnəl/","quốc dân",["EDUCATION"],5],["orientation","/ˌɔːriənˈteɪʃn/","sự định hướng; Sự định hướng; Hướng",["EDUCATION","ANTHROPOLOGY","REAL ESTATE"],5],["outcome","/ˈaʊtkʌm/","kết quả",["EDUCATION"],5],["overseas student","/ˌəʊvərˈsiːz ˈstuːdnt/","du học sinh",["EDUCATION"],5],["pencil","/ˈpensl/","bút chì",["EDUCATION"],5],["placement test","/ˈpleɪsmənt test/","bài thi đánh giá năng lực",["EDUCATION"],5],["primary","/ˈpraɪmeri/","sơ cấp",["EDUCATION"],5],["printer","/ˈprɪntər/","máy in",["EDUCATION"],5],["proofread","/ˈpruːfriːd/","đọc lại để kiểm tra",["EDUCATION"],5],["publication","/ˌpʌblɪˈkeɪʃn/","sự công bố",["EDUCATION"],5],["pupil","/ˈpjuːpl/","học sinh",["EDUCATION"],5],["reference","/ˈrefrəns/","sự tham khảo",["EDUCATION"],5],["registrar’s office","/ˈredʒɪstrɑːrz ˈɑːfɪs/","văn phòng cán bộ đào tạo",["EDUCATION"],5],["report","/rɪˈpɔːrt/","báo cáo",["EDUCATION"],5],["research","/ˈriːsɜːrtʃ/","nghiên cứu; Nghiên cứu",["EDUCATION","EDUCATION (Detailed)"],5],["schedule","/ˈskedʒuːl/","kế hoạch làm việc",["EDUCATION"],5],["school reunion","/skuːl ˌriːˈjuːniən/","buổi tựu trường",["EDUCATION"],5],["secondary","/ˈsekənderi/","trung cấp",["EDUCATION"],5],["senior","/ˈsiːniər/","sinh viên năm cuối; Sinh viên năm cuối",["EDUCATION","EDUCATION (Detailed)"],5],["specialist","/ˈspeʃəlɪst/","chuyên gia; Chuyên gia",["EDUCATION","FORENSICS"],5],["speech","/spiːtʃ/","bài nói, diễn thuyết; Bài phát biểu",["EDUCATION","LITERATURE"],5],["staff","/stæf/","nhân viên",["EDUCATION"],5],["stationery","/ˈsteɪʃəneri/","đồ dùng văn phòng",["EDUCATION"],5],["student advisor","/ˈstuːdnt ədˈvaɪzər/","cố vấn sinh viên",["EDUCATION"],5],["student retention","/ˈstuːdnt rɪˈtenʃn/","bảo lưu",["EDUCATION"],5],["student support service","/ˈstuːdnt səˈpɔːrt ˈsɜːrvɪs/","dịch vụ hỗ trợ sinh viên",["EDUCATION"],5],["supervisor","/ˈsuːpərvaɪzər/","người giám sát",["EDUCATION"],5],["task","/tæsk/","bài tập, nhiệm vụ",["EDUCATION"],5],["teamwork","/ˈtiːmwɜːrk/","làm việc nhóm",["EDUCATION"],5],["textbook","/ˈtekstbʊk/","sách giáo khoa, giáo trình",["EDUCATION"],5],["topic","/ˈtɑːpɪk/; /ˈtɑː.pɪk/","đề tài, chủ đề; Đề tài",["EDUCATION","LITERATURE"],5],["tutor","/ˈtuːtər/","phụ đạo, gia sư",["EDUCATION"],5],["tutorial","/tuːˈtɔːriəl/","hướng dẫn",["EDUCATION"],5],["university","/ˌjuːnɪˈvɜːrsəti/","trường đại học; Đại học",["EDUCATION","EDUCATION (Detailed)"],5],["vocabulary","/vəˈkæbjəleri/","từ vựng",["EDUCATION"],5],["archery","/ˈɑːrtʃəri/","bắn cung",["HOBBIES"],9],["billiards","/ˈbɪljərdz/","bi-a",["HOBBIES"],9],["bowling","/ˈbəʊlɪŋ/","bowling",["HOBBIES"],9],["caving","/ˈkeɪvɪŋ/","khám phá hang động",["HOBBIES"],9],["chess","/tʃes/","cờ",["HOBBIES"],9],["climbing","/ˈklaɪmɪŋ/","leo núi",["HOBBIES"],9],["cycling","/ˈsaɪklɪŋ/","đạp xe",["HOBBIES"],9],["darts","/dɑːrtz/","phi tiêu",["HOBBIES"],9],["embroidery","/ɪmˈbrɔɪdəri/","thêu thùa",["HOBBIES"],9],["fishing","/ˈfɪʃɪŋ/","câu cá",["HOBBIES"],9],["gardening","/ˈɡɑːrdnɪŋ/","làm vườn",["HOBBIES"],9],["golf","/ɡɑːlf/","golf",["HOBBIES"],9],["hiking","/ˈhaɪkɪŋ/","đi bộ đường dài",["HOBBIES"],9],["ice skating","/ˈaɪs skeɪtɪŋ/","trượt băng",["HOBBIES"],9],["jogging","/ˈdʒɑːɡɪŋ/","chạy bộ",["HOBBIES"],9],["orienteering","/ˌɔːriənˈtɪrɪŋ/","chạy địa hình điều hướng",["HOBBIES"],9],["painting","/ˈpeɪntɪŋ/","hội họa; bức tranh",["HOBBIES","ART"],9],["parachute","/ˈpærəʃuːt/","nhảy dù",["HOBBIES"],9],["photography","/fəˈtɑːɡrəfi/","nhiếp ảnh",["HOBBIES"],9],["pottery","/ˈpɑːtəri/","làm đồ gốm",["HOBBIES"],9],["running","/ˈrʌnɪŋ/","chạy đua",["HOBBIES"],9],["scuba-diving","/ˈskuːbə daɪvɪŋ/","lặn có bình khí",["HOBBIES"],9],["skateboarding","/ˈskeɪtbɔːrdɪŋ/","trượt ván",["HOBBIES"],9],["snorkeling","/ˈsnɔːrklɪŋ/","lặn với ống thở",["HOBBIES"],9],["spelunking","/spəˈlʌŋkɪŋ/","khảo sát hang động",["HOBBIES"],9],["stamp collecting","/ˈstæmp kəlektɪŋ/","sưu tầm tem",["HOBBIES"],9],["walking","/ˈwɔːkɪŋ/","đi bộ",["HOBBIES"],9],["woodcarving","/ˈwʊdkɑːrvɪŋ/","chạm khắc gỗ",["HOBBIES"],9],["aluminum","/ˌæləˈmɪniəm/","nhôm",["MATERIALS"],10],["arsenic","/ˈɑːrsnɪk/","asen",["MATERIALS"],10],["bone","/bəʊn/","xương",["MATERIALS"],10],["ceramic","/səˈræmɪk/","gốm",["MATERIALS"],10],["coal","/kəʊl/","than",["MATERIALS"],10],["composite","/kəmˈpɑːzət/","hỗn hợp",["MATERIALS"],10],["copper","/ˈkɑːpər/","đồng",["MATERIALS"],10],["cotton","/ˈkɑːtn/","bông",["MATERIALS"],10],["fabric","/ˈfæbrɪk/","vải",["MATERIALS"],10],["feather","/ˈfeðər/","lông vũ; Lông vũ",["MATERIALS","ORNITHOLOGY"],10],["fiberglass","/ˈfaɪbərɡlæs/","sợi thủy tinh",["MATERIALS"],10],["fur","/fɜːr/","lông",["MATERIALS"],10],["glass","/ɡlæs/","thủy tinh",["MATERIALS"],10],["glue","/ɡluː/","keo",["MATERIALS"],10],["gold","/ɡəʊld/","vàng",["MATERIALS"],10],["lead","/liːd/","chì",["MATERIALS"],10],["leather","/ˈleðər/","da",["MATERIALS"],10],["lumber","/ˈlʌmbər/","gỗ xẻ",["MATERIALS"],10],["magnesium","/mæɡˈniːziəm/","magiê",["MATERIALS"],10],["manganese","/ˈmæŋɡəniːz/","mangan",["MATERIALS"],10],["metal","/ˈmetl/","kim loại",["MATERIALS"],10],["paper","/ˈpeɪpər/","giấy",["MATERIALS"],10],["plastic","/ˈplæstɪk/","nhựa",["MATERIALS"],10],["rubber","/ˈrʌbər/","cao su",["MATERIALS"],10],["silver","/ˈsɪlvər/","bạc",["MATERIALS"],10],["steel","/stiːl/","thép",["MATERIALS"],10],["stone","/stəʊn/","đá",["MATERIALS"],10],["textile","/ˈtekstaɪl/","vải dệt",["MATERIALS"],10],["tin","/tɪn/","thiếc",["MATERIALS"],10],["wax","/wæks/","sáp",["MATERIALS"],10],["wood","/wʊd/","gỗ",["MATERIALS"],10],["wool","/wʊl/","len",["MATERIALS"],10],["acid rain","/ˌæsɪd ˈreɪn/","mưa axit",["ENVIRONMENT"],1],["air pollution","/er pəˈluːʃn/","ô nhiễm không khí",["ENVIRONMENT"],1],["atmosphere","/ˈætməsfɪr/","không khí",["ENVIRONMENT"],1],["biodegradable","/ˌbaɪəʊdɪˈɡreɪdəbl/","phân hủy sinh học",["ENVIRONMENT"],1],["carbon","/ˌkɑːrbən/","cacbon",["ENVIRONMENT"],1],["carbon dioxide","/ˌkɑːrbən daɪˈɑːksaɪd/","cacbonic oxit (CO2)",["ENVIRONMENT"],1],["chemical-free","/ˈkemɪkl friː/","không có hóa chất",["ENVIRONMENT"],1],["contaminated","/kənˈtæmɪneɪtɪd/","bị ô nhiễm",["ENVIRONMENT"],1],["decompose","/ˌdiːkəmˈpəʊz/","phân hủy",["ENVIRONMENT"],1],["deforestation","/ˌdiːˌfɔːrɪˈsteɪʃn/; /diːˌfɒr.ɪˈsteɪ.ʃən/","sự chặt phá rừng; sự phá rừng",["ENVIRONMENT"],1],["degradation","/ˌdeɡrəˈdeɪʃn/","sự xuống cấp, thoái hóa",["ENVIRONMENT"],1],["desert","/ˈdezərt/","sa mạc",["ENVIRONMENT"],1],["drought","/draʊt/","hạn hán",["ENVIRONMENT"],1],["environmentally friendly","/ɪnˌvaɪrənmentəli ˈfrendli/","thân thiện với môi trường",["ENVIRONMENT"],1],["exhaust fumes","/ɪɡˈzɔːst fjuːmz/","khói thải, khí thải",["ENVIRONMENT"],1],["firewood","/ˈfaɪərwʊd/","củi",["ENVIRONMENT"],1],["fossil fuel","/ˈfɑːsl fjuːəl/","nhiên liệu hóa thạch",["ENVIRONMENT"],1],["global warming","/ˌɡləʊbl ˈwɔːrmɪŋ/","sự ấm lên toàn cầu",["ENVIRONMENT"],1],["greenhouse effect","/ˈɡriːnhaʊs ɪfekt/","hiệu ứng nhà kính",["ENVIRONMENT"],1],["hydroelectric power","/ˌhaɪdrəʊɪˈlektrɪk ˈpaʊər/","năng lượng thủy điện",["ENVIRONMENT"],1],["landfill","/ˈlændfɪl/","bãi rác",["ENVIRONMENT"],1],["nitrogen dioxide","/ˌnaɪtrədʒən daɪˈɑːksaɪd/","nitơ đioxit (NO2)",["ENVIRONMENT"],1],["non-renewable","/ˌnɑːn rɪˈnuːəbl/","không thể hồi phục",["ENVIRONMENT"],1],["non-renewable resource","/ ˌnɑːn rɪˈnuːəbl rɪˈsɔːrs/","tài nguyên không tái tạo",["ENVIRONMENT"],1],["ocean current","/ˈəʊʃn ˈkɜːrənt/","dòng hải lưu",["ENVIRONMENT"],1],["oxygen","/ˈɑːksɪdʒən/","khí oxy",["ENVIRONMENT"],1],["pollution","/pəˈluːʃn/","sự ô nhiễm",["ENVIRONMENT"],1],["power plant","/ˈpaʊər plænt/","nhà máy điện",["ENVIRONMENT"],1],["reliable","/rɪˈlaɪəbl/","đáng tin cậy",["ENVIRONMENT"],1],["renewable","/rɪˈnuːəbl/","có thể thay mới",["ENVIRONMENT"],1],["renewable energy","/rɪˈnuːəbl ˈenərdʒi/","năng lượng tái tạo",["ENVIRONMENT"],1],["sea level","/ˈsiː levl/","mực nước biển",["ENVIRONMENT"],1],["smog","/smɑːɡ/","sương khói",["ENVIRONMENT"],1],["soil","/sɔɪl/","đất",["ENVIRONMENT"],1],["soil conditioner","/sɔɪl kənˈdɪʃənər/","chất điều hòa đất",["ENVIRONMENT"],1],["soil pollution","/sɔɪl pəˈluːʃn /","ô nhiễm môi trường đất",["ENVIRONMENT"],1],["solar panel","/ˌsəʊlər ˈpænl/","tấm pin năng lượng mặt trời",["ENVIRONMENT"],1],["solar power","/ˌsəʊlər ˈpaʊər/","năng lượng mặt trời",["ENVIRONMENT"],1],["source of energy","/sɔːrs əv ˈenərdʒi/","nguồn năng lượng",["ENVIRONMENT"],1],["vegetation","/ˌvedʒəˈteɪʃn/","thực vật",["ENVIRONMENT"],1],["water pollution","/ˈwɔːtər pəˈluːʃn /","ô nhiễm môi trường nước",["ENVIRONMENT"],1],["wind turbine","/ˈwɪnd tɜːrbaɪn/","tuabin gió",["ENVIRONMENT"],1],["windmill","/ˈwɪndmɪl/","cối xay gió",["ENVIRONMENT"],1],["conservation","/ˌkɒn.səˈveɪ.ʃən/","sự bảo tồn",["ENVIRONMENT"],1],["contamination","/kənˈtæm.ɪ.neɪt/; /kənˌtæmɪˈneɪʃn/","sự làm nhiễm độc; Sự lây nhiễm",["ENVIRONMENT","FORENSICS"],1],["deplete","/dɪˈpliːt/","làm cạn kiệt",["ENVIRONMENT"],1],["ecosystem","/ˈiː.kəʊˌsɪs.təm/","hệ sinh thái; Hệ sinh thái",["ENVIRONMENT","BIOLOGY"],1],["endangered","/ɪnˈdeɪn.dʒəd/","gặp nguy hiểm; Có nguy cơ bị tuyệt chủng",["ENVIRONMENT","BIOLOGY"],1],["environmental","/ɪnˌvaɪ.rənˈmen.təl/","thuộc về môi trường",["ENVIRONMENT"],1],["greenhouse","/ˈɡriːn.haʊs/","nhà kính",["ENVIRONMENT"],1],["pollutant","/pəˈluː.tənt/","chất gây ô nhiễm",["ENVIRONMENT"],1],["rainforest","/ˈreɪn.fɒr.ɪst/","rừng mưa nhiệt đới",["ENVIRONMENT"],1],["touring","/tʊərɪŋ/","chuyến du lịch",["TOURING"],14],["aquarium","/əˈkweriəm/","thủy cung",["TOURING"],14],["bed and breakfast","/ˌbed ən ˈbrekfəst/","dịch vụ lưu trú chỉ bao gồm giường ngủ và bữa sáng",["TOURING"],14],["book","/bʊk/","đặt phòng",["TOURING"],14],["booking","/ˈbʊkɪŋ/","sự đặt phòng, dịch vụ",["TOURING"],14],["budget","/ˈbʌdʒɪt/","ngân sách",["TOURING"],14],["check-in","/ˈtʃek ɪn/","thủ tục nhận phòng; Thủ tục trước khi bay",["TOURING","AVIATION"],14],["checkout","/ˈtʃekaʊt/","thủ tục trả phòng",["TOURING"],14],["double bedded room","/ˌdʌbl bedɪd ˈruːm/","phòng đôi",["TOURING"],14],["excursion","/ɪkˈskɜːrʒn/","cuộc du ngoạn",["TOURING"],14],["flight ticket","/flaɪt ˈtɪkɪt/","vé máy bay",["TOURING"],14],["guest","/ɡest/","khách trọ",["TOURING"],14],["holiday","/ˈhɑːlədeɪ/","kỳ nghỉ",["TOURING"],14],["honeymoon","/ˈhʌnimuːn/","tuần trăng mật",["TOURING"],14],["hostel","/ˈhɑːstl/","nhà nghỉ giá rẻ",["TOURING"],14],["memorable","/ˈmemərəbl/","đáng nhớ",["TOURING"],14],["minibar","/ˈmɪnibɑːr/","tủ lạnh mini khách sạn",["TOURING"],14],["package tour","/ˈpækɪdʒ tʊr/","tua du lịch trọn gói",["TOURING"],14],["picnic","/ˈpɪknɪk/","dã ngoại",["TOURING"],14],["receptionist","/rɪˈsepʃənɪst/","lễ tân",["TOURING"],14],["reservation","/ˌrezərˈveɪʃn/","sự đặt chỗ trước",["TOURING"],14],["resort","/rɪˈzɔːrt/","nơi nghỉ dưỡng",["TOURING"],14],["room service","/ˈruːm sɜːrvɪs/","dịch vụ phòng",["TOURING"],14],["route","/ruːt/","tuyến đường, lộ trình",["TOURING"],14],["single bedded room","/ˈsɪŋɡl bedɪd ˈruːm/","phòng đơn",["TOURING"],14],["souvenir","/ˌsuːvəˈnɪr/","quà lưu niệm",["TOURING"],14],["suite","/swiːt/","phòng cao cấp",["TOURING"],14],["ticket","/ˈtɪkɪt/","vé",["TOURING"],14],["ticket office","/ˈtɪkɪt ˈɑːfɪs/","phòng bán vé",["TOURING"],14],["tourist","/ˈtʊrɪst/","du khách",["TOURING"],14],["tourist attraction","/ˈtʊrɪst əˈtrækʃn/","điểm tham quan du lịch",["TOURING"],14],["tourist guided tour","/ ˈtʊrɪst ˈɡaɪdɪd tʊr/","chuyến du lịch có người hướng dẫn",["TOURING"],14],["train ticket","/treɪn ˈtɪkɪt/","vé tàu",["TOURING"],14],["travel agency","/ˈtrævl eɪdʒənsi/","đại lý lữ hành",["TOURING"],14],["trip","/trɪp/","chuyến đi",["TOURING"],14],["view","/vjuː/","quang cảnh",["TOURING"],14],["villa","/ˈvɪlə/","biệt thự",["TOURING"],14],["voyage","/ˈvɔɪɪdʒ/","chuyến đi xa",["TOURING"],14],["art gallery","/ˈɑːrt ɡæləri/; /ˈɑːt ɡæləri/","phòng trưng bày nghệ thuật; triển lãm nghệ thuật",["ARTS - MEDIA","ART"],9],["artist","/ˈɑːrtɪst/","nghệ sĩ",["ARTS - MEDIA"],9],["audience","/ˈɔːdiəns/","khán giả",["ARTS - MEDIA"],9],["ballet","/bæˈleɪ/","ba-lê",["ARTS - MEDIA"],9],["broadcast","/ˈbrɔːdkæst/","chương trình phát thanh hoặc truyền hình",["ARTS - MEDIA"],9],["brochure","/brəʊˈʃʊr/","ấn phẩm quảng cáo duới dạng tập/cuốn sách mỏng",["ARTS - MEDIA"],9],["carnival","/ˈkɑːrnɪvl/","ngày hội",["ARTS - MEDIA"],9],["cinema","/ˈsɪnəmə/","rạp chiếu phim",["ARTS - MEDIA"],9],["classical music","/ˌklæsɪkl ˈmjuːzɪk/","nhạc cổ điển",["ARTS - MEDIA"],9],["concert","/ˈkɑːnsərt/","buổi hòa nhạc",["ARTS - MEDIA"],9],["conductor","/kənˈdʌktər/","người chỉ đạo",["ARTS - MEDIA"],9],["editor","/ˈedɪtər/","biên tập viên",["ARTS - MEDIA"],9],["exhibition","/ˌeksɪˈbɪʃn/","cuộc triển lãm; trưng bày, triển lãm",["ARTS - MEDIA","ART"],9],["festival","/ˈfestɪvl/","lễ hội",["ARTS - MEDIA"],9],["graphics","/ˈɡræfɪks/","đồ họa",["ARTS - MEDIA"],9],["journalism","/ˈdʒɜːrnəlɪzəm/","nghề làm báo",["ARTS - MEDIA"],9],["journalist","/ˈdʒɜːrnəlɪst/","nhà báo, ký giả",["ARTS - MEDIA"],9],["museum","/mjuˈziːəm/","bảo tàng",["ARTS - MEDIA"],9],["newspaper","/ˈnuːzpeɪpər/","báo",["ARTS - MEDIA"],9],["opera","/ˈɑːprə/","nhạc kịch, ô-pê-ra",["ARTS - MEDIA"],9],["orchestra","/ˈɔːrkɪstrə/; /ˈɔːkɪstrə/","dàn nhạc; Dàn nhạc",["ARTS - MEDIA","ART"],9],["prospectus","/prəˈspektəs/","tờ quảng cáo",["ARTS - MEDIA"],9],["radio","/ˈreɪdiəʊ/","ra-đi-ô",["ARTS - MEDIA"],9],["symphony","/ˈsɪmfəni/","bản nhạc giao hưởng",["ARTS - MEDIA"],9],["television","/ˈtelɪvɪʒn/","vô tuyến",["ARTS - MEDIA"],9],["the press","/ðə pres/","báo chí",["ARTS - MEDIA"],9],["vocalist","/ˈvəʊkəlɪst/","người hát",["ARTS - MEDIA"],9],["abseiling","/ˈæbseɪlɪŋ/","tụt xuống núi bằng dây thừng",["SPORTS"],9],["American football","/əˌmerɪkən ˈfʊtbɔːl/","bóng đá kiểu Mỹ",["SPORTS"],9],["athlete","/ˈæθliːt/","vận động viên",["SPORTS"],9],["badminton","/ˈbædmɪntən/","môn cầu lông",["SPORTS"],9],["barbell","/ˈbɑːrbel/","tạ đòn",["SPORTS"],9],["baseball","/ˈbeɪsbɔːl/","môn bóng chày",["SPORTS"],9],["basketball","/ˈbæskɪtbɔːl/","môn bóng rổ",["SPORTS"],9],["bodyboarding","/ˈbɑːdibɔːrdɪŋ/","môn lướt ván nằm sấp",["SPORTS"],9],["bungee jumping","/ˈbʌndʒi dʒʌmpɪŋ/","nhảy bungee",["SPORTS"],9],["canoeing","/kəˈnuːɪŋ/","môn thể thao chèo xuồng với một mái chèo đơn",["SPORTS"],9],["championship","/ˈtʃæmpiənʃɪp/","chức vô địch",["SPORTS"],9],["club","/klʌb/","câu lạc bộ",["SPORTS"],9],["cricket","/ˈkrɪkɪt/","môn bóng gậy",["SPORTS"],9],["extreme sport","/ɪkˌstriːm ˈspɔːrt/","thể thao mạo hiểm",["SPORTS"],9],["gym","/dʒɪm/","phòng tập thể dục",["SPORTS"],9],["gymnasium","/dʒɪmˈneɪziəm/","phòng tập thể dục (có dụng cụ)",["SPORTS"],9],["hang-gliding","/ˈhæŋ ɡlaɪdɪŋ/","môn thể thao bay lượn bằng cách bám vào khung diều và điều khiển bằng tay chân",["SPORTS"],9],["hockey","/ˈhɑːki/","môn khúc côn cầu",["SPORTS"],9],["horse racing","/ˈhɔːrs reɪsɪŋ/","môn đua ngựa",["SPORTS"],9],["javelin","/ˈdʒævlɪn/","cái lao",["SPORTS"],9],["jet-skiing","/ˈdʒet skiːɪŋ/","môn thể thao với mô tô nước",["SPORTS"],9],["judo","/ˈdʒuːdəʊ/","Nhu đạo",["SPORTS"],9],["kick-boxing","/ˈkɪk bɑːksɪŋ/","môn thể thao đối kháng kết hợp các đòn đấm , đá từ các môn thể thao khác",["SPORTS"],9],["kitesurfing","/ˈkaɪtsɜːrfɪŋ/","môn lướt ván diều",["SPORTS"],9],["membership","/ˈmembərʃɪp/","tư cách hội viên",["SPORTS"],9],["mountain biking","/ˈmaʊntn baɪkɪŋ/","môn đạp xe leo núi",["SPORTS"],9],["paragliding","/ˈpærəɡlaɪdɪŋ/","môn thể thao dù lượn",["SPORTS"],9],["ping-pong","/ˈpɪŋ pɑːŋ/","môn bóng bàn",["SPORTS"],9],["pitch","/pɪtʃ/","cách ném bóng",["SPORTS"],9],["polo","/ˈpəʊləʊ/","môn mã cầu",["SPORTS"],9],["press-up","/ˈpres ʌp/","môn thể dục hít đất",["SPORTS"],9],["push-up","/ˈpʊʃ ʌp/","môn thể dục hít đất",["SPORTS"],9],["recreation","/ˌriːkriˈeɪʃn/","sự giải trí, tiêu khiển",["SPORTS"],9],["refreshment","/rɪˈfreʃmənt/","sự nghỉ ngơi, tĩnh dưỡng",["SPORTS"],9],["rugby","/ˈrʌɡbi/","môn bóng bầu dục",["SPORTS"],9],["showjumping","/ˈʃəʊdʒʌmpɪŋ/","môn thể thao cưỡi ngựa vượt chướng ngại vật",["SPORTS"],9],["skydiving","/ˈskaɪdaɪvɪŋ/","môn nhảy dù",["SPORTS"],9],["snooker","/ˈsnuːkər/","môn thể thao bi-a",["SPORTS"],9],["snowboarding","/ˈsnəʊbɔːrdɪŋ/","trượt ván trên tuyết",["SPORTS"],9],["soccer","/ˈsɑːkər/","môn bóng đá",["SPORTS"],9],["squash","/skwɑːʃ/","môn bóng quần",["SPORTS"],9],["stadium","/ˈsteɪdiəm/","sân vận động",["SPORTS"],9],["surfing","/ˈsɜːrfɪŋ/","lướt sóng",["SPORTS"],9],["swimming","/ˈswɪmɪŋ/","môn bơi",["SPORTS"],9],["team","/tiːm/","đội chơi",["SPORTS"],9],["tennis","/ˈtenɪs/","môn quần vợt",["SPORTS"],9],["the discus","/ðə ˈdɪskəs/","cuộc thi ném đĩa",["SPORTS"],9],["the hammer","/ðə ˈhæmər/","đánh bại",["SPORTS"],9],["the high jump","/ðə ˈhaɪ dʒʌmp/","môn nhảy cao",["SPORTS"],9],["treadmill","/ˈtredmɪl/","máy chạy bộ",["SPORTS"],9],["white-water rafting","/ˌwaɪt ˈwɔːtər ˈræftɪŋ/","chèo thuyền vượt ghềnh",["SPORTS"],9],["windsurfing","/ˈwɪndsɜːrfɪŋ/","môn lướt ván buồm",["SPORTS"],9],["equipment","/ɪˈkwɪpmənt/","trang thiết bị; Vật dụng (thí nghiệm)",["EQUIPMENT - TOOLS","SCIENCE"],10],["tool","/tuːl/","công cụ, dụng cụ",["EQUIPMENT - TOOLS"],10],["backpack","/ˈbækpæk/","balo",["EQUIPMENT - TOOLS"],10],["battery","/ˈbætəri/","pin",["EQUIPMENT - TOOLS"],10],["break","/breɪk/","phanh",["EQUIPMENT - TOOLS"],10],["brick","/brɪk/","gạch",["EQUIPMENT - TOOLS"],10],["button","/ˈbʌtn/","nút bấm",["EQUIPMENT - TOOLS"],10],["cable","/ˈkeɪbl/","cáp",["EQUIPMENT - TOOLS"],10],["carpet","/ˈkɑːrpɪt/","thảm",["EQUIPMENT - TOOLS"],10],["cassette","/kəˈset/","băng catxet",["EQUIPMENT - TOOLS"],10],["device","/dɪˈvaɪs/","thiết bị",["EQUIPMENT - TOOLS"],10],["digital monitor","/ˈdɪdʒɪtl ˈmɑːnɪtər/","màn hình số",["EQUIPMENT - TOOLS"],10],["disk","/dɪsk/","ổ đĩa",["EQUIPMENT - TOOLS"],10],["furniture","/ˈfɜːrnɪtʃər/","đồ nội thất",["EQUIPMENT - TOOLS"],10],["gadget","/ˈɡædʒɪt/","tiện ích; Đồ phụ tùng nhỏ",["EQUIPMENT - TOOLS","INFORMATION TECHNOLOGY"],10],["helmet","/ˈhelmɪt/","mũ bảo hiểm",["EQUIPMENT - TOOLS"],10],["ladder","/ˈlædər/","cái thang",["EQUIPMENT - TOOLS"],10],["light","/laɪt/","đèn",["EQUIPMENT - TOOLS"],10],["magnet","/ˈmæɡnət/","nam châm",["EQUIPMENT - TOOLS"],10],["mechanical pencil","/məˌkænɪkl ˈpensl/","bút chì kim",["EQUIPMENT - TOOLS"],10],["memory","/ˈmeməri/","bộ nhớ; Trí nhớ",["EQUIPMENT - TOOLS","PSYCHOLOGY"],10],["musical instrument","/ˌmjuːzɪkl ˈɪnstrəmənt/","nhạc cụ",["EQUIPMENT - TOOLS"],10],["personal computer","/ˌpɜːrsənl kəmˈpjuːtər/","máy tính cá nhân",["EQUIPMENT - TOOLS"],10],["robot","/ˈrəʊbɑːt/","rô-bốt",["EQUIPMENT - TOOLS"],10],["screen","/skriːn/","màn hình",["EQUIPMENT - TOOLS"],10],["silicon chip","/ˌsɪlɪkən ˈtʃɪp/","microchip làm bằng silic",["EQUIPMENT - TOOLS"],10],["tablet","/ˈtæblət/","máy tính bảng",["EQUIPMENT - TOOLS"],10],["turbine","/ˈtɜːrbaɪn/","tua bin",["EQUIPMENT - TOOLS"],10],["wheel","/wiːl/","bánh (xe)",["EQUIPMENT - TOOLS"],10],["wire","/ˈwaɪər/","dây (kim loại)",["EQUIPMENT - TOOLS"],10],["ability","/əˈbɪləti/","khả năng",["WORKS"],19],["accountant","/əˈkaʊntənt/","kế toán",["WORKS"],19],["administrative assistant","/ədˈmɪnɪstreɪtɪv əˈsɪstənt/","trợ lý hành chính",["WORKS"],19],["appointment","/əˈpɔɪntmənt/","sự bổ nhiệm",["WORKS"],19],["captain","/ˈkæptɪn/","đội trưởng; Cơ trưởng",["WORKS","AVIATION"],19],["cashier","/kæˈʃɪr/","thu ngân",["WORKS"],19],["clerk","/klɜːrk/","nhân viên bán hàng",["WORKS"],19],["colleague","/ˈkɑːliːɡ/; /ˈkɒliːg/","đồng nghiệp; Đồng nghiệp",["WORKS","HUMAN RESOURCES"],19],["confidence","/ˈkɑːnfɪdəns/; /ˈkɒn.fɪ.dəns/","sự tự tin; trust, sự tin tưởng, sự tín nhiệm.",["WORKS","POLITICS"],19],["craftsman","/ˈkræftsmən/","thợ thủ công",["WORKS"],19],["creativity","/ˌkriːeɪˈtɪvəti/","óc sáng tạo",["WORKS"],19],["curriculum vitae","/kəˌrɪkjələm ˈviːtaɪ/","hồ sơ xin việc, bản tóm lược tất cả các thông tin cần thiết của người ứng tuyển",["WORKS"],19],["decorator","/ˈdekəreɪtər/","người làm nghề trang trí",["WORKS"],19],["dentist","/ˈdentɪst/","nha sĩ",["WORKS"],19],["designer","/dɪˈzaɪnər/","nhà thiết kế",["WORKS"],19],["dialogue","/ˈdaɪəlɔːɡ/","cuộc đối thoại",["WORKS"],19],["doctor","/ˈdɑːktər/","bác sĩ",["WORKS"],19],["email","/ˈiːmeɪl/","thư điện tử",["WORKS"],19],["employee","/ɪmˈplɔɪiː/","người làm công",["WORKS"],19],["employer","/ɪmˈplɔɪər/","người sử dụng lao động",["WORKS"],19],["employment","/ɪmˈplɔɪmənt/","sự làm công",["WORKS"],19],["engineer","/ˌendʒɪˈnɪr/","kỹ sư",["WORKS"],19],["flight attendant","/ˈflaɪt ətendənt/","tiếp viên hàng không; Tiếp viên hàng không",["WORKS","AVIATION"],19],["freelance","/ˈfriːlæns/; /ˈfriːlɑːns/","làm nghề tự do; làm tự do",["WORKS"],19],["guard","/ɡɑːrd/","người bảo vệ",["WORKS"],19],["hairdresser","/ˈherdresər/","thợ làm tóc",["WORKS"],19],["information desk","/ˌɪnfərˈmeɪʃn desk/","quầy thông tin",["WORKS"],19],["internship","/ˈɪntɜːrnʃɪp/","nhân viên thực tập",["WORKS"],19],["job offer","/ dʒɑːb ˈɔːfər/","lời đề nghị về việc làm",["WORKS"],19],["letter of invitation","/ˈletər əv ˌɪnvɪˈteɪʃn/","thư mời",["WORKS"],19],["mail address","/ meɪl əˈdres/","địa chỉ gửi thư",["WORKS"],19],["manager","/ˈmænɪdʒər/","quản lý",["WORKS"],19],["mentor","/ˈmentɔːr/","người cố vấn",["WORKS"],19],["nurse","/nɜːrs/","y tá",["WORKS"],19],["occupation","/ˌɑːkjuˈpeɪʃn/","nghề nghiệp",["WORKS"],19],["pilot","/ˈpaɪlət/","phi công; Phi công",["WORKS","AVIATION"],19],["proactive","/ˌprəʊˈæktɪv/","chủ động trong tư duy và hành động",["WORKS"],19],["procedure","/prəˈsiːdʒər/; /prəˈsiːʤə/","thủ tục, quy trình; Tiến độ bàn giao",["WORKS","REAL ESTATE"],19],["profession","/prəˈfeʃn/","nghề nghiệp",["WORKS"],19],["professor","/prəˈfesər/","giáo sư; Thầy giáo, giáo sư (giảng dạy tại các trường ĐH, Cao học)",["WORKS","EDUCATION (Detailed)"],19],["psychologist","/saɪˈkɑːlədʒɪst/","nhà tâm lý học",["WORKS"],19],["reception","/rɪˈsepʃn/","lễ tân",["WORKS"],19],["scientist","/ˈsaɪəntɪst/","nhà khoa học; Nhà khoa học",["WORKS","SCIENCE"],19],["secretary","/ˈsekrəteri/","thư ký",["WORKS"],19],["staff selection","/ stæf sɪˈlekʃn/","tuyển dụng nhân sự",["WORKS"],19],["stress","/stres/","căng thẳng; Căng thẳng, mệt mỏi",["WORKS","PSYCHOLOGY"],19],["teacher","/ˈtiːtʃər/","giáo viên",["WORKS"],19],["team leader","/ tiːm ˈliːdər/","đội trưởng",["WORKS"],19],["technical cooperation","/ˈteknɪkl kəʊˌɑːpəˈreɪʃn/","hợp tác kỹ thuật",["WORKS"],19],["unemployed","/ˌʌnɪmˈplɔɪd/","thất nghiệp",["WORKS"],19],["vacancy","/ˈveɪkənsi/","vị trí còn trống",["WORKS"],19],["vision","/ˈvɪʒn/","tầm nhìn",["WORKS"],19],["volunteer","/ˌvɑːlənˈtɪr/","tình nguyện viên",["WORKS"],19],["waiter","/ˈweɪtər/","nhân viên phục vụ bàn nam",["WORKS"],19],["waitress","/ˈweɪtrəs/","nhân viên phục vụ bàn nữ",["WORKS"],19],["work experience","/ˈwɜːrk ɪkspɪriəns/","kinh nghiệm làm việc",["WORKS"],19],["workshop","/ˈwɜːrkʃɑːp/","hội thảo",["WORKS"],19],["Suit","/suːt/","phù hợp",["WORKS"],19],["Office work","/ˈɒfɪs wəːk /","công việc văn phòng",["WORKS"],19],["aircraft","/ˈerkræft/","máy bay; Máy bay, tàu bay",["TRANSPORTATIONS","AVIATION"],14],["airport","/ˈerpɔːrt/","sân bay",["TRANSPORTATIONS"],14],["airship","/ˈerʃɪp/","tàu bay",["TRANSPORTATIONS"],14],["automobile","/ˈɔːtəməbiːl/","ô tô",["TRANSPORTATIONS"],14],["boat","/bəʊt/","tàu thuyền",["TRANSPORTATIONS"],14],["cabin cruiser","/ˈkæbɪn kruːzər/","thuyền máy có chỗ ngủ",["TRANSPORTATIONS"],14],["canal boat","/kəˈnæl bəʊt/","thuyền dùng để đi trên kênh",["TRANSPORTATIONS"],14],["canoe","/kəˈnuː/","xuồng",["TRANSPORTATIONS"],14],["cargo plane","/ˈkɑːrɡəʊ pleɪn/","máy bay chở hàng",["TRANSPORTATIONS"],14],["container ship","/kənˈteɪnər ʃɪp/","tàu container",["TRANSPORTATIONS"],14],["crew","/kruː/","toàn bộ người lái và nhân viên trên máy bay, tàu",["TRANSPORTATIONS"],14],["fare","/fer/","tiền vé",["TRANSPORTATIONS"],14],["ferry","/ˈferi/","phà",["TRANSPORTATIONS"],14],["gondola","/ˈɡɑːndələ/","thuyền đáy bằng",["TRANSPORTATIONS"],14],["helicopter","/ˈhelɪkɑːptər/","trực thăng",["TRANSPORTATIONS"],14],["hire","/ˈhaɪər/","thuê",["TRANSPORTATIONS"],14],["hot-air balloon","/ˌhɑːt ˈer bəluːn/","khinh khí cầu",["TRANSPORTATIONS"],14],["hovercraft","/ˈhʌvərkræft/","tàu đệm hơi",["TRANSPORTATIONS"],14],["hydrofoil","/ˈhaɪdrəfɔɪl/","tàu cánh ngầm",["TRANSPORTATIONS"],14],["kayak","/ˈkaɪæk/","thuyền nhỏ hẹp, được điều khiển bằng sức người",["TRANSPORTATIONS"],14],["lifeboat","/ˈlaɪfbəʊt/","tàu cứu đắm",["TRANSPORTATIONS"],14],["liner","/ˈlaɪnər/","tàu thủy lớn chở khách, hàng chạy theo tuyến định kỳ",["TRANSPORTATIONS"],14],["narrowboat","/ˈnærəʊbəʊt/","thuyền hẹp",["TRANSPORTATIONS"],14],["paddle steamer","/ˈpædl stiːmər/","tàu hơi nước chạy bằng guồng",["TRANSPORTATIONS"],14],["passenger","/ˈpæsɪndʒər/","hành khách",["TRANSPORTATIONS"],14],["platform","/ˈplætfɔːrm/","chỗ đứng (xe khách, xe lửa)",["TRANSPORTATIONS"],14],["punt","/pʌnt/","thúng",["TRANSPORTATIONS"],14],["rowboat","/ˈrəʊbəʊt/","thuyền có mái chèo",["TRANSPORTATIONS"],14],["rowing boat","/ˈrəʊɪŋ bəʊt/","thuyền có mái chèo",["TRANSPORTATIONS"],14],["sailboat","/ˈseɪlbəʊt/","thuyền buồm",["TRANSPORTATIONS"],14],["seaplane","/ˈsiːpleɪn/","thủy phi cơ",["TRANSPORTATIONS"],14],["shipment","/ˈʃɪpmənt/","hàng gửi; việc gửi hàng",["TRANSPORTATIONS"],14],["terminal","/ˈtɜːrmɪnl/","nhà đón khách",["TRANSPORTATIONS"],14],["breakdown truck","/ˈbreɪkdaʊn trʌk/","xe chuyên dụng để kéo các xe hỏng hóc",["TRANSPORTATIONS"],14],["bus","/bʌs/","xe buýt",["TRANSPORTATIONS"],14],["cab","/kæb/","taxi",["TRANSPORTATIONS"],14],["camper","/ˈkæmpər/","xe cắm trại",["TRANSPORTATIONS"],14],["car","/kɑːr/","ô tô",["TRANSPORTATIONS"],14],["caravan","/ˈkærəvæn/","xe moóc (dùng làm nơi ở)",["TRANSPORTATIONS"],14],["coach","/kəʊtʃ/","xe buýt chạy đường dài",["TRANSPORTATIONS"],14],["container","/kənˈteɪnər/","container",["TRANSPORTATIONS"],14],["double-decker","/ˌdʌbl ˈdekər/","xe khách hai tầng; máy bay hai tầng cánh",["TRANSPORTATIONS"],14],["double-decker bus","/ˌdʌbl ˈdekər bʌs/","xe buýt hai tầng",["TRANSPORTATIONS"],14],["forklift truck","/ˌfɔːrklɪft ˈtrʌk/","xe nâng đa tải trọng",["TRANSPORTATIONS"],14],["freight car","/ˈfreɪt kɑːr/","toa hàng",["TRANSPORTATIONS"],14],["freight train","/ˈfreɪt treɪn/","tàu hỏa chở hàng",["TRANSPORTATIONS"],14],["goods train","/ˈɡʊdz treɪn/","tàu chở hàng",["TRANSPORTATIONS"],14],["jeep","/dʒiːp/","xe jíp",["TRANSPORTATIONS"],14],["lorry","/ˈlɔːri/","xe tải; toa chở hàng",["TRANSPORTATIONS"],14],["minibus","/ˈmɪnibʌs/","xe chở khách nhỏ",["TRANSPORTATIONS"],14],["motorcycle","/ˈməʊtərsaɪkl/","xe mô tô, xe gắn máy",["TRANSPORTATIONS"],14],["pickup","/ˈpɪkʌp/","xe bán tải",["TRANSPORTATIONS"],14],["school bus","/skuːl bʌs/","xe buýt chở học sinh",["TRANSPORTATIONS"],14],["single-decker","/ˌsɪŋɡl ˈdekər/","xe buýt một tầng",["TRANSPORTATIONS"],14],["steam train","/stiːm treɪn/","đầu máy xe lửa hơi nước",["TRANSPORTATIONS"],14],["subway","/ˈsʌbweɪ/","tàu điện ngầm",["TRANSPORTATIONS"],14],["tanker","/ˈtæŋkər/","tàu chở dầu",["TRANSPORTATIONS"],14],["taxi","/ˈtæksi/","taxi",["TRANSPORTATIONS"],14],["tow truck","/ˈtəʊ trʌk/","xe tải kéo",["TRANSPORTATIONS"],14],["tractor","/ˈtræktər/","máy kéo, xe kéo",["TRANSPORTATIONS"],14],["tram","/træm/","xe điện",["TRANSPORTATIONS"],14],["transporter","/trænˈspɔːrtər/","xe to (dùng để chở ô tô…)",["TRANSPORTATIONS"],14],["truck","/trʌk/","xe tải",["TRANSPORTATIONS"],14],["underground","/ˌʌndərˈɡraʊnd/","xe điện ngầm; dưới mặt đất",["TRANSPORTATIONS"],14],["van","/væn/","xe tải (chở hành lý hoặc người)",["TRANSPORTATIONS"],14],["activity","/ækˈtɪvəti/","hoạt động",["OTHERS"],8],["attitude","/ˈætɪtuːd/","thái độ; Thái độ",["OTHERS","PSYCHOLOGY"],8],["blood pressure","/ˈblʌd preʃər/","huyết áp",["OTHERS"],8],["burger","/ˈbɜːrɡər/","cái bánh kẹp",["OTHERS"],8],["carriage","/ˈkærɪdʒ/","sự điều khiển, sự thi hành",["OTHERS"],8],["cattle","/ˈkætl/","gia súc",["OTHERS"],8],["chocolate","/ˈtʃɔːklət/","sô-cô-la",["OTHERS"],8],["circuit","/ˈsɜːrkɪt/; /ˈsɜːkɪt/","cuộc tuần tra; Mạch",["OTHERS","INFORMATION TECHNOLOGY"],8],["city council","/ˌsɪti ˈkaʊnsl/","hội đồng thành phố",["OTHERS"],8],["commerce","/ˈkɑːmɜːrs/","thương mại",["OTHERS"],8],["compound","/ˈkɑːmpaʊnd/","hợp chất",["OTHERS"],8],["condition","/kənˈdɪʃn/","điều kiện",["OTHERS"],8],["creation","/kriˈeɪʃn/","sự tạo thành",["OTHERS"],8],["daily routine","/ruːˈtiːn/","thời gian biểu",["OTHERS"],8],["decision","/dɪˈsɪʒn/","quyết định",["OTHERS"],8],["democrat","/ˈdeməkræt/","người theo chế độ dân chủ",["OTHERS"],8],["demonstration","/ˌdemənˈstreɪʃn/","sự biểu hiện, chứng minh",["OTHERS"],8],["dialect","/ˈdaɪəlekt/","phương ngữ",["OTHERS"],8],["driving licence","/ˈdraɪvɪŋ laɪsns/","bằng lái",["OTHERS"],8],["encyclopedia","/ɪnˌsaɪkləˈpiːdiə/","bách khoa toàn thư",["OTHERS"],8],["entrance","/ˈentrəns/","lối vào",["OTHERS"],8],["evolution","/ˌevəˈluːʃn/; /ˌiː.vəˈluː.ʃən/","sự tiến hoá; Sự tiến hóa; Sự tiến hóa, sự phát triển",["OTHERS","BIOLOGY","SCIENCE"],8],["farewell","/ˌferˈwel/","tạm biệt, chia tay",["OTHERS"],8],["frequently updated","/ˈfriːkwəntli ˌʌpˈdeɪt ɪd/","cập nhật thường xuyên",["OTHERS"],8],["fundraising event","/ˈfʌndreɪzɪŋ ɪˈvent/","sự kiện nhằm mục đích gây quỹ",["OTHERS"],8],["gender","/ˈdʒendər/","giới tính",["OTHERS"],8],["government","/ˈɡʌvərnmənt/","chính phủ",["OTHERS"],8],["guarantee","/ˌɡærənˈtiː/","sự bảo đảm",["OTHERS"],8],["illiteracy","/ɪˈlɪtərəsi/","nạn mù chữ",["OTHERS"],8],["indigenous","/ɪnˈdɪdʒənəs/","bản xứ; Mang tính bản địa",["OTHERS","ANTHROPOLOGY"],8],["individual","/ˌɪndɪˈvɪdʒuəl/","cá nhân",["OTHERS"],8],["liberal democracy","/ˈlɪbərəl dɪˈmɑːkrəsi/","dân chủ tự do",["OTHERS"],8],["libertarian","/ˌlɪbərˈteriən/; /ˌlɪbəˈteərɪən/","người tự do chủ nghĩa; Tự Do",["OTHERS","LAW"],8],["life expectancy","/ˈlaɪf ɪkspektənsi/","tuổi thọ trung bình",["OTHERS"],8],["literary","/ˈlɪtəreri/","có tính chất văn học",["OTHERS"],8],["lunar calendar","/ˌluːnər ˈkælɪndər/","lịch âm",["OTHERS"],8],["man-made","/ˌmæn ˈmeɪd/","nhân tạo",["OTHERS"],8],["narrative","/ˈnærətɪv/","có tính chất tường thuật",["OTHERS"],8],["nature conservation","/ˈneɪtʃər ˌkɑːnsərˈveɪʃn/","sự bảo tồn thiên nhiên",["OTHERS"],8],["opportunity","/ˌɑːpərˈtuːnəti/","cơ hội",["OTHERS"],8],["original inhabitant","/əˈrɪdʒənl ɪnˈhæbɪtənt/","cư dân gốc",["OTHERS"],8],["passport photo","/ˈpæspɔːrt ˈfəʊtəʊ/","ảnh hộ chiếu",["OTHERS"],8],["pedestrian safety","/pəˈdestriən ˈseɪfti/","an toàn giao thông của người đi bộ",["OTHERS"],8],["personal fulfillment","/ˈpɜːrsənl fʊlˈfɪlmənt/","sự hoàn thành ước nguyện của chính mình",["OTHERS"],8],["practice","/ˈpræktɪs/","thực tiễn",["OTHERS"],8],["private sector","/ˌpraɪvət ˈsektər/","khu vực tư nhân",["OTHERS"],8],["prize","/praɪz/","giải thưởng",["OTHERS"],8],["process","/ˈprɑːses/","quá trình",["OTHERS"],8],["proficiency","/prəˈfɪʃnsi/","sự thành thạo",["OTHERS"],8],["prototype","/ˈprəʊtətaɪp/","nguyên mẫu",["OTHERS"],8],["ramification","/ˌræmɪfɪˈkeɪʃn/","sự phân nhánh",["OTHERS"],8],["recipient","/rɪˈsɪpiənt/","người nhận",["OTHERS"],8],["recommend","/ˌrekəˈmend/","khuyến khích, đề nghị",["OTHERS"],8],["republican","/rɪˈpʌblɪkən/","cộng hòa",["OTHERS"],8],["revolution","/ˌrevəˈluːʃn/","cuộc cách mạng",["OTHERS"],8],["satellite","/ˈsætəlaɪt/","vệ tinh",["OTHERS"],8],["sewer system","/ˈsuːər ˈsɪstəm/","hệ thống rác thải",["OTHERS"],8],["state","/steɪt/","tiểu bang",["OTHERS"],8],["straight","/streɪt/","thẳng",["OTHERS"],8],["strike","/straɪk/","đánh, đập",["OTHERS"],8],["sufficient","/səˈfɪʃnt/","đủ",["OTHERS"],8],["supportive","/səˈpɔːrtɪv/","có tính giúp đỡ, khuyến khích",["OTHERS"],8],["traffic jam","/ˈtræfɪk dʒæm/","sự ách tắc giao thông",["OTHERS"],8],["ultrasound","/ˈʌltrəsaʊnd/","siêu âm",["OTHERS"],8],["umbrella","/ʌmˈbrelə/","cái ô",["OTHERS"],8],["variety","/vəˈraɪəti/","sự đa dạng",["OTHERS"],8],["video","/ˈvɪdiəʊ/","video",["OTHERS"],8],["waiting list","/ˈweɪtɪŋ lɪst/","danh sách chờ",["OTHERS"],8],["welfare","/ˈwelfer/","phúc lợi",["OTHERS"],8],["word of mouth","/wɜːrd əv maʊθ/","truyền miệng",["OTHERS"],8],["Canonical","/kəˈnɑː.nɪ.kəl/","Kinh điển",["LITERATURE"],8],["Writer","/ˈraɪ.tər/","Nhà văn",["LITERATURE"],8],["Artistic","/ɑːrˈtɪs.tɪk/; /ɑːˈtɪstɪk/","Nghệ thuật; thuộc về nghệ thuật, thuộc về mỹ thuật",["LITERATURE","ART"],8],["Classical","/ˈklæs.ɪ.kəl/","Cổ điển",["LITERATURE"],8],["Drama","/ˈdræm.ə/","Kịch",["LITERATURE"],8],["Dramatic","/drəˈmæt̬.ɪk/","Kịch tính",["LITERATURE"],8],["Essay","/ˈɛseɪ/","Tiểu luận",["LITERATURE"],8],["Fantasy","/ˈfæntəsi/","Tưởng tượng",["LITERATURE"],8],["Folktale","/ˈfoʊkˌteɪl/","Truyện dân gian",["LITERATURE"],8],["Genre","/ˈʒɑːn.rə/; /ˈʒɑːnrə/","Thể loại",["LITERATURE","CINEMATOGRAPHY"],8],["Masterpiece","/ˈmæstəpiːs/; /ˈmɑːstəpiːs/","Kiệt tác",["LITERATURE","ART"],8],["Memoir","/ˈmem.wɑːr/","Hồi ký",["LITERATURE"],8],["Metaphor","/ˈmet.̬ə.fɔːr/; /ˈmetəfɔːr/","Phép ẩn dụ",["LITERATURE","LINGUISTICS"],8],["Metaphorical","/met·̬əˈfɔr·ɪ·kəl/","mang tính ẩn dụ",["LITERATURE"],8],["Mythological","/mɪθ·əˈlɑdʒ·ɪ·kəl/","Thần thoại",["LITERATURE"],8],["Naturalism","/ˈnætʃ.ər.əl.ɪ.zəm/; /ˈnæʧrəlɪzm/","Chủ nghĩa tự nhiên",["LITERATURE","ART"],8],["Nonfiction","/nɒnˈfɪkʃən/","Phi hư cấu",["LITERATURE"],8],["Novel","/ˈnɒvəl/","Tiểu thuyết",["LITERATURE"],8],["Poem","/ˈpoʊ.əm/","Bài thơ",["LITERATURE"],8],["Poetic","/poʊˈetɪ̬k/","Thơ mộng",["LITERATURE"],8],["Poetry","/ˈpoʊ.ə.tri/","Thơ",["LITERATURE"],8],["Point of view","/pɔɪnt əv ˈvjuː/","Quan điểm",["LITERATURE"],8],["Prescriptive","/prɪsˈkrɪptɪv/","Mô tả",["LITERATURE"],8],["Prose","/prəʊz/","Văn xuôi",["LITERATURE","ART"],8],["Realism","/ˈrɪəlɪzm/","Chủ nghĩa hiện thực",["LITERATURE"],8],["Rhyme","/raɪm/","Vần; Âm vần, ăn vần",["LITERATURE","LINGUISTICS"],8],["Rhyming","/ˈraɪmɪŋ/","Vần điệu",["LITERATURE"],8],["Rhythm","/ˈrɪðəm/","Nhịp điệu",["LITERATURE"],8],["Romance","/roʊˈmæns/","Sự lãng mạn",["LITERATURE"],8],["Satire","/ˈsæt.aɪr/","Sự châm biếm",["LITERATURE"],8],["Satirical","/səˈtɪrɪkəl/","Châm biếm",["LITERATURE"],8],["Satirize","/ˈsæt·̬əˌrɑɪz/","Châm biếm",["LITERATURE"],8],["Science fiction","/ˈsaɪəns ˈfɪkʃən/","Khoa học viễn tưởng",["LITERATURE"],8],["Short story","/ʃɔːt ˈstɔːri/","Truyện ngắn",["LITERATURE"],8],["Symbolism","/ˈsɪmbəlɪzm/","Biểu tượng; Chủ nghĩa tượng trưng",["LITERATURE","ART"],8],["Syntax","/ˈsɪntæks/","Cú pháp",["LITERATURE","LINGUISTICS"],8],["Text","/tekst/","Bản văn",["LITERATURE"],8],["Tragedy","/ˈtræʤɪdi/","Bi kịch",["LITERATURE"],8],["Verse form","/vɜːs/ /fɔːm/","Dạng câu",["LITERATURE"],8],["Adapt","/əˈdæpt/","Chuyển thể.",["LITERATURE"],8],["Fortune","/ˈfɔː.tʃuːn/","1 khối tài sản rất lớn",["LITERATURE"],8],["Heroine","/ˈher.əʊ.ɪn/","Nhân vật nữ chính/ nữ anh hùng",["LITERATURE"],8],["Material","/məˈtɪr.i.əl/","Tài liệu",["LITERATURE"],8],["Novelist","/ˈnɑː.və.ɪst/","Nhà văn chuyên viết tiểu thuyết",["LITERATURE"],8],["Publish","/ˈpʌb.lɪʃ/","Xuất bản",["LITERATURE"],8],["Secondary school","/ˈsekənderi skuːl/","Trường trung học cơ sở (cấp 2)",["EDUCATION (Detailed)"],5],["Primary school","/ˈpraɪmeri skuːl/","Trường tiểu học (cấp 1)",["EDUCATION (Detailed)"],5],["High school","/ˈhaɪ skuːl/","Trường trung học phổ thông (cấp 3)",["EDUCATION (Detailed)"],5],["Tuition","/tuˈɪʃn/","Học phí",["EDUCATION (Detailed)"],5],["Literacy","/ˈlɪtərəsi/","Khả năng đọc viết",["EDUCATION (Detailed)"],5],["Degree","/dɪˈɡriː/","Bằng cấp",["EDUCATION (Detailed)"],5],["Course","/kɔːrs/","Khóa học",["EDUCATION (Detailed)"],5],["Subject","/ˈsʌbdʒɪkt/","Môn học",["EDUCATION (Detailed)"],5],["Skill","/skɪl/","Kỹ năng",["EDUCATION (Detailed)"],5],["Pass","/pæs/","qua môn, đậu",["EDUCATION (Detailed)"],5],["Fail","/feɪl/","Trượt",["EDUCATION (Detailed)"],5],["Academic","/ˌækəˈdemɪk/","Học thuật",["EDUCATION (Detailed)"],5],["Assignment","/əˈsaɪnmənt/","Bài tập được giao",["EDUCATION (Detailed)"],5],["Thesis","/ˈθiːsɪs/","Luận văn, luận án (Đại học)",["EDUCATION (Detailed)"],5],["Educational","/ˌedʒuˈkeɪʃənl/","Mang tính chất giáo dục",["EDUCATION (Detailed)"],5],["Timetable","/ˈtaɪmteɪbl/","Thời khóa biểu",["EDUCATION (Detailed)"],5],["Headmaster","/ˌhedˈmæstər/","Thầy/cô hiệu trưởng",["EDUCATION (Detailed)"],5],["Coursebook","/ˈkɔːrsbʊk/","Sách giáo khoa",["EDUCATION (Detailed)"],5],["Curriculum","/kəˈrɪkjələm/","Chương trình giảng dạy, các môn trong khóa học",["EDUCATION (Detailed)"],5],["Syllabus","/ˈsɪləbəs/","Giáo trình, chương trình học",["EDUCATION (Detailed)"],5],["Freshman","/ˈfreʃmən/","Sinh viên năm nhất",["EDUCATION (Detailed)"],5],["Sophomore","/ˈsɑːfəmɔːr/","Sinh viên năm hai",["EDUCATION (Detailed)"],5],["Undergrad","/ˈʌndərɡræd/","Sinh viên chưa tốt nghiệp, chưa có bằng",["EDUCATION (Detailed)"],5],["Scholarship","/ˈskɑːlərʃɪp/","Học bổng",["EDUCATION (Detailed)"],5],["Dropout","/ˈdrɑːpaʊt/","Học sinh/sinh viên bỏ học",["EDUCATION (Detailed)"],5],["Qualification","/ˌkwɑːlɪfɪˈkeɪʃn/","Chứng chỉ chuyên môn,văn bằng",["EDUCATION (Detailed)"],5],["Intensive course","/ɪnˈtensɪv kɔːrs/","Khóa học nâng cao",["EDUCATION (Detailed)"],5],["Truancy","/ˈtruːənsi/","Sự trốn học, vắng mặt trên lớp",["EDUCATION (Detailed)"],5],["Student loan","/ˈstuːdnt ləʊn/","Khoản vay sinh viên",["EDUCATION (Detailed)"],5],["Hypothesis","/haɪˈpɑːθəsɪs/","Giả thuyết",["EDUCATION (Detailed)"],5],["Presentation","/ˌpriːznˈteɪʃn/","Bài thuyết trình",["EDUCATION (Detailed)"],5],["Uniform","/ˈjuːnɪfɔːrm/","Đồng phục",["EDUCATION (Detailed)"],5],["Discipline","/ˈdɪsəplɪn/","Kỷ luật, phạt",["EDUCATION (Detailed)"],5],["Lecture hall","/ˈlektʃər hɔːl/","Giảng đường (đại học)",["EDUCATION (Detailed)"],5],["Campus","/ˈkæmpəs/","Khuôn viên trong trường học",["EDUCATION (Detailed)"],5],["Bookworm","/ˈbʊkwɜːrm/","Mọt sách",["EDUCATION (Detailed)"],5],["Anxiety","/æŋˈzaɪəti/","Sự lo lắng, lo âu",["PSYCHOLOGY"],21],["Bias","/ˈbaɪəs/","Sự thiên vị, thiên về",["PSYCHOLOGY"],21],["Cognition","/kɑːɡˈnɪʃn/","Nhận thức",["PSYCHOLOGY"],21],["Consciousness","/ˈkɑːnʃəsnəs/","Ý thức con người",["PSYCHOLOGY"],21],["Disorder","/dɪsˈɔːrdər/","Rối loạn chức năng (bệnh lý)",["PSYCHOLOGY"],21],["Nature","/ˈneɪtʃər/","Bản năng (có sẵn)",["PSYCHOLOGY"],21],["Nurture","/ˈnɜːrtʃər/","Được nuôi dưỡng; Dưỡng dục",["PSYCHOLOGY","ANTHROPOLOGY"],21],["Meditation","/ˌmedɪˈteɪʃn/","Thiền",["PSYCHOLOGY"],21],["Mind","/maɪnd/","Đầu óc, lý trí",["PSYCHOLOGY"],21],["Motivation","/ˌməʊtɪˈveɪʃn/","Động lực, động cơ",["PSYCHOLOGY"],21],["Personality","/ˌpɜːrsəˈnæləti/","Tính cách, tính chất",["PSYCHOLOGY"],21],["Psychiatrist","/saɪˈkaɪətrɪst/","Chuyên gia tâm thần học",["PSYCHOLOGY"],21],["Reason","/ˈriːzn/","Lí do, nguyên nhân",["PSYCHOLOGY"],21],["Well-being","/ˈwel biːɪŋ/","Tình trạng sức khỏe (thể xác, tinh thần)",["PSYCHOLOGY"],21],["Attention","/əˈtenʃn/","Sự chú ý",["PSYCHOLOGY"],21],["Behavior","/bɪˈheɪvjər/","Hành vi con người",["PSYCHOLOGY"],21],["Cerebral","/səˈriːbrəl/","Thuộc về não",["PSYCHOLOGY"],21],["Conditioning","/kənˈdɪʃənɪŋ/","Bệnh tình, điều kiện",["PSYCHOLOGY"],21],["Counseling","/ˈkaʊnslɪŋ/","Tư vấn, tham vấn",["PSYCHOLOGY"],21],["Stereotype","/ˈsteriətaɪp/","Cái nhìn rập khuôn,quan điểm định kiến về 1 sự vật sự việc nào đó",["PSYCHOLOGY"],21],["Empathy","/ˈempəθi/","Sự đồng cảm",["PSYCHOLOGY"],21],["Intuition","/ˌɪntuˈɪʃn/","Trực giác (dựa trên cảm xúc)",["PSYCHOLOGY"],21],["Morality","/məˈræləti/","Đạo đức, đạo lý",["PSYCHOLOGY"],21],["Neuroscience","/ˈnʊrəʊsaɪəns/","Khoa học thần kinh",["PSYCHOLOGY"],21],["Psyche","/ˈsaɪki/","Tâm thần",["PSYCHOLOGY"],21],["Therapeutic","/ˌθerəˈpjuːtɪk/","Có tính chữa lành",["PSYCHOLOGY"],21],["Tolerant","/ˈtɑːlərənt/","Chịu đựng, cam chịu",["PSYCHOLOGY"],21],["Psychotherapy","/ˌsaɪkəʊˈθerəpi/","Tâm lý liệu pháp",["PSYCHOLOGY"],21],["Psychotherapist","/ˌsaɪkəʊˈθerəpɪst/","Nhà chữa bệnh tâm lý",["PSYCHOLOGY"],21],["Phobia","/ˈfəʊbiə/","Nỗi sợ",["PSYCHOLOGY"],21],["Hypnosis","/hɪpˈnəʊsɪs/","Thôi miên",["PSYCHOLOGY"],21],["Mental illness","/ˈmentl ˈɪlnəs/","Bệnh về tâm lý, vấn đề tâm lý",["PSYCHOLOGY"],21],["Fear of abandonment","/fɪr əv əˈbændənmənt/","Nỗi sợ bị bỏ rơi",["PSYCHOLOGY"],21],["Attachment issue","/əˈtætʃmənt ˈɪʃuː/","Rối loạn gắn bó",["PSYCHOLOGY"],21],["Toxic","/ˈtɑːksɪk/","Độc hại, không lành mạnh",["PSYCHOLOGY"],21],["Depression","/dɪˈpreʃn/","Trầm cảm",["PSYCHOLOGY"],21],["Bipolar disorder","/ˌbaɪˈpəʊlər dɪsɔːrdər/","Rối loạn luỡng cực",["PSYCHOLOGY"],21],["Post-traumatic stress disorder","/ˌpəʊst trəˌmætɪk ˈstres dɪsɔːrdər/","Rối loạn căng thẳng sau sang chấn",["PSYCHOLOGY"],21],["Dissociative identity disorder","/dɪˌsəʊsieɪtɪv aɪˈdentəti dɪsɔːrdər/","Rối loạn đa nhân cách",["PSYCHOLOGY"],21],["Psychopath","/ˈsaɪkəpæθ/","Người rối loạn nhân cách, thái nhân cách",["PSYCHOLOGY"],21],["Sociopath","/ˈsəʊsiəʊpæθ/","Người bị rối loạn nhân cách chống đối xã hội",["PSYCHOLOGY"],21],["Subconscious","/ˌsʌbˈkɑːnʃəs/","Vô thức, một cách vô thức",["PSYCHOLOGY"],21],["Conflict","/ˈkɑːnflɪkt/","Sự xung đột",["PSYCHOLOGY"],21],["Individualism","/ˌɪndɪˈvɪdʒuəlɪzəm/","Chủ nghĩa cá nhân",["PSYCHOLOGY"],21],["Persuasion","/pərˈsweɪʒn/","Sự thuyết phục",["PSYCHOLOGY"],21],["Dementia","/dɪˈmenʃə/","Loạn trí",["PSYCHOLOGY"],21],["Amnesia","/æmˈniːʒə/","Bệnh mất trí nhớ",["PSYCHOLOGY"],21],["Alzheimer’s disease","/ˈɑːltshaɪmərz dɪziːz/","Bệnh mất trí nhớ của người già",["PSYCHOLOGY"],21],["Schizophrenia","/ˌskɪtsəˈfriːniə/","Bệnh tâm thần phân liệt",["PSYCHOLOGY"],21],["Flora","/ˈflɔː.rə/","Thực vật/cây thường xanh",["BIOLOGY"],3],["Evergreen","/ˈev.ə.ɡriːn/","Thực vật/cây thường xanh",["BIOLOGY"],3],["Deciduous","/dɪˈsɪdʒ.u.əs/; /dɪˈsɪdʒuəs/","Rụng lá theo mùa; Rụng lá hằng năm",["BIOLOGY","AGRICULTURE"],3],["Moss","/mɒs/","Rêu",["BIOLOGY"],3],["Algae","/ˈæl.ɡiː/","Tảo, loài thực vật ko có rễ, trôi nổi trên mặt nước",["BIOLOGY"],3],["Reed","/riːd/","Cỏ sậy mọc ven sông, hồ",["BIOLOGY"],3],["Habitat","/ˈhæb.ɪ.tæt/","Sinh cảnh",["BIOLOGY"],3],["Foliage","/ˈfəʊ.li.ɪdʒ/","Lá cây nói chung",["BIOLOGY"],3],["Bough","/baʊ/","Cành cây lớn",["BIOLOGY"],3],["Bud","/bʌd/","Mầm, chồi",["BIOLOGY"],3],["Genome","/ˈdʒiː.nəʊm/","Toàn bộ cấu trúc di truyền của một cá thể",["BIOLOGY"],3],["Genetics","/dʒəˈnet.ɪks/; /dʒəˈnetɪk/","Di truyền học",["BIOLOGY","SCIENCE"],3],["Genetic","/dʒəˈnet.ɪk/","Thuộc về di truyền",["BIOLOGY"],3],["Cell","/sel/","Tế bào",["BIOLOGY"],3],["Tissue","/ˈtɪʃuː/","Mô; Mô, tế bào",["BIOLOGY","SCIENCE"],3],["Evolve","/ɪˈvɒlv/","Tiến hóa",["BIOLOGY"],3],["Mutation","/mjuːˈteɪ.ʃən/","Sự đột biến",["BIOLOGY"],3],["Extinction","/ɪkˈstɪŋk.ʃən/","Sự tuyệt chủng",["BIOLOGY"],3],["Reproduce","/ˌriː.prəˈdʒuːs/","Sinh sản",["BIOLOGY"],3],["Reproduction","/ˌriː.prəˈdʌk.ʃən/","Sự sinh sản",["BIOLOGY"],3],["Breed","/briːd/","Sinh sản, gây giống",["BIOLOGY"],3],["Fertile","/ˈfɜː.taɪl/","Có khả năng sinh sản",["BIOLOGY"],3],["Fertilize","/ˈfɜː.tɪ.laɪz/","Thụ tinh",["BIOLOGY"],3],["Fertility","/fəˈtɪl.ə.ti/","Sự có khả năng sinh sản",["BIOLOGY"],3],["Fauna","/ˈfɔː.nə/","Động vật",["BIOLOGY"],3],["Human","/ˈhjuː.mən/","Thuộc về loài người, con người",["BIOLOGY"],3],["Wildlife","/ˈwaɪld.laɪf/","Động vật hoang dã",["BIOLOGY"],3],["Carnivore","/ˈkɑːnɪvɔːr/","Động vật ăn thịt",["BIOLOGY"],3],["Carnivorous","/kɑːˈnɪvərəs/","Ăn thịt",["BIOLOGY"],3],["Herbivore","/ˈhɜː.bɪ.vɔːr/; /ˈhɜːrbɪvɔːr/","Động vật ăn cỏ",["BIOLOGY","AGRICULTURE"],3],["Herbivorous","/hɜːˈbɪv.ər.əs/","Ăn cỏ",["BIOLOGY"],3],["Omnivore","/ˈɒm.nɪ.vɔːr/","Động vật ăn tạp",["BIOLOGY"],3],["Food chain","/ˈfuːd ˌtʃeɪn/","Chuỗi thức ăn",["BIOLOGY"],3],["Predator","/ˈpredətər/","Động vật săn mồi",["BIOLOGY"],3],["System","/ˈsɪstəm/","Hệ thống",["LINGUISTICS"],8],["Phonetics","/fəˈnetɪks/","Ngữ âm học",["LINGUISTICS"],8],["Phonology","/fəˈnɑːlədʒi/","Âm vị học",["LINGUISTICS"],8],["Morphology","/mɔːrˈfɑːlədʒi/","Hình thái học",["LINGUISTICS"],8],["Acronym","/ˈækrənɪm/","Từ viết tắt",["LINGUISTICS"],8],["Affix","/əˈfɪks/","Phụ tố",["LINGUISTICS"],8],["Allomorph","/ˈæləmɔːrf/","Tha hình",["LINGUISTICS"],8],["Allophone","/ˈæləfəʊn/","Tha âm vị",["LINGUISTICS"],8],["Ambiguity","/ˌæmbɪˈɡjuːəti/","Từ nhiều nghĩa, đa nghĩa",["LINGUISTICS"],8],["Antonym","/ˈæntənɪm/","Từ trái nghĩa",["LINGUISTICS"],8],["Compound sentence","/ˈkɑːmpaʊnd ˈsentəns/","Câu ghép, câu phức",["LINGUISTICS"],8],["Conjunction","/kənˈdʒʌŋkʃn/","Liên từ",["LINGUISTICS"],8],["Consonant","/ˈkɑːnsənənt/","Phụ âm",["LINGUISTICS"],8],["Vowel","/ˈvaʊəl/","Nguyên âm",["LINGUISTICS"],8],["Descriptive linguistics","/dɪˈskrɪptɪv lɪŋˈɡwɪstɪks/","Ngôn ngữ học mô tả",["LINGUISTICS"],8],["Prescriptive linguists","/prɪˈskrɪptɪv lɪŋˈɡwɪstɪks/","Ngôn ngữ học quy định",["LINGUISTICS"],8],["Etymology","/ˌetɪˈmɑːlədʒi/","Từ nguyên học",["LINGUISTICS"],8],["Semantics","/sɪˈmæntɪks/","Ngữ nghĩa",["LINGUISTICS"],8],["Determiner","/dɪˈtɜːrmɪnər/","Từ hạn định",["LINGUISTICS"],8],["Digraph","/ˈdaɪɡræf/","Từ ghép",["LINGUISTICS"],8],["Diphthong","/ˈdɪpθɔːŋ/","Nguyên âm đôi",["LINGUISTICS"],8],["Homonym","/ˈhɑːmənɪm/","Từ đồng âm (khác nghĩa)",["LINGUISTICS"],8],["Homograph","/ˈhɑːməɡræf/","Từ cùng chữ (phát âm và nghĩa khác nhau)",["LINGUISTICS"],8],["Inflect","/ɪnˈflekt/","Biến cách",["LINGUISTICS"],8],["Morpheme","/ˈmɔːrfiːm/","Hình vị học",["LINGUISTICS"],8],["Orthography","/ɔːrˈθɑːɡrəfi/","Phép chính tả",["LINGUISTICS"],8],["Phoneme","/ˈfəʊniːm/","Đơn âm",["LINGUISTICS"],8],["Phrase","/freɪz/","Cụm từ",["LINGUISTICS"],8],["Clause","/klɔːz/","Mệnh đề",["LINGUISTICS"],8],["Constituent","/kənˈstɪtʃuənt/; /kənˈstɪtjʊənt/","Thành phần; Cấu tử",["LINGUISTICS","CHEMISTRY"],8],["Syllable","/ˈsɪləbl/","Âm tiết",["LINGUISTICS"],8],["Synonym","/ˈsɪnənɪm/","Từ đồng nghĩa",["LINGUISTICS"],8],["Diachronic","/ˌdaɪəˈkrɑːnɪk/","Lịch đại",["LINGUISTICS"],8],["Displacement","/dɪsˈpleɪsmənt/","Sự thế chỗ",["LINGUISTICS"],8],["Extralinguistic","/ɛkstrəlɪŋˈɡwɪstɪk /","Ngoài lĩnh vực ngôn ngữ học",["LINGUISTICS"],8],["Metalanguage","/ˈmetəlæŋɡwɪdʒ/","Siêu ngữ",["LINGUISTICS"],8],["Onomastics","/ˌɑːnəˈmæstɪks/","(thuộc) Nghiên cứu tên riêng",["LINGUISTICS"],8],["Paradigm","/ˈpærədaɪm/","Hệ biến hóa",["LINGUISTICS"],8],["Parameter","/pəˈræmɪtər/","Tham số",["LINGUISTICS"],8],["Reflexive","/rɪˈfleksɪv/","Phản xạ tốt",["LINGUISTICS"],8],["Sign language","/ˈsaɪn læŋɡwɪdʒ/","Ngôn ngữ cử chỉ",["LINGUISTICS"],8],["Structuralism","/ˈstrʌktʃərəlɪzəm/","Chủ nghĩa cấu trúc",["LINGUISTICS"],8],["Taxonomic","/ˌtæksəˈnɑːmɪk/","(thuộc) Sự phân loại",["LINGUISTICS"],8],["Astronomy","/əˈstrɑːnəmi/","Thiên văn học",["SCIENCE","ASTROPHYSICS"],6],["Astrophysics","/ˌæstrəʊˈfɪzɪks/","Vật lý học thiên thể",["SCIENCE","ASTROPHYSICS"],6],["Atom","/ˈætəm/","Nguyên tử",["SCIENCE","CHEMISTRY"],6],["Bacteria","/bækˈtɪriə/","Vi khuẩn",["SCIENCE"],6],["Biochemistry","/ˌbaɪəʊˈkemɪstri/","Khoa hóa sinh",["SCIENCE"],6],["Data","/ˈdeɪtə/ /ˈdætə/","Dữ liệu, thông tin",["SCIENCE"],6],["Element","/ˈelɪmənt/","Nguyên tố, yếu tố",["SCIENCE"],6],["Emerge","/ɪˈmɜːrdʒ/","Hiện lên (trồi lên từ dưới bề mặt)",["SCIENCE"],6],["Energy","/ˈenərdʒi/","Năng lượng",["SCIENCE"],6],["Electromagnetic","/ɪˌlektrəʊmæɡˈnetɪk/","Thuộc điện từ",["SCIENCE"],6],["Experimentation","/ɪkˌsperɪmenˈteɪʃn/","Sự thí nghiệm",["SCIENCE"],6],["Factual","/ˈfæktʃuəl/","Dựa trên sự thật, thực tế",["SCIENCE"],6],["Flask","/flæsk/","Cốc phễu",["SCIENCE"],6],["Fossil","/ˈfɑːsl/","Hóa thạch",["SCIENCE","ARCHAEOLOGY"],6],["Geology","/dʒiˈɑːlədʒi/","Địa chất học",["SCIENCE"],6],["Geophysics","/ˌdʒiːəʊˈfɪzɪks/","Khoa địa vật lý",["SCIENCE"],6],["Gravity","/ˈɡrævəti/","Trọng lực",["SCIENCE","ASTROPHYSICS","COSMOLOGY"],6],["Laboratory","/ˈlæbrətɔːri/","Phòng nghiên cứu, thí nghiệm",["SCIENCE"],6],["Magnetism","/ˈmæɡnətɪzəm/","Từ tính, hiện tượng từ tính",["SCIENCE"],6],["Matter","/ˈmætər/","Vật chất",["SCIENCE"],6],["Measure","/ˈmeʒər/","Đo đạc, đo lường",["SCIENCE"],6],["Meteorologist","/ˌmiːtiəˈrɑːlədʒɪst/","Nhà khí tượng học",["SCIENCE"],6],["Meteorology","/ˌmiːtiəˈrɑːlədʒi/","Khí tượng học",["SCIENCE"],6],["Microbiologist","/ˌmaɪkrəʊbaɪˈɑːlədʒɪst/","Nhà vi trùng học",["SCIENCE"],6],["Microbiology","/ˌmaɪkrəʊbaɪˈɑːlədʒi/","Vi trùng học",["SCIENCE"],6],["Microscope","/ˈmaɪkrəskəʊp/","Kính hiển vi",["SCIENCE"],6],["Organism","/ˈɔːrɡənɪzəm/","Sinh vật, cơ thể",["SCIENCE"],6],["Particle","/ˈpɑːrtɪkl/","Hạt, phần tử; Hạt",["SCIENCE","COSMOLOGY"],6],["Quantum mechanics","/ˌkwɑːntəm məˈkænɪks/","Cơ học lượng tử",["SCIENCE"],6],["Telescope","/ˈtelɪskəʊp/","Kính thiên văn",["SCIENCE","COSMOLOGY"],6],["Test tube","/ˈtest tuːb/","Ống nghiệm",["SCIENCE"],6],["Theory","/ˈθɪri/","Lý thuyết, giả thuyết",["SCIENCE"],6],["Variable","/ˈveriəbl/","(Kết quả) có thể thay đổi, biến thiên",["SCIENCE"],6],["Immunology","/ˌɪmjuˈnɑːlədʒi/","Nghiên cứu hệ miễn dịch",["SCIENCE"],6],["Surface","/ˈsɜːrfɪs/","Bề mặt, trên bề mặt",["SCIENCE"],6],["Friction","/ˈfrɪkʃn/","Sự va chạm, ma sát",["SCIENCE"],6],["Kinetic","/kɪˈnetɪk/","Động lực, do động lực",["SCIENCE"],6],["Separate","/ˈseprət/","Phân tách, phân rã",["SCIENCE"],6],["Radioactive","/ˌreɪdiəʊˈæktɪv/","Phóng xạ, nhiễm phóng xạ",["SCIENCE"],6],["Vapor","/ˈveɪpər/","Sự bốc hơi, hơi nước",["SCIENCE"],6],["Enculturation","/ɪnˌkʌltʃəˈreɪʃn/","Sự giao thoa văn hóa",["ANTHROPOLOGY"],7],["Acculturate","/əˈkʌltʃəreɪt/","Tiếp biến văn hóa",["ANTHROPOLOGY"],7],["Ethnocentric","/ˌeθnəʊˈsentrɪk/","Vị chủng, cho dân tộc mình là hơn cả",["ANTHROPOLOGY"],7],["Ethnocentrism","/ˌeθnəʊˈsentrɪzəm/","Chủ nghĩa vị chủng",["ANTHROPOLOGY"],7],["Institutionalize","/ˌɪnstɪˈtuːʃənəlaɪz/","Thể chế hóa",["ANTHROPOLOGY"],7],["Fieldwork","/ˈfiːldwɜːrk/","Khảo sát thực tế; Công tác thực địa",["ANTHROPOLOGY","ARCHAEOLOGY"],7],["Nuclear family","/ˌnuːkliər ˈfæməli/","Gia đình hạt nhân (ít người)",["ANTHROPOLOGY"],7],["Acculturation","/əˌkʌltʃəˈreɪʃn/","Sự hòa nhập",["ANTHROPOLOGY"],7],["Developmentally","/dɪˌveləpˈmentəli/","Phát triển, tiến triển",["ANTHROPOLOGY"],7],["Hierarchic","/ˌhaɪəˈrɑːrkɪk/","Có thứ bậc, mang tính phân cấp",["ANTHROPOLOGY"],7],["Machismo","/mɑːˈtʃiːzməʊ/","Sự gia trưởng",["ANTHROPOLOGY"],7],["Ethnography","/eθˈnɑːɡrəfi/; /eθˈnɒɡrəfi/","Dân tộc học; tài liệu/ sách vở/ ghi chép mô tả về văn hóa của 1 cộng đồng người, được viết khi nhà khoa học phải đến tận nơi chung sống với họ.",["ANTHROPOLOGY"],7],["Indoctrinate","/ɪnˈdɑːktrɪneɪt/","Truyền bá, truyền thụ",["ANTHROPOLOGY"],7],["Lesbian","/ˈlezbiən/","Đồng tính nữ, người đồng tính nữ",["ANTHROPOLOGY"],7],["Homosexual","/ˌhəʊməˈsekʃuəl/","Đồng tính (nam và nữ)",["ANTHROPOLOGY"],7],["Subculture","/ˈsʌbkʌltʃər/","Văn hóa nhóm, tiểu văn hóa",["ANTHROPOLOGY"],7],["Holistic","/həʊˈlɪstɪk/","Thuộc toàn thể, tổng thể",["ANTHROPOLOGY"],7],["Macho","/ˈmɑːtʃəʊ/","Bậc nam nhi",["ANTHROPOLOGY"],7],["Segregate","/ˈseɡrɪɡeɪt/","Tách biệt, phân tách (chủng tộc)",["ANTHROPOLOGY"],7],["World view","/ˌwɜːrld ˈvjuː/","Thế giới quan",["ANTHROPOLOGY"],7],["Chauvinism","/ˈʃəʊvɪnɪzəm/","Chủ nghĩa Sô-vanh",["ANTHROPOLOGY"],7],["Paternalism","/pəˈtɜːrnəlɪzəm/","Chế độ gia trưởng, chính sách phụ mẫu",["ANTHROPOLOGY"],7],["Stigmatize","/ˈstɪɡmətaɪz/","Làm nổi rõ cái xấu",["ANTHROPOLOGY"],7],["Pluralism","/ˈplʊrəlɪzəm/","Chủ nghĩa đa nguyên",["ANTHROPOLOGY"],7],["Documentation","/ˌdɑːkjumenˈteɪʃn/","Tài liệu",["ANTHROPOLOGY","FORENSICS"],7],["Melting pot","/ˈmeltɪŋ pɑːt/","Nơi giao thoa văn hóa",["ANTHROPOLOGY"],7],["Excavate","/ˈekskəveɪt/","Khai quật",["ANTHROPOLOGY","ARCHAEOLOGY"],7],["Integrate","/ˈɪntɪɡreɪt/","Tích hợp, hòa nhập",["ANTHROPOLOGY"],7],["Caucasian","/kɔːˈkeɪʒn/","Người da trắng",["ANTHROPOLOGY"],7],["Person of color","/ˌpɜːrsn əv ˈkʌlər/","Người da màu (chỉ tất cả những chủng người không phải da trắng)",["ANTHROPOLOGY"],7],["Hierarchical","/ˌhaɪəˈrɑːrkɪkl/","Mang tính phân cấp, thứ bậc",["ANTHROPOLOGY"],7],["Deviation","/ˌdiːviˈeɪʃn/","Sự lệch lạc",["ANTHROPOLOGY"],7],["Social work","/ˈsəʊʃl wɜːrk/","Công tác xã hội",["ANTHROPOLOGY"],7],["Empower","/ɪmˈpaʊər/","Trao quyền",["ANTHROPOLOGY"],7],["Oriented","/ˈɔːrient/","Định hướng",["ANTHROPOLOGY"],7],["Homogeneous","/ˌhəʊməˈdʒiːniəs/","Cùng nguồn gốc, đồng nhất",["ANTHROPOLOGY"],7],["Viewpoint","/ˈvjuːpɔɪnt/","Quan điểm, góc nhìn",["ANTHROPOLOGY"],7],["Disable","/dɪsˈeɪbl/","Vô hiệu hóa, làm mất khả năng",["ANTHROPOLOGY"],7],["Manipulation","/məˌnɪpjuˈleɪʃn/","Sự thao túng, điều khiển; Thao túng",["ANTHROPOLOGY","CINEMATOGRAPHY"],7],["Immigrant","/ˈɪmɪɡrənt/","Dân nhập cư",["ANTHROPOLOGY"],7],["Integration","/ˌɪntɪˈɡreɪʃn/","Sự hòa nhập",["ANTHROPOLOGY"],7],["Reciprocity","/ˌresɪˈprɑːsəti/","Có đi có lại, sự trao đổi",["ANTHROPOLOGY"],7],["Isolate","/ˈaɪsəleɪt/","Cô lập",["ANTHROPOLOGY"],7],["Autonomous","/ɔːˈtɑːnəməs/","Mang tính tự trị",["ANTHROPOLOGY"],7],["Racism","/ˈreɪsɪzəm/","Sự phân biệt chủng tộc",["ANTHROPOLOGY"],7],["Ethnographic","/ˌeθnəˈɡræfɪk/","(thuộc) dân tộc học",["ANTHROPOLOGY"],7],["Demographics","/ˌdeməˈɡræfɪks/","những dữ liệu nghiên cứu về 1 nhóm người cụ thể, bao gồm số lượng, độ tuổi, thói quen, hành vi v.v đặc biệt là về kinh tế và tiêu dùng",["ANTHROPOLOGY"],7],["Culture","/ˈkʌltʃər/","văn hóa",["ANTHROPOLOGY"],7],["Cultural","/ˈkʌltʃərəl/","thuộc về văn hóa",["ANTHROPOLOGY"],7],["Behavior/Behaviour","/bɪˈheɪ.vjər/","hành vi",["ANTHROPOLOGY"],7],["Belief","/bɪˈliːf/","tín ngưỡng (NIỀM TIN vào các thế lực siêu nhiên); Niềm tin",["ANTHROPOLOGY","PHILOSOPHY"],7],["Religion","/rɪˈlɪdʒən/","tôn giáo (bao gồm Belief và hành động thờ cúng, hệ thống chức sắc, nơi thực hành...)",["ANTHROPOLOGY"],7],["Field trip","/ˈfiːld ˌtrɪp/","chuyến đi nghiên cứu thực địa",["ANTHROPOLOGY"],7],["Speculate","/ˈspekjəleɪt/; /ˈspek(j)əˌleɪt/","phỏng đoán không có căn cứ; Đoán mò",["ANTHROPOLOGY","ORNITHOLOGY"],7],["Speculation","/ˌspekjəˈleɪʃən/","sự phỏng đoán không có căn cứ",["ANTHROPOLOGY"],7],["Assume","/əˈsjuːm/","tin rằng 1 điều là đúng mà không cần căn cứ",["ANTHROPOLOGY"],7],["Assumption","/əˈsʌmpʃən/; /əˈsʌmpʃn/","sự tin rằng 1 điều là đúng mà không cần căn cứ; Giả thiết",["ANTHROPOLOGY","PHILOSOPHY"],7],["Savage/Barbaric","/ˈsævɪdʒ/ /bɑːˈbærɪk/","rất bạo lực, man rợ",["ANTHROPOLOGY"],7],["Savage/Barbarian","/ˈsævɪdʒ/ /bɑːˈbeəriən/","(mang tính xúc phạm) 1 kẻ man rợ, thuộc 1 dân tộc khác kém phát triển, kém văn minh.",["ANTHROPOLOGY"],7],["Ethnic group","/ˈeθnɪk ɡruːp/","dân tộc (khi được phân chia và nghiên cứu theo nhân chủng học)",["ANTHROPOLOGY"],7],["People/Peoples","/ˈpiː.pəl/","Con người, dân tộc (số nhiều Peoples)",["ANTHROPOLOGY"],7],["Ethnic minority","/'eθnɪk maɪˈnɒrɪti/","dân tộc thiểu số (khi phần lớn những người khác trong một quốc gia/vùng lãnh thổ thuộc về 1 hoặc nhiều Ethnic groups khác)",["ANTHROPOLOGY"],7],["Indigenous/Native/Aboriginal","/ɪnˈdɪdʒɪnəs/ /ˈneɪtɪv/ /ˌæbəˈrɪdʒənəl/","thuộc về bản xứ/ bản địa; [n]: người dân tộc bản địa của 1 vùng đất trước khi vùng đất ấy bị xâm chiếm, đô hộ bởi thực dân hoặc ngoại bang.",["ANTHROPOLOGY"],7],["Reside/Dwell in an area/place","/rɪˈzaɪd/ /dwel/","cư trú, sinh sống tại 1 nơi",["ANTHROPOLOGY"],7],["Inhabit","/ɪnˈhæbɪt/","Cư trú - thường dùng ở dạng bị động (A place is inhabited by Sb/Sth)",["ANTHROPOLOGY"],7],["Inhabitant/Resident/Dweller","/ɪnˈhæbɪtənt/ /ˈrezɪdənt/ /ˈdwelər/","cư dân của 1 vùng đất/ vị trí/ khu vực",["ANTHROPOLOGY"],7],["Absolutism","/ˈæbsəluːtɪzəm/","Chế độ chuyên chế",["PHILOSOPHY"],21],["Abstract","/ˈæbstrækt/","Trừu tượng",["PHILOSOPHY","ART"],21],["Absurd","/əbˈsɜːrd/","Vô lý, ngớ ngẩn",["PHILOSOPHY"],21],["Activism","/ˈæktɪvɪzəm/","Hoạt động xã hội",["PHILOSOPHY"],21],["Activist","/ˈæktɪvɪst/","Nhà hoạt động xã hội",["PHILOSOPHY"],21],["Actuality","/ˌæktʃuˈæləti/","Thực tế",["PHILOSOPHY"],21],["Aesthetic","/esˈθetɪk/; /iːsˈθetɪk/","Thẩm mỹ; Thẩm mỹ, có tính thẩm mỹ",["PHILOSOPHY","ART"],21],["Agnosticism","/æɡˈnɑːstɪsɪzəm/","Thuyết bất khả tri",["PHILOSOPHY"],21],["Altruism","/ˈæltruɪzəm/","Chủ nghĩa vị tha",["PHILOSOPHY"],21],["Analytic","/ˌænəˈlɪtɪk/","Mang tính phân tích",["PHILOSOPHY"],21],["Anarchist","/ˈænərkɪst/","Người theo chủ nghĩa vô chính phủ",["PHILOSOPHY"],21],["Anarchy","/ˈænərki/","Tình trạng vô chính phủ",["PHILOSOPHY"],21],["Animism","/ˈænɪmɪzəm/","Thuyết vật linh",["PHILOSOPHY"],21],["Antecedent","/ˌæntɪˈsiːdnt/","Tiền lệ",["PHILOSOPHY"],21],["Anthropomorphism","/ˌænθrəpəˈmɔːrfɪzəm/","Thuyết hình người",["PHILOSOPHY"],21],["Antinomy","/ænˈtɪn.ə.mi/","Phản dị học",["PHILOSOPHY"],21],["Antiquity","/ænˈtɪkwəti/","Cổ xưa",["PHILOSOPHY"],21],["Antithesis","/ænˈtɪθəsɪs/","Phản đề",["PHILOSOPHY"],21],["Aphorism","/ˈæfərɪzəm/","Cách ngôn",["PHILOSOPHY"],21],["Apologetic","/əˌpɑːləˈdʒetɪk/","Cảm thấy hối lối",["PHILOSOPHY"],21],["A posteriori","/ˌɑː pəʊˌstɪriˈɔːri/","Suy diễn từ thực tế",["PHILOSOPHY"],21],["Appeal","/əˈpiːl/","Sự hấp dẫn, lôi cuốn",["PHILOSOPHY"],21],["Appearance","/əˈpɪrəns/","Vẻ bề ngoài",["PHILOSOPHY"],21],["A priori","/ˌɑː priˈɔːri/","Tiên nghiệm",["PHILOSOPHY"],21],["Argument","/ˈɑːrɡjumənt/","Tranh luận",["PHILOSOPHY"],21],["Ascetic","/əˈsetɪk/","Khổ hạnh",["PHILOSOPHY"],21],["Asceticism","/əˈsetɪsɪzəm/","Chủ nghĩa khổ hạnh",["PHILOSOPHY"],21],["Atheism","/ˈeɪθiɪzəm/","Thuyết vô thần",["PHILOSOPHY"],21],["Atomism","/ˈætəmɪzəm/","Thuyết nguyên tử",["PHILOSOPHY"],21],["Authoritarian","/əˌθɔːrəˈteriən/","Độc tài",["PHILOSOPHY"],21],["Authority","/əˈθɔːrəti/; /ɔːˈθɒr.ə.ti/","Thẩm quyền; thẩm quyền, quyền lực",["PHILOSOPHY","POLITICS"],21],["Autonomy","/ɔːˈtɑːnəmi/","Quyền tự trị",["PHILOSOPHY"],21],["Axiology","/ˌæk.si.ˈɑː.lə.dʒi/","Tiên đề học, giá trị học",["PHILOSOPHY"],21],["Axiom","/ˈæk.si.əm/","Tiên đề, chân lý",["PHILOSOPHY"],21],["Axiomatic","/ˌæk.si.ə.ˈmæ.tɪk/","Rõ ràng, hiển nhiên",["PHILOSOPHY"],21],["Baroque","/bə.ˈroʊk/; /bəˈrɒk/","Kỳ dị, lố bịch.; Phong cách nghệ thuật Phục Hưng",["PHILOSOPHY","ART"],21],["Behaviorism","/bɪˈheɪvjərɪzəm/","Chủ nghĩa hành vi",["PHILOSOPHY"],21],["Benevolence","/bəˈnevələns/","Lòng nhân từ",["PHILOSOPHY"],21],["Bigotry","/ˈbɪɡətri/","Sự cố chấp, lòng tin mù quáng",["PHILOSOPHY"],21],["Buddism","/ˈbʊdɪzəm/","Phật giáo",["PHILOSOPHY"],21],["Capitalism","/ˈkæpɪtəlɪzəm/; /'kæpitəlizəm/","Chủ nghĩa tư bản",["PHILOSOPHY","HISTORY"],21],["Civil rights","/ˌsɪvl ˈraɪts/","Quyền công dân",["PHILOSOPHY"],21],["Existentialism","/ˌeɡzɪˈstenʃəlɪzəm/","Thuyết hiện sinh",["PHILOSOPHY"],21],["Stoicism","/ˈstəʊɪsɪzəm/","Chủ nghĩa khắc kỷ",["PHILOSOPHY"],21],["Nihilism","/ˈnaɪɪlɪzəm/","Chủ nghĩa hư vô",["PHILOSOPHY"],21],["Optimism","/ˈɑːptɪmɪzəm/","Chủ nghĩa tích cực",["PHILOSOPHY"],21],["Christianity","/ˌkrɪstiˈænəti/","Thiên chúa giáo, Kito Giáo",["PHILOSOPHY"],21],["Cathholic","/ˈkæθlɪk/","Công giáo",["PHILOSOPHY"],21],["Islam","/ˈɪzlɑːm/","Hồi giáo, đạo Hồi",["PHILOSOPHY"],21],["Taxation","/tækˈseɪʃən/","Hoạt động thu và nộp thuế",["ECONOMICS"],16],["Incentive","/ɪnˈsentɪv/","Sự ưu đãi để khuyến khích ai đó làm gì",["ECONOMICS"],16],["Tax incentive","/ tæks ɪnˈsentɪv/","Ưu đãi thuế",["ECONOMICS"],16],["Preferential duties","/ˌprɛfəˈrɛnʃəl ˈdjuːtiz/","Thuế ưu đãi",["ECONOMICS"],16],["Advance corporation tax","/ədˈvɑːns ˌkɔːpəˈreɪʃən tæks/","Thuế doanh nghiệp ứng trước",["ECONOMICS"],16],["Tariff","/ˈtærɪf/","Hàng rào thuế quan",["ECONOMICS"],16],["Free trade agreement","/friː treɪd əˈgriːmənt/","Hiệp định thương mại tự do",["ECONOMICS"],16],["Foreign Direct Investment","/ˈfɒrɪn dɪˈrekt ɪnˈvestmənt/","Vốn đầu tư trực tiếp nước ngoài",["ECONOMICS"],16],["Gross Domestic Product","/grəʊs dəʊˈmestɪk ˈprɒdʌkt/","Tổng sản phẩm nội địa",["ECONOMICS"],16],["Gross National Product","/grəʊs ˈnæʃənl ˈprɒdʌkt/","Tổng sản lượng quốc gia",["ECONOMICS"],16],["Knowledge economy","/ˈnɒlɪdʒ iˈkɒnəmi/","Kinh tế tri thức",["ECONOMICS"],16],["Subsidise","/ˈsʌbsɪdaɪz/","Trả tiền cho 1 phần chi phí của cái gì",["ECONOMICS"],16],["Subsidy","/ˈsʌbsɪdi/","Trợ cấp",["ECONOMICS"],16],["Price support","/praɪs səˈpɔːt/","Sự trợ giá",["ECONOMICS"],16],["Gig economy","/gɪg iːˈkɒnəmi/","Nền kinh tế làm thuê tự do",["ECONOMICS"],16],["Accommodating monetary policy","/əˈkɒmədeɪtɪŋ ˈmʌnɪtəri ˈpɒlɪsi/","Chính sách tiền tệ điều tiết",["ECONOMICS"],16],["Accrued expenses","/əˈkruːd ɪksˈpensɪz/","Chi phí phát sinh",["ECONOMICS"],16],["Abolish","/əˈbɒlɪʃ/","Bãi bỏ, huỷ bỏ",["ECONOMICS"],16],["Accommodation transactions","/əˌkɒməˈdeɪʃ(ə)n trænˈzækʃənz/","Các giao dịch điều tiết",["ECONOMICS"],16],["Active balance","/ˈæktɪv ˈbæləns/","Dư ngạch",["ECONOMICS"],16],["Aggregate output","/ˈægrɪgɪt ˈaʊtpʊt/","Tổng thu nhập",["ECONOMICS"],16],["Autarky","/ˈɔːtɑːki/","Tự cung tự cấp",["ECONOMICS"],16],["Absolute scarcity","/ˈæbsəluːt ˈskeəsɪti/","Khan hiếm tuyệt đối",["ECONOMICS"],16],["Accelerated depreciation","/əkˈseləreɪtɪd dɪˌpriːʃɪˈeɪʃən/","khấu hao nhanh",["ECONOMICS"],16],["Buffer stocks","/ˈbʌfə stɒks/","Dự trữ bình ổn",["ECONOMICS"],16],["Beneficiary","/ˌbenɪˈfɪʃəri/","Người thụ hưởng",["ECONOMICS","INSURANCE"],16],["Bearer cheque","/ˈbeərə ʧek/","Séc vô danh",["ECONOMICS"],16],["Balanced growth","/ˈbælənst grəʊθ/","Tăng trưởng cân đối",["ECONOMICS"],16],["Correspondent","/ˌkɒrɪsˈpɒndənt/","Ngân hàng có quan hệ đại lý",["ECONOMICS"],16],["Counterfoil","/ˈkaʊntəfɔɪl/","Cuống (séc)",["ECONOMICS"],16],["Ceiling","/ˈsiːlɪŋ/","Mức trần",["ECONOMICS"],16],["Crossed cheque","/krɒst ʧek/","Séc thanh toán bằng chuyển khoản",["ECONOMICS"],16],["Capital expenditure","/ˈkæpɪtl ɪksˈpendɪʧə/; /ˈkæpətəl ɪkˈspendəʧər/","Các khoản chi tiêu lớn; Chi phí đầu tư",["ECONOMICS","ACCOUNTING"],16],["Debenture","/dɪˈbenʧə/","Trái khoán công ty, giấy nợ, phiếu nợ",["ECONOMICS"],16],["Dumping","/ˈdʌmpɪŋ/","Bán phá giá",["ECONOMICS"],16],["Economic blockade","/ˌiːkəˈnɒmɪk blɒˈkeɪd/","Bao vây kinh tế",["ECONOMICS"],16],["Embargo","/emˈbɑːgəʊ/","Cấm vận",["ECONOMICS"],16],["Effective longer-run solution","/ɪˈfektɪv ˈlɒŋgərʌn səˈluːʃən/","Giải pháp lâu dài hữu hiệu",["ECONOMICS"],16],["Intermediary","/ˌɪntəˈmiːdiəri/","Người làm trung gian",["ECONOMICS"],16],["International economic aid","/ˌɪntə(ː)ˈnæʃənl ˌiːkəˈnɒmɪk eɪd/","Viện trợ kinh tế quốc tế",["ECONOMICS"],16],["Indicator of economic welfare","/ˈɪndɪkeɪtər ɒv ˌiːkəˈnɒmɪk ˈwelfeə/","Chỉ tiêu phúc lợi kinh tế",["ECONOMICS"],16],["Mandate","/ˈmændeɪt/","Tờ uỷ nhiệm",["ECONOMICS"],16],["Reconcile","/ˈrekənsaɪl/","Bù trừ",["ECONOMICS"],16],["The openness of the economy","/ði ˈəʊpnnɪs ɒv ði iːˈkɒnəmi/","Sự mở cửa của nền kinh tế",["ECONOMICS"],16],["Telegraphic transfer","/ˌtelɪˈgræfɪk ˈtrænsfəː/","Chuyển tiền bằng điện tín",["ECONOMICS"],16],["Transnational corporations","/trænzˈnæʃənəl ˌkɔːpəˈreɪʃənz/","Các công ty siêu quốc gia",["ECONOMICS"],16],["Bilateral assistance","/baɪˈlætərəl əˈsɪstəns/","Trợ giúp song phương",["ECONOMICS"],16],["Amortization","/əˌmɔːtɪˈzeɪʃən/","Chi trả từng kỳ",["ECONOMICS"],16],["Finance","/ˈfaɪnæns/","Tài chính",["FINANCE - BANKING"],16],["Banking","/ˈbæŋkɪŋ/","Ngân hàng",["FINANCE - BANKING"],16],["Monetary policy","/ˈmʌnɪtəri ˈpɒlɪsi/","Chính sách tiền tệ",["FINANCE - BANKING"],16],["Monetary system","/ˈmʌnɪtəri ˈsɪstɪm/","Hệ thống tiền tệ",["FINANCE - BANKING"],16],["Monetary operations","/ˈmʌnɪtəri ˌɒpəˈreɪʃənz/","Hoạt động tiền tệ",["FINANCE - BANKING"],16],["Income from the sale of state property","/ˈɪnkʌm frɒm ðə seɪl ɒv steɪt ˈprɒpəti/","Thu nhập từ bán tài sản của nhà nước",["FINANCE - BANKING"],16],["Bankruptcy risk","/ˈbæŋkrəptsi rɪsk/","Rủi ro phá sản",["FINANCE - BANKING"],16],["Turnover","/ˈtɜːnˌəʊvə/","Kim ngạch",["FINANCE - BANKING"],16],["Fiduciary relationship","/fɪˈʤuːʃiəri rɪˈleɪʃənʃɪp/","Quan hệ ủy thác",["FINANCE - BANKING"],16],["Regulatory","/ˈregjʊleɪtəri/","Điều tiết",["FINANCE - BANKING"],16],["Provisional estimate","/prəˈvɪʒənl ˈestəmeɪt/","Dự toán tạm thời",["FINANCE - BANKING"],16],["Economic depression","/ˌiːkəˈnɒmɪk dɪˈpreʃən/","Suy thoái kinh tế",["FINANCE - BANKING"],16],["Amortize","/əˈmɔːtaɪz/","(món nợ) Trả dần, trừ dần",["FINANCE - BANKING"],16],["Boom","/buːm/","Phất, phát triển nhanh chóng",["FINANCE - BANKING"],16],["Certificate of deposit","/səˈtɪfɪkɪt ɒv dɪˈpɒzɪt/","Chứng chỉ tiền gửi",["FINANCE - BANKING"],16],["Cumulative","/ˈkjuːmjʊlətɪv/","Tích lũy, chồng chất",["FINANCE - BANKING"],16],["Deficit","/ˈdefɪsɪt/","Mức thâm hụt",["FINANCE - BANKING"],16],["Equity","/ˈekwɪti/","Vốn chủ sở hữu; Luật công bình",["FINANCE - BANKING","LAW"],16],["Fiduciary","/fɪˈʤuːʃiəri/","Uỷ thác; Người nhận uỷ thác",["FINANCE - BANKING","INSURANCE"],16],["Intrinsic","/ɪnˈtrɪnsɪk/","Thực chất, nội tại",["FINANCE - BANKING"],16],["Leverage","/ˈliːvərɪʤ/","Sự ảnh hưởng, tác động",["FINANCE - BANKING"],16],["Liability","/ˌlaɪəˈbɪlɪti/","Trách nhiệm pháp lý",["FINANCE - BANKING"],16],["Money market fund","/ˈmʌni ˈmɑːkɪt fʌnd/","Quỹ thị trường tiền tệ",["FINANCE - BANKING"],16],["Mutual fund","/ˈmjuːtjʊəl fʌnd/","Quỹ tương hỗ",["FINANCE - BANKING"],16],["Tycoon","/taɪˈkuːn/","Doanh nhân thành đạt, ông trùm (kinh tế)",["FINANCE - BANKING"],16],["Sight draft","/saɪt drɑːft/","Hối phiếu trả ngay",["FINANCE - BANKING"],16],["Buyer default","/ˈbaɪə dɪˈfɔːlt/","Người mua trả nợ không đúng hạn",["FINANCE - BANKING"],16],["Expenditure","/ɪksˈpendɪʧə/","Phí tổn",["FINANCE - BANKING"],16],["Forfaiting","/ˈfɔːfɪtɪŋ/","Bao thanh toán",["FINANCE - BANKING"],16],["Gearing","/ˈgɪərɪŋ/","Vốn vay",["FINANCE - BANKING"],16],["Letter of hypothecation","/ˈletər ɒv haɪˌpɒθəˈkeɪʃən/","Thư cầm cố",["FINANCE - BANKING"],16],["Institution","/ˌɪnstɪˈtjuːʃən/","Tổ chức, cơ quan",["FINANCE - BANKING"],16],["In credit","/ɪn ˈkredɪt/","Dư có",["FINANCE - BANKING"],16],["Late payer","/leɪt ˈpeɪə/","Người trả trễ hạn",["FINANCE - BANKING"],16],["Leasing","/ˈliːsɪŋ/","Sự cho thuê",["FINANCE - BANKING"],16],["Lessee","/leˈsiː /","Người đi thuê",["FINANCE - BANKING"],16],["Lessee purchase","/leˈsiː ˈpɜːʧəs/","Thuê mua",["FINANCE - BANKING"],16],["Lessor","/leˈsɔː/","Người cho thuê",["FINANCE - BANKING"],16],["Home market","/həʊm ˈmɑːkɪt/","Thị trường nội địa",["FINANCE - BANKING"],16],["Honour","/ˈɒnə/","Chấp nhận thanh toán",["FINANCE - BANKING"],16],["Fixed asset","/fɪkst ˈæset/","Tài sản cố định",["FINANCE - BANKING"],16],["Fixed cost","/fɪkst kɒst/","Chi phí cố định",["FINANCE - BANKING"],16],["Financial institution","/faɪˈnænʃəl ˌɪnstɪˈtjuːʃən/","Tổ chức tài chính",["FINANCE - BANKING"],16],["Fitting","/ˈfɪtɪŋ/","Đồ đạc",["FINANCE - BANKING"],16],["Finance sector","/faɪˈnæns ˈsektə/","Lĩnh vực tài chính",["FINANCE - BANKING"],16],["Factoring","/fæktərɪŋ/","Sự bao thanh toán, chiết khấu chứng từ",["FINANCE - BANKING"],16],["Black hole","/ˌblæk ˈhəʊl/","Hố đen",["ASTROPHYSICS","COSMOLOGY"],4],["Galaxy","/ˈɡæləksi/","Thiên hà",["ASTROPHYSICS","COSMOLOGY"],4],["Globular cluster","/ˈɡlɑːbjələr ˈklʌstər/","Cụm hình cầu",["ASTROPHYSICS"],4],["Gravitational lens","/ˌɡrævɪˈteɪʃnl /lenz/","Thấu kính hấp dẫn",["ASTROPHYSICS"],4],["Kuiper belt","/ˈkī-pər /belt/","Vành đai Kuiper",["ASTROPHYSICS"],4],["Neutron star","/ˈnuːtrɑːn stɑːr/","Sao neutron",["ASTROPHYSICS"],4],["Photosphere","/'foutousfiə/","Quang quyển, quang cầu",["ASTROPHYSICS"],4],["Planetary nebula","/ˈplænəteri ˈnebjələ/","Tinh vân hành tinh",["ASTROPHYSICS"],4],["Pulsar","/'pʌlsɑ:/","Ngôi sao neutron",["ASTROPHYSICS"],4],["Sibling sciences","/ˈsɪblɪŋ ˈsaɪəns/","Khoa học có sự liên kết",["ASTROPHYSICS"],4],["Nebula","/ˈnebjələ/","Tinh vân",["ASTROPHYSICS"],4],["Meteor shower","/ˈmiːtiər ˈʃaʊər/","Mưa sao băng",["ASTROPHYSICS"],4],["Planet","/ˈplænɪt/","Hành tinh",["ASTROPHYSICS","COSMOLOGY"],4],["Einstein's Relativity","/ˈaɪnstaɪn ˌreləˈtɪvəti/","Thuyết tương đối của Einstein",["ASTROPHYSICS"],4],["Celestial Coordinate","/səˈlestʃl kəʊˈɔːrdɪneɪt/","Tọa độ thiên thể",["ASTROPHYSICS"],4],["Cosmology","/kɑːzˈmɑːlədʒi/; /kɒzˈmɒlədʒi/","Vũ trụ học",["ASTROPHYSICS","COSMOLOGY"],4],["Circumpolar","/ˌsərkəmˈpōlər/","Quanh cực (quả đất)",["ASTROPHYSICS"],4],["Comet","/ˈkɑːmɪt/","Sao chổi",["ASTROPHYSICS"],4],["Constellation","/ˌkɑːnstəˈleɪʃn/","Chòm sao",["ASTROPHYSICS","COSMOLOGY"],4],["Dark Adaptation","/dɑːrk ˌædæpˈteɪʃn/","Thích nghi với bóng tối",["ASTROPHYSICS"],4],["Binary Star","/ˈbaɪnəri stɑːr/","Ngôi sao nhị phân",["ASTROPHYSICS"],4],["Earthshine","/ɜːrθ ʃaɪn/","Ánh đất",["ASTROPHYSICS"],4],["Eccentricity","/ˌeksenˈtrɪsəti/","Độ lệch tâm",["ASTROPHYSICS"],4],["Eclipse","/ɪˈklɪps/","Nhật thực",["ASTROPHYSICS"],4],["Finderscope","/ 'faində skəʊp/","Kính viễn vọng quang học",["ASTROPHYSICS"],4],["Focal Length","/ˌfəʊkl ˈleŋkθ/","Tiêu cự",["ASTROPHYSICS"],4],["Light Pollution","/laɪt pəˈluːʃn/","Ô nhiễm ánh sáng",["ASTROPHYSICS"],4],["Light-year","/ˈlaɪt jɪr/","Năm ánh sáng",["ASTROPHYSICS"],4],["Magnification","/ˌmæɡnɪfɪˈkeɪʃn/","Sự phóng đại",["ASTROPHYSICS"],4],["Magnitude","/ˈmæɡnɪtuːd/","Độ sáng biểu kiến (của thiên thể)",["ASTROPHYSICS"],4],["Meteor","/ˈmiːtiər/","Sao băng",["ASTROPHYSICS"],4],["Milky Way","/ˌmɪlki ˈweɪ/","Ngân Hà; Dải Ngân Hà",["ASTROPHYSICS","COSMOLOGY"],4],["Occultation","/ˌɒkəlˈteɪʃn/","Sự che khuất thiên thể",["ASTROPHYSICS"],4],["Planisphere","/ 'plænisfiə/","Bình đồ địa cầu",["ASTROPHYSICS"],4],["Retrograde","/ˈretrəɡreɪd/","Chuyển động ngược",["ASTROPHYSICS"],4],["Solar Filter","/ˈsəʊlər ˈfɪltər/","Bộ lọc năng lượng mặt trời",["ASTROPHYSICS"],4],["Star Cluster","/stɑːr ˈklʌstər/","Cụm sao",["ASTROPHYSICS"],4],["Supernova","/ˈsuːpərnəʊvə/","Siêu tân tinh",["ASTROPHYSICS","COSMOLOGY"],4],["Twilight","/ˈtwaɪlaɪt/","Hoàng hôn",["ASTROPHYSICS"],4],["Universal Time","/ˌjuːnɪˌvɜːrsl ˌtaɪm/","Giờ quốc tế",["ASTROPHYSICS"],4],["Star Diagonal","/ˈstɑːr daɪˈæɡənl/","Đường chéo sao",["ASTROPHYSICS"],4],["Sunspot","/ˈsʌnspɑːt/","Vết đen; Vết đen mặt trời",["ASTROPHYSICS","COSMOLOGY"],4],["Solstice","/ˈsɑːlstɪs/","Điểm chí",["ASTROPHYSICS"],4],["Parallax","/ˈpærəlæks/","Thị sai",["ASTROPHYSICS","COSMOLOGY"],4],["Synchrotron","/ˈsɪŋkroʊtrɒn/","Bức xạ, định hướng",["ASTROPHYSICS"],4],["Ancient civilization","/ˈeɪnʃ(ə)nt ˌsɪvɪlaɪˈzeɪʃən/","Nền văn minh cổ",["HISTORY"],7],["Ancestor","/ˈænsɪstə/","Tổ tiên",["HISTORY"],7],["Colonization","/ˌkɒlənaɪˈzeɪʃən/","Sự thuộc địa hóa",["HISTORY"],7],["Colonial force","/kəˈləʊniəl fɔːs/","Sự quản chế của ngoại xâm",["HISTORY"],7],["Delve into","/delv ˈɪntuː/","Đi sâu/ đào sâu vào (cái gì đó)",["HISTORY"],7],["Domination","/ˌdɒmɪˈneɪʃən/","Sự đô hộ",["HISTORY"],7],["Foreign invader","/ˈfɒrɪn ɪnˈveɪdə/","Giặc ngoại xâm",["HISTORY"],7],["Historical figure","/hɪsˈtɒrɪkəl ˈfɪgə/","Nhân vật lịch sử",["HISTORY"],7],["Historical highlight","/hɪsˈtɒrɪkəl ˈhaɪˌlaɪt/","Sự kiện lịch sử nổi bật",["HISTORY"],7],["Historical relic","/hɪsˈtɒrɪkəl ˈrelɪk/","Tàn dư, sản vật lịch sử",["HISTORY"],7],["Primitive times","/ˈprɪmɪtɪv taɪmz/","Thời kỳ nguyên thủy",["HISTORY"],7],["Prominent leader","/ˈprɒmɪnənt ˈliːdə/","Lãnh tụ kiệt xuất",["HISTORY"],7],["Resistance","/rɪˈzɪstəns/","Kháng chiến",["HISTORY"],7],["Sacrifice","/ˈsækrɪfaɪs/","Hy sinh",["HISTORY"],7],["Sovereignty","/ˈsɒvrənti/","Chủ quyền",["HISTORY"],7],["Victorious past","/vɪkˈtɔːrɪəs pɑːst/","Quá khứ hào hùng",["HISTORY"],7],["World-conflict","/wɜːld-ˈkɒnflɪkt/","Xung đột thế giới",["HISTORY"],7],["National anthem","/ˈnæʃənl ˈænθəm/","Quốc ca",["HISTORY"],7],["Patriotism","/ˈpætrɪətɪzm/","Lòng yêu nước",["HISTORY"],7],["Proclamation of Independence","/ˌprɒkləˈmeɪʃən ɒv ˌɪndɪˈpendəns/","Bản tuyên ngôn độc lập",["HISTORY"],7],["Cultivate patriotism","/ˈkʌltɪveɪt ˈpætrɪətɪzm/","Xây đắp lòng yêu nước",["HISTORY"],7],["Atrocity","/əˈtrɒsɪti/","Sự tàn bạo",["HISTORY"],7],["Avert war","/əˈvɜːt wɔː/","Đẩy lùi chiến tranh",["HISTORY"],7],["Border war","/ˈbɔːdə wɔː/","Chiến tranh biên giới",["HISTORY"],7],["Ceasefire","/ˈsiːsˌfaɪə/","Ngừng bắn",["HISTORY"],7],["Civilian","/sɪˈvɪljən/","Thường dân",["HISTORY"],7],["Collateral damage","/kɒˈlætərəl ˈdæmɪʤ/","Tổn thất ngoài dự kiến",["HISTORY"],7],["Deploy troop","/dɪˈplɔɪ truːp/","Triển khai quân",["HISTORY"],7],["Decisive battle","/dɪˈsaɪsɪv ˈbætl/","Trận đánh quyết định",["HISTORY"],7],["Guerilla","/gəˈrɪlə/","Du kích",["HISTORY"],7],["Invader","/ɪnˈveɪdə/","Quân xâm lược",["HISTORY"],7],["Invade","/ɪnˈveɪd/","Xâm lược",["HISTORY"],7],["Insurgent","/ɪnˈsɜːʤənt/","Người khởi nghĩa",["HISTORY"],7],["Kindle war","/ˈkɪndl wɔː/","Châm ngòi chiến tranh",["HISTORY"],7],["Counterattack","/ˈkaʊntərəˌtæk/","Phản công",["HISTORY"],7],["Liberation day","/ˌlɪbəˈreɪʃən deɪ/","Ngày Giải phóng",["HISTORY"],7],["Blockade","/blɒˈkeɪd/","Phong tỏa",["HISTORY"],7],["Militant","/ˈmɪlɪtənt/","Chiến sĩ",["HISTORY"],7],["Nuclear war","/ˈnjuːklɪə wɔː/","Chiến tranh hạt nhân",["HISTORY"],7],["Occupy","/ˈɒkjʊpaɪ/","Chiếm đóng",["HISTORY"],7],["Political conflict","/pəˈlɪtɪkəl ˈkɒnflɪkt/","Xung đột chính trị",["HISTORY"],7],["Radiation","/ˌreɪdɪˈeɪʃən/","Phóng xạ",["HISTORY"],7],["Rebel","/'rebl/","Quân phiến loạn",["HISTORY"],7],["Retreat","/rɪˈtriːt/","Rút quân",["HISTORY"],7],["Treaty","/'tri:ti/","Hiệp ước",["HISTORY"],7],["Triumph","/'traiəmf/","Chiến thắng",["HISTORY"],7],["Surrender","/sə'rendə[r]/","Đầu hàng",["HISTORY"],7],["Monarchical","/mɔ'nɑ:kəl/","Quân chủ chuyên chế",["HISTORY"],7],["Armed insurrection","/ɑːmd ˌɪnsəˈrekʃən/","Khởi nghĩa vũ trang",["HISTORY"],7],["Absolute magnitude","/ˌæbsəluːt ˈmæɡnɪtuːd/","Cường độ tuyệt đối",["COSMOLOGY"],4],["Absorption spectrum","/əbˈzɔːrpʃn ˈspektrəm/","Sự hấp thụ quang phổ",["COSMOLOGY"],4],["Antimatter","/ˈæntaɪmætər/","Phản vật chất",["COSMOLOGY"],4],["Asteroid","/ˈæstərɔɪd/","Tiểu hành tinh",["COSMOLOGY"],4],["Big bang theory","/ˌbɪɡ ˈbæŋ ˈθɪri/","Thuyết Vụ nổ lớn",["COSMOLOGY"],4],["Closed universe","/kləʊzd ˈjuːnɪvɜːrs/","Vũ trụ khép kín",["COSMOLOGY"],4],["Corona","/kəˈrəʊnə/","Hào quang",["COSMOLOGY"],4],["Cosmos","/ˈkɑːzməs/","Hệ vũ trụ",["COSMOLOGY"],4],["Dark matter","/ˌdɑːrk ˈmætər/","Vật chất tối",["COSMOLOGY"],4],["Debris","/dəˈbriː/","Mảnh vụn ngoài không gian",["COSMOLOGY"],4],["Density","/ˈdensəti/","Khối lượng riêng",["COSMOLOGY"],4],["Electromagnetism","/ɪˌlektrəʊˈmæɡnətɪzəm/","Điện từ học, hiện tượng điện từ",["COSMOLOGY"],4],["Emission","/ɪˈmɪʃn/","Sự phát ra (nhiệt, ánh sáng)",["COSMOLOGY"],4],["Fusion","/ˈfjuːʒn/","Dung hợp",["COSMOLOGY"],4],["Geocentric","/ˌdʒiːəʊˈsentrɪk/","Địa tâm",["COSMOLOGY"],4],["Heliocentric","/ˌhiːliəˈsentrɪk/","Thuyết nhật tâm, nhật tâm",["COSMOLOGY"],4],["Interstellar","/ˌɪntərˈstelər/","GIữa các vì sao",["COSMOLOGY"],4],["Luminous","/ˈluːmɪnəs/","Sáng chói",["COSMOLOGY"],4],["Magnetic field","/mæɡˌnetɪk ˈfiːld/","Từ trường",["COSMOLOGY"],4],["Momentum","/məʊˈmentəm/","Quán tính",["COSMOLOGY"],4],["Nova","/ˈnəʊvə/","Sao mới hiện",["COSMOLOGY"],4],["Nuclear fission","/ˌnuːkliər ˈfɪʃn/","Sự phân hạch hạt nhân",["COSMOLOGY"],4],["Orbit","/ˈɔːrbɪt/","Quỹ đạo, di chuyển theo quỹ đạo",["COSMOLOGY"],4],["Planetesimal","/ˌplænɪˈtesəməl/","Vi thể hành tinh",["COSMOLOGY"],4],["Primordial","/praɪˈmɔːrdiəl/","Nguyên thủy",["COSMOLOGY"],4],["Red giant","/ˌred ˈdʒaɪənt/","Sao đỏ khổng lồ",["COSMOLOGY"],4],["Redshift","/ˈredˌʃɪft/","Dịch chuyển đỏ",["COSMOLOGY"],4],["Relativity","/ˌreləˈtɪvəti/","Học thuyết tương đối",["COSMOLOGY"],4],["Solar flare","/ˌsəʊlər ˈfler/","Bão mặt trời",["COSMOLOGY"],4],["Solar system","/ˈsəʊlər sɪstəm/","Hệ mặt trời",["COSMOLOGY"],4],["Space-time","/ˈspeɪs taɪm/","Không-thời gian",["COSMOLOGY"],4],["Spiral galaxy","/ˈspaɪrəl ˈɡæləksi/","Thiên hà xoắn ốc",["COSMOLOGY"],4],["Stellar","/ˈstelər/","Thuộc về sao",["COSMOLOGY"],4],["Supergiant","/ˈsjuːpəˌdʒaɪənt/","Sao siêu khổng lồ",["COSMOLOGY"],4],["Multiverse","/ˈmʌl.ti.vɜ˞ːs/","Đa vũ trụ",["COSMOLOGY"],4],["Wormhole","/ˈwɜːrmhəʊl/","Lỗ sâu",["COSMOLOGY"],4],["Wavelength","/ˈweɪvleŋkθ/","Bước sóng",["COSMOLOGY"],4],["White dwarf","/ˌwaɪt ˈdwɔːrf/","Sao lùn trắng",["COSMOLOGY"],4],["Isaac Newton","/ˌaɪzək ˈnuːtən/","Nhà khoa học có tầm ảnh hưởng lớn và vĩ đại nhất trong lịch sử",["COSMOLOGY"],4],["Albert Einstein","/ˌælbərt ˈaɪnstaɪn/","Người phát minh ra thuyết Tương đối, nhà vật lý vĩ đại nhất mọi thời đại",["COSMOLOGY"],4],["Critical realism","/ˈkrɪtɪkəl ˈrɪəlɪzm/","Chủ nghĩa hiện thực phê phán",["ART"],9],["Plastic art","/ˈplæstɪk ɑːt/","Nghệ thuật tạo hình",["ART"],9],["Spectator","/spekˈteɪtə/","Khán giả",["ART"],9],["Caricature","/ˌkærɪkəˈtjʊə/","Tranh biếm họa, tranh đả kích",["ART"],9],["Bring out","/brɪŋ aʊt/","Xuất bản, thể hiện",["ART"],9],["Artifact","/ˈɑːtɪfækt/; /ˈɑːrtɪfækt/","Đồ tạo tác; Cổ vật, đồ tạo tác",["ART","ARCHAEOLOGY"],9],["Choreograph","/'kɒriəgrɑ:f/","Dàn dựng",["ART"],9],["Gouache","/gʊˈɑːʃ/","Tranh bột màu",["ART"],9],["Stylization","/'stailai'zei∫n/","Sự cách điệu hóa",["ART"],9],["Woodcut","/ˈwʊdkʌt/","Tác phẩm khắc gỗ",["ART"],9],["Engraving","/ɪnˈgreɪvɪŋ/","Tranh khắc",["ART"],9],["Socialist realism","/ˈsəʊʃəlɪst ˈrɪəlɪzm/","Chủ nghĩa hiện thực xã hội",["ART"],9],["Romanticism","/rəʊˈmæntɪsɪzm/","Chủ nghĩa lãng mạn",["ART"],9],["Expressionism","/ɪksˈpreʃnɪzm/","Chủ nghĩa biểu hiện",["ART"],9],["Surrealism","/səˈrɪəlɪzm/","Chủ nghĩa siêu thực",["ART"],9],["Fresco","/ˈfreskəʊ/","Tranh tường",["ART"],9],["Periodical","/ˌpɪərɪˈɒdɪkəl/","Xuất bản định kỳ",["ART"],9],["Still-life picture","/stɪl-laɪf ˈpɪkʧə/","Tranh tĩnh vật",["ART"],9],["Composition","/ˌkɒmpəˈzɪʃən/","Thành phần",["ART"],9],["Hue","/hjuː/","Màu sắc",["ART"],9],["Vanishing point","/ˈvænɪʃɪŋ pɔɪnt/","Điểm mù",["ART"],9],["Avant-garde","/ˌævɒŋˈgɑːd/","Tiên phong",["ART"],9],["Collage","/ˈkɒlɑːʒ/","Hình thức nghệ thuật thị giác",["ART"],9],["Evocative","/ˈevəʊkətɪv/","Gợi lên một thứ gì đó dễ chịu",["ART"],9],["Saturation","/ˌsæʧəˈreɪʃən/","Bão hòa",["ART"],9],["Oblique","/əˈbliːk/","Đường nghiêng",["ART"],9],["Renaissance","/rəˈneɪsəns/","Thời kỳ phục hưng",["ART"],9],["Elegy","/ˈelɪʤi/","Thơ sầu",["ART"],9],["Blank verse","/blæŋk vɜːs/","Thơ không vần",["ART"],9],["Remuneration","/rɪˌmjuːnəˈreɪʃən/","Tiền thù lao, nhuận bút",["ART"],9],["Anthology","/ænˈθɒləʤi/","Tuyển tập",["ART"],9],["Autobiography","/ˌɔtəbaɪˈɑgrəfi/","Tự truyện",["ART"],9],["Sitter","/'sitə/","Người mẫu vẽ",["ART"],9],["Charcoal drawing","/ˈtʃɑːkəʊl ˈdrɔːɪŋ/","Tranh vẽ bằng chì than",["ART"],9],["Artwork","/ˈɑːtwɜːk/","tác phẩm nghệ thuật",["ART"],9],["Decorate","/ˈdekəreɪt/","trang trí, trang hoàng",["ART"],9],["Depict","/dɪˈpɪkt/","miêu tả",["ART"],9],["Portrait","/ˈpɔːtreɪt/","chân dung",["ART"],9],["Oil painting","/ˈɔɪl peɪntɪŋ/","tranh sơn dầu",["ART"],9],["Illustrate","/ˈɪləstreɪt/","minh họa",["ART"],9],["Watercolor","/ˈwɔːtəkʌlə(r)/","màu nước",["ART"],9],["Landscape","/ˈlændskeɪp/","phong cảnh; Cảnh quan",["ART","REAL ESTATE"],9],["Sophisticated","/səˈfɪstɪkeɪtɪd/","tinh tế",["ART"],9],["Contemporary","/kənˈtemprəri/","đương đại",["ART"],9],["Fine art","/ˌfaɪn ˈɑːt/","Loại hình nghệ thuật, mỹ thuật",["ART"],9],["Piece of artwork","None","Tác phẩm nghệ thuật",["ART"],9],["Eminent painters","/ˈemɪnənt/ /ˈpeɪntə(r)/","Họa sĩ tài năng",["ART"],9],["Alignment","/əˈlaɪnmənt/","Bố cục",["ART"],9],["Elegant pursuit","/ˈelɪɡənt/ /pəˈsjuːt/","Thú vui tao nhã",["ART"],9],["Criminology","/ˌkrɪmɪˈnɒlədʒi/","Tội phạm học (n)",["CRIMINOLOGY"],17],["Abduction","/æbˈdʌkʃn/","Bắt cóc (n)",["CRIMINOLOGY"],17],["Arson","/ˈɑːrsn/","Phóng hỏa (n)",["CRIMINOLOGY"],17],["Assassination","/əˌsæsɪˈneɪʃn/","Sự ám sát (n)",["CRIMINOLOGY"],17],["Assault","/əˈsɔːlt/","Tấn công (n)",["CRIMINOLOGY"],17],["Bigamy","/ˈbɪɡəmi/","Song hôn (n)",["CRIMINOLOGY"],17],["Blackmail","/ˈblækmeɪl/","Tống tiền (n)",["CRIMINOLOGY"],17],["Bombing","/ˈbɑːmɪŋ/","Ném bom (n)",["CRIMINOLOGY"],17],["Bribery","/ˈbraɪbəri/","Hối lộ (n)",["CRIMINOLOGY"],17],["Burglary","/ˈbɜːrɡləri/","Trộm cắp (n)",["CRIMINOLOGY"],17],["Child abuse","/ˈtʃaɪld əbjuːs/","Lạm dụng trẻ em (n)",["CRIMINOLOGY"],17],["Corruption","/kəˈrʌpʃn/","Tham nhũng (n)",["CRIMINOLOGY"],17],["Crime","/kraɪm/","Tội ác (n)",["CRIMINOLOGY"],17],["Cybercrime","/ˈsaɪbərkraɪm/","Tội phạm mạng (n)",["CRIMINOLOGY"],17],["Domestic violence","/də'mestik 'vaiələns/","Bạo lực gia đình (n)",["CRIMINOLOGY"],17],["Drunk driving","/ˌdrʌŋk ˈdraɪvɪŋ/","Say rượu lái xe (n)",["CRIMINOLOGY"],17],["Embezzlement","/ɪmˈbezlmənt/","Tham ô, biển thủ (n)",["CRIMINOLOGY"],17],["Espionage","/ˈespiənɑːʒ/","Gián điệp (n)",["CRIMINOLOGY"],17],["Forgery","/ˈfɔːrdʒəri/","Giả mạo (n)",["CRIMINOLOGY"],17],["Fraud","/frɔːd/","Lừa đảo (n)",["CRIMINOLOGY"],17],["Genocide","/ˈdʒenəsaɪd/","Tội diệt chủng (n)",["CRIMINOLOGY"],17],["Hijacking","/ˈhaɪdʒækɪŋ/","Không tặc (n)",["CRIMINOLOGY"],17],["Hit and run","/ˌhɪt ən ˈrʌn/","Gây tai nạn rồi bỏ chạy (n)",["CRIMINOLOGY"],17],["Homicide","/ˈhɑːmɪsaɪd/","Tội giết người (n)",["CRIMINOLOGY"],17],["Hooliganism","/ˈhuːlɪɡənɪzəm/","Hành vi côn đồ (n)",["CRIMINOLOGY"],17],["Identity theft","/aɪˈdentəti θeft/","Hành vi trộm cắp danh tính (n)",["CRIMINOLOGY"],17],["Kidnapping","/ˈkɪdnæpɪŋ/","Bắt cóc (n)",["CRIMINOLOGY"],17],["Libel","/ˈlaɪbl/","Phỉ báng (n)",["CRIMINOLOGY"],17],["Looting","/ˈluːtɪŋ/","Cướp bóc (n)",["CRIMINOLOGY"],17],["Manslaughter","/ˈmænslɔːtər/","Ngộ sát (n)",["CRIMINOLOGY"],17],["Perjury","/ˈpɜːrdʒəri/","Tội khai man (n)",["CRIMINOLOGY"],17],["Arsonist","/ˈɑːrsənɪst/","Kẻ phóng hỏa (n)",["CRIMINOLOGY"],17],["Assassin","/əˈsæsn/","Kẻ ám sát (n)",["CRIMINOLOGY"],17],["Assailant","/əˈseɪlənt/; /əˈseɪ.lənt/","Người tấn công (n); Tội phạm, người tấn công",["CRIMINOLOGY","POLITICS"],17],["Bigamist","/ˈbɪɡəmɪst/","Người phạm tội song hôn (n)",["CRIMINOLOGY"],17],["Blackmailer","/ˈblækmeɪlər/","Kẻ tống tiền (n)",["CRIMINOLOGY"],17],["Bomber","/ˈbɑːmər/","Kẻ đặt bom (n)",["CRIMINOLOGY"],17],["Child abuser","/tʃaɪld əˈbjuːzər/","Tội phạm lạm dụng trẻ em (n)",["CRIMINOLOGY"],17],["Criminal","/ˈkrɪmɪnl/","Tội phạm (n)",["CRIMINOLOGY"],17],["Cyber criminal","/saɪbər ˈkrɪmɪnl/","Tội phạm mạng (n)",["CRIMINOLOGY"],17],["Drunk driver","/ˌdrʌŋk ˈdraɪvər/","Người lái xe say rượu (n)",["CRIMINOLOGY"],17],["Embezzler","/ɪmˈbezlər/","Tội phạm tham ô (n)",["CRIMINOLOGY"],17],["Con artist","/kɑːn ˈɑːrtɪst/","Kẻ lừa đảo (n)",["CRIMINOLOGY"],17],["Hooligan","/ˈhuːlɪɡən/","Côn đồ (n)",["CRIMINOLOGY"],17],["Kidnapper","/ˈkɪdnæpər/","Kẻ bắt cóc (n)",["CRIMINOLOGY"],17],["Looter","/ˈluːtər/","Kẻ cướp bóc (n)",["CRIMINOLOGY"],17],["Murderer","/ˈmɜːrdərər/","Sát nhân, kẻ giết người (n)",["CRIMINOLOGY"],17],["Self-defense","/ˌself dɪˈfens/","Tự vệ (n)",["CRIMINOLOGY"],17],["Criminal profiling","/ˈkrɪmɪnl ˈprəʊfaɪlɪŋ/","Hồ sơ định hình tội phạm (n)",["CRIMINOLOGY"],17],["Terrorism","/ˈterərɪzəm/","Khủng bố (n)",["CRIMINOLOGY"],17],["Treason","/ˈtriːzn/","Tội phản quốc (n)",["CRIMINOLOGY"],17],["Get hold of","v phrase","obtain, có được, sở hữu được",["POLITICS"],15],["Election","/iˈlek.ʃən/","bầu cử",["POLITICS"],15],["Take place","[v phr]","diễn ra",["POLITICS"],15],["Upper house","/ˌʌp.ə ˈhaʊs/","thượng viện",["POLITICS"],15],["Apparently","/əˈpær.ənt.li/","có vẻ như là",["POLITICS"],15],["Promote","/prəˈməʊt/","thúc đẩy",["POLITICS"],15],["Alliance","/əˈlaɪ.əns/","liên minh",["POLITICS"],15],["Ally","/ˈæl.aɪ/","đồng minh",["POLITICS"],15],["By any estimation","adv phrase","hiểu theo mọi góc độ",["POLITICS"],15],["Influential","/ˌɪn.fluˈen.ʃəl/","có sức ảnh hưởng",["POLITICS"],15],["Postwar","/ˈpəʊst.wɔː/","thuộc về thời kỳ hậu chiến",["POLITICS"],15],["Announce","/əˈnaʊns/","tuyên bố",["POLITICS"],15],["Parliamentary party","/ˌpɑː.lɪˈmen.tər.i//ˈpɑː.ti/","1 nhóm người bao gồm các thành viên của cùng 1 đảng chính trị, có thể hiểu là đại hội đại biểu của Đảng đó",["POLITICS"],15],["Rebellion","/rɪˈbel.i.ən/","sự nổi loạn, chống đối",["POLITICS"],15],["MP = Member of Parliament","/ˌmem.bər əv ˈpɑː.lɪ.mənt/","đại biểu quốc hội",["POLITICS"],15],["Press release","/ˈpres rɪˌliːs/","thông cáo báo chí",["POLITICS"],15],["Conservative, Conservative Party","/kənˈsɜː.və.tɪv/","Đảng Bảo thủ, 1 trong 2 chính đảng cầm quyền ở nước Anh bên cạnh Liberal Party, Đảng Tiến bộ",["POLITICS"],15],["House of Commons","/ˌhaʊs əv ˈkɒm.ənz/","hạ nghị viện Anh, có vai trò giám sát hoạt động của chính phủ cùng với House of Lords – thượng nghị viện",["POLITICS"],15],["PM = Prime Minister","/ˌpraɪm ˈmɪn.ɪ.stər/","thủ tướng Anh",["POLITICS"],15],["Be unseated","b phr","bị phế truất",["POLITICS"],15],["Get/have (one’s) jollies (up)","idiom","tận hưởng sự vui sướng hoặc thích thú",["POLITICS"],15],["Better the devil you know than the devil you don’t","idiom","1 câu idiom rất hay nói về sự lựa chọn. Một người/ sự vật mà ta ĐÃ BIẾT là nó xấu xa như thế nào vẫn còn TỐT HƠN một người/ sự vật mà ta KHÔNG BIẾT nó có thể xấu xa đến mức nào.",["POLITICS"],15],["Resignation","/ˌrez.ɪɡˈneɪ.ʃən/","sự từ chức",["POLITICS"],15],["Anti-corruption","/ˌæn.ti.kəˈrʌp.ʃən/","chống tham nhũng",["POLITICS"],15],["Champion","/ˈtʃæm.pi.ən/","1 người tranh luận hoặc đấu tranh cho 1 sự nghiệp hoặc thay mặt cho ai đó",["POLITICS"],15],["The ministerial code","/ˌmɪn.ɪˈstɪə.ri.əl/","1 văn bản quy định các quy tắc và chuẩn mực ứng xử dành cho các quan chức chính phủ Anh",["POLITICS"],15],["Health secretary","Secretary of State for Health and Social Care","chức vị tương đương bộ trưởng y tế",["POLITICS"],15],["Underestimate","/ˌʌn.dəˈres.tɪ.meɪt/","coi thường, đánh giá thấp",["POLITICS"],15],["Get behind sb/sth","v phr","ủng hộ ai đó/ cái gì",["POLITICS"],15],["Returning officer","None","quan chức được giao trọng trách kiểm đếm và tuyên bố kết quả của các cuộc bầu cử",["POLITICS"],15],["Vote in favour","/vəʊt/ /ɪn/ /ˈfeɪ.vər/","số phiếu ủng hộ",["POLITICS"],15],["Vote against","/vəʊt/ /əˈɡenst/","số phiếu phản đối",["POLITICS"],15],["Valedictorian","/væləˌdɪkˈtɔriən/","sinh viên danh dự, người tốt nghiệp với điểm số cao nhất và được chọn lên phát biểu tại lễ trao bằng tốt nghiệp",["POLITICS"],15],["Hone","/həʊn/","trau dồi, mài dũa (kỹ năng, tài năng)",["POLITICS"],15],["Trigger","/ˈtrɪɡər/","kích hoạt",["POLITICS"],15],["Corporation","/kɔrpəˈreɪʃən/","công ty, doanh nghiệp",["POLITICS"],15],["Intellectual","/ɪn.təlˈek.tʃu.əl/","thuộc về trí thức/ [n]: 1 người trí thức",["POLITICS"],15],["Intellect","/ˈɪn.təl.ekt/","tri thức của con người, khả năng hiểu biết và tiếp thu kiến thức, một người tri thức",["POLITICS"],15],["Alumnus","/əˈlʌm.nəs/","cựu sinh viên",["POLITICS"],15],["Alumni","/əˈlʌm.naɪ/","số nhiều của Alumnus",["POLITICS"],15],["Appraisement","/əˈpreɪzmənt/","sự đánh giá về tính chất/ giá trị của 1 thứ gì đó",["POLITICS"],15],["Benefactor","/ˈben.ɪ.fæk.tər/","nhà tài trợ",["POLITICS"],15],["Tenure","/ˈten.jər/","nhiệm kỳ, thời gian mà một người nắm giữ 1 chức vị nào đó do bầu cử",["POLITICS"],15],["Inequity","/ɪˈnek.wɪ.ti/","sự bất bình đẳng",["POLITICS"],15],["Scarcity","/ˈskeə.sə.ti/","sự khan hiếm",["POLITICS"],15],["Privileged","/ˈprɪv.əl.ɪdʒd/","(chỉ người) có đặc quyền/ có điều kiện tốt hơn người thường",["POLITICS"],15],["Under-privileged","/ʌn.dəˈprɪv.əl.ɪdʒd/","(chỉ người) có hoàn cảnh thiếu thốn, khó khăn",["POLITICS"],15],["Forensics","/fəˈrenzɪks/","Pháp y",["FORENSICS"],17],["Preserve","/prɪˈzɜːrv/","Lưu giữ, bảo quản",["FORENSICS"],17],["Evidence","/ˈevɪdəns/","Chứng cứ, bằng chứng",["FORENSICS"],17],["Observation","/ˌɑːbzərˈveɪʃn/","Quan sát",["FORENSICS"],17],["Suspect","/səˈspekt/","Nghi ngờ",["FORENSICS"],17],["Suspect (n)","/ˈsʌspekt/","Nghi phạm",["FORENSICS"],17],["Accomplice","/əˈkɑːmplɪs/","Đồng lõa, tòng phạm",["FORENSICS"],17],["Alibi","/ˈæləbaɪ/","Chứng cứ ngoại phạm",["FORENSICS"],17],["Detective","/dɪˈtektɪv/","Thám tử",["FORENSICS"],17],["Crime scene","/ˈkraɪm siːn/","Hiện trường vụ án",["FORENSICS"],17],["Ballistic","/bəˈlɪstɪk/","Đạn đạo",["FORENSICS"],17],["Dentistry","/ˈdentɪstri/","Dấu vết về nha khoa",["FORENSICS"],17],["Entomology","/ˌentəˈmɑːlədʒi/","Côn trùng học",["FORENSICS"],17],["Pathology","/pəˈθɑːlədʒi/","Bệnh lý",["FORENSICS"],17],["Toxicology","/ˌtɑːksɪˈkɑːlədʒi/","Độc chất học",["FORENSICS"],17],["Latent","/ˈleɪtnt/","Tiềm tàng",["FORENSICS"],17],["Eyewitness","/ˈaɪwɪtnəs/","Nhân chứng tận mắt",["FORENSICS"],17],["Medulla oblongata","/məˌdʌlə ˌɑːblɑːŋˈɡɑːtə/","Tủy",["FORENSICS"],17],["Keratin","/ˈkerətɪn/","Chất sừng",["FORENSICS"],17],["Fingerprint","/ˈfɪŋɡərprɪnt/","Dấu vân tay",["FORENSICS"],17],["Poison","/ˈpɔɪzn/","Chất độc",["FORENSICS"],17],["Spinous","/ˈspaɪnəs/","Có gai",["FORENSICS"],17],["Fabricated evidence","/ˈfæbrɪkeɪt ˈevɪdəns/","Bằng chứng giả",["FORENSICS"],17],["Splatter","/ˈsplætər/","Bắn tung toé",["FORENSICS"],17],["Volume","/ˈvɑːljəm/","Dung tích, thể tích",["FORENSICS"],17],["Cast-off","/ˈkæst ɔːf/","Loại bỏ",["FORENSICS"],17],["Electrophoresis","/əˌlektrəfəˈriːsɪs/","Điện di",["FORENSICS"],17],["Circumstantial evidence","/ˌsɜːrkəmˈstænʃl ˈevɪdəns/","Chứng cứ gián tiếp",["FORENSICS"],17],["Catalyze","/ˈkætəlaɪz/","Xúc tác",["FORENSICS"],17],["Culprit","/ˈkʌlprɪt/","Kẻ thủ phạm, chủ mưu",["FORENSICS"],17],["Detect","/dɪˈtekt/","Phát hiện",["FORENSICS"],17],["Discovery","/dɪˈskʌvəri/","Khám phá",["FORENSICS"],17],["Evidential","/ˌevɪˈdenʃl/","Dựa trên bằng chứng",["FORENSICS"],17],["Forensic science","/fəˈrenzɪk ˈsaɪəns/","Khoa học pháp y, khoa học hiện trường",["FORENSICS"],17],["Investigate","/ɪnˈvestɪɡeɪt/","Điều tra",["FORENSICS"],17],["Investigator","/ɪnˈvestɪɡeɪtər/","Điều tra viên",["FORENSICS"],17],["Proof","/pruːf/","Bằng chứng",["FORENSICS"],17],["Trace","/treɪs/","Dấu vết",["FORENSICS"],17],["Retrieve","/rɪˈtriːv/","Khôi phục lại",["FORENSICS"],17],["Controversial","/ˌkɑːntrəˈvɜːrʃl/","Gây tranh cãi",["FORENSICS"],17],["Examine","/ɪɡˈzæmɪn/","Khám nghiệm, kiểm tra",["FORENSICS"],17],["Alleged","/əˈledʒd/","Mang tính cáo buộc",["FORENSICS"],17],["Autopsy","/ˈɔːtɑːpsi/","Khám nghiệm tử thi",["FORENSICS"],17],["Abnormality","/ˌæbnɔːrˈmæləti/","Sự bất thường",["FORENSICS"],17],["Residue","/ˈrezɪduː/","Tàn dư, dấu vết bị bỏ lại",["FORENSICS"],17],["Prosecution","/ˌprɑːsɪˈkjuːʃn/","Truy tố",["FORENSICS"],17],["Reliability of eyewitness","/rɪˌlaɪəˈbɪləti əv ˈaɪwɪtnəs/","Độ tin cậy của nhân chứng",["FORENSICS"],17],["Reconstruction of the crime scene","/ˌriːkənˈstrʌkʃn əv ðə ˈkraɪm siːn/","Tái tạo lại hiện trường",["FORENSICS"],17],["Aviation","/ˌeɪviˈeɪʃn/","Hàng không",["AVIATION"],14],["Air force","/ˈer fɔːrs/","Không quân",["AVIATION"],14],["Airline","/ˈerlaɪn/","Hãng hàng không",["AVIATION"],14],["Bleed air","/blid er/","Khí nóng tỏa ra từ máy bay",["AVIATION"],14],["Cabin crew","/ˈkæbɪn kruː/","Phi hành đoàn",["AVIATION"],14],["Camber","/ˈkæmbər/","Sự vồng lên",["AVIATION"],14],["Cargo","/ˈkɑːrɡəʊ/","Hàng hóa",["AVIATION"],14],["Center of gravity","/ˌsentər əv ˈɡrævəti/","Trung tâm trọng lực",["AVIATION"],14],["Charter","/ˈtʃɑːrtər/","Máy bay thuê",["AVIATION"],14],["Cross-country","/ˌkrɔːs ˈkʌntri/","Xuyên quốc gia",["AVIATION"],14],["Crosswind","/ˈkrɑːs.wɪnd/","Gió ngang",["AVIATION"],14],["Thrust","/θrʌst/","Đẩy lên",["AVIATION"],14],["Descent","/dɪˈsent/","Hạ xuống",["AVIATION"],14],["Downwind leg","/ˌdaʊnˈwɪnd leɡ/","Chân xuôi gió",["AVIATION"],14],["Estimated time of arrival","/ˈestɪmeɪt taɪm əv əˈraɪvl/","Giờ đáp ước chừng",["AVIATION"],14],["Estimated time of departure","/ˈestɪmeɪt taɪm əv dɪˈpɑːrtʃər/","Giờ khởi hành ước chừng",["AVIATION"],14],["Estimated time en route","/ˈestɪmeɪt taɪm ˌɑːn raʊt/","Thời gian ước chừng cả chuyến bay",["AVIATION"],14],["Final approach","/ˈfaɪnl əˈprəʊtʃ/","Điểm dừng cuối",["AVIATION"],14],["Firewall","/ˈfaɪərwɔːl/; /ˈfaɪəwɔːl/","Tường lửa",["AVIATION","INFORMATION TECHNOLOGY"],14],["Flightbag","/ˈflaɪtbæg/","Vali nhỏ",["AVIATION"],14],["Flight deck","/ˈflaɪt dek/","Buồng điều khiển trên máy bay",["AVIATION"],14],["Go-around","/ˈɡəʊ əraʊnd/","Bay vòng",["AVIATION"],14],["Gross weight","/ɡrəʊs weɪt/","Trọng lượng thực tế",["AVIATION"],14],["Horizontal stabilizer","/ˌhɔːrɪˈzɑːntl ˈsteɪbəlaɪzər/","Bộ thăng bằng ngang",["AVIATION"],14],["Jet","/dʒet/","Máy bay phản lực",["AVIATION"],14],["Lift","/lɪft/","Nâng lên, nhấc lên",["AVIATION"],14],["Morse code","/ˌmɔːrs ˈkəʊd/","Mã morse",["AVIATION"],14],["Payload","/ˈpeɪləʊd/","Trọng tải",["AVIATION"],14],["First officer","/ˌfɜːrst ˈɑːfɪsər/","Cơ phó",["AVIATION"],14],["Luggage","/ˈlʌɡɪdʒ/","Hành lý",["AVIATION"],14],["Aisle","/aɪl/","Lối đi trên máy bay",["AVIATION"],14],["In-flight meal","/ˌɪn ˈflaɪt miːl/","Bữa ăn trong chuyến bay",["AVIATION"],14],["Seatbelt","/ˈsiːt belt/","Dây an toàn",["AVIATION"],14],["Turbulence","/ˈtɜːrbjələns/","Sự nhiễu loạn",["AVIATION"],14],["Window seat","/ˈwɪndəʊ siːt/","Ghế ngồi gần cửa sổ",["AVIATION"],14],["Economy class","/ɪˈkɑːnəmi klæs/","Hạng phổ thông",["AVIATION"],14],["Business class","/ˈbɪznəs klæs/","Hạng thương gia",["AVIATION"],14],["First class","/ˌfɜːrst ˈklæs/","Hạng nhất",["AVIATION"],14],["Carry-on","/ˈkæri ɑːn/","Hành lý xách tay",["AVIATION"],14],["Boarding pass","/ˈbɔːrdɪŋ pæs/","Vé lên máy bay",["AVIATION"],14],["Passport","/ˈpæspɔːrt/","Hộ chiếu",["AVIATION"],14],["Security","/sɪˈkjʊrəti/","An ninh",["AVIATION"],14],["Delay","/dɪˈleɪ/","Hoãn lại",["AVIATION"],14],["Conveyor belt","/kənˈveɪər belt/","Băng chuyền",["AVIATION"],14],["Trolley","/ˈtrɑːli/","Xe đẩy hành lý",["AVIATION"],14],["Engineering","/ˌendʒɪˈnɪərɪŋ/","Cơ khí",["ENGINEERING"],6],["Workpiece","/ˈwɜːkˌpiːs/","Chi tiết gia công",["ENGINEERING"],6],["Rake angle","/reɪk ˈæŋgl/","Góc trước",["ENGINEERING"],6],["Flank","/flæŋk/","Mặt hông/mặt bên",["ENGINEERING"],6],["Face","/feɪs/","Mặt trước",["ENGINEERING"],6],["Auxiliary cutting edge","/ɔːɡˈzɪliəri ˈkʌtɪŋ ɛʤ/","Lưỡi cắt phụ",["ENGINEERING"],6],["Clearance angle","/ˈklɪərəns ˈæŋgl/","Góc sau",["ENGINEERING"],6],["Lip angle","/lɪp ˈæŋgl/","Góc sắc",["ENGINEERING"],6],["Plane approach angle","/pleɪn əˈprəʊʧ ˈæŋgl/","Góc nghiêng chính",["ENGINEERING"],6],["Auxiliary plane angle","/ɔːɡˈzɪliəri pleɪn ˈæŋgl/","Góc nghiêng phụ",["ENGINEERING"],6],["Plane point angle","/pleɪn pɔɪnt ˈæŋgl/","Góc mũi dao",["ENGINEERING"],6],["Nose radius","/nəʊz ˈreɪdiəs/","Bán kính mũi dao",["ENGINEERING"],6],["Built up edge","/bɪlt ʌp ɛʤ/","Lẹo dao",["ENGINEERING"],6],["Roughing turning tool","/ˈrʌfɪŋ ˈtɜːnɪŋ tuːl/","Dao tiện thô",["ENGINEERING"],6],["Finishing turning tool","/ˈfɪnɪʃɪŋ ˈtɜːnɪŋ tuːl/","Dao tiện tinh",["ENGINEERING"],6],["Pointed turning tool","/ˈpɔɪntɪd ˈtɜːnɪŋ tuːl/","Dao tiện tinh đầu nhọn",["ENGINEERING"],6],["Board turning tool","/bɔːd ˈtɜːnɪŋ tuːl/","Dao tiện tinh rộng bản",["ENGINEERING"],6],["Chamfer tool","/ˈʧæmfə tuːl/","Dao vát mép",["ENGINEERING"],6],["Machined surface","/məˈʃiːnd ˈsɜːfɪs/","Bề mặt đã gia công",["ENGINEERING"],6],["Longitudinal feed","/ˌlɒnʤɪˈtjuːdɪnl fiːd/","Chạy dao dọc",["ENGINEERING"],6],["Lathe bed","/leɪð bed/","Băng máy",["ENGINEERING"],6],["Saddle","/ˈsædl/","Bàn trượt",["ENGINEERING"],6],["Backing-off lathe","/ˈbækɪŋ-ɒf leɪð/","Máy tiện hớt lưng",["ENGINEERING"],6],["Bench lathe","/benʧ leɪð/","Máy tiện để bàn",["ENGINEERING"],6],["Camshaft lathe","/ˈkæmʃɑːft leɪð/","Máy tiện trục cam",["ENGINEERING"],6],["Cylindrical milling cutter","/sɪˈlɪndrɪkəl ˈmɪlɪŋ ˈkʌtə/","Dao phay mặt trụ",["ENGINEERING"],6],["Disk-type milling cutter","/dɪsk-taɪp ˈmɪlɪŋ ˈkʌtə/","Dao phay đĩa",["ENGINEERING"],6],["Dove-tail milling cutter","/dʌv-teɪl ˈmɪlɪŋ ˈkʌtə/","Dao phay rãnh đuôi én",["ENGINEERING"],6],["Helical tooth cutter","/ˈhelɪkəl tuːθ ˈkʌtə/","Dao phay răng xoắn",["ENGINEERING"],6],["Inserted blade","/ɪnˈsɜːtɪd bleɪd/","Răng ghép",["ENGINEERING"],6],["Aerodynamic controller","/ˌeərəʊdaɪˈnæmɪk kənˈtrəʊlə/","Bộ kiểm soát khí động lực",["ENGINEERING"],6],["Balancing mandrel","/ˈbælənsɪŋ ˈmændrɪl/","Trục cân bằng",["ENGINEERING"],6],["Bar-advancement mechanism","/bɑː- ədˈvɑːnsmənt ˈmekənɪzm/","Cơ cấu thanh dẫn tiến",["ENGINEERING"],6],["Bar-clamping mechanism","/bɑː-ˈklæmpɪŋ ˈmekənɪzm/","Cơ cấu thanh kẹp",["ENGINEERING"],6],["Buffing wheel","/ˈbʌfɪŋ wiːl/","Đĩa chà bóng",["ENGINEERING"],6],["Burnisher","/ˈbɜːnɪʃə/","Dụng cụ mài bóng",["ENGINEERING"],6],["Capstan wheel","/ˈkæpstən wiːl/","Bánh xe có mayơ",["ENGINEERING"],6],["Carburetor","/ˈkɑːbjʊretə/","Bộ chế hoà khí",["ENGINEERING"],6],["Chip breaker","/ʧɪp ˈbreɪkə/","Khe thoát phôi",["ENGINEERING"],6],["Chisel edge","/ˈʧɪzl ɛʤ/","Đinh cắt",["ENGINEERING"],6],["Chute","/ʃuːt/","Máng trượt",["ENGINEERING"],6],["Clamp hook","/klæmp hʊk/","Móc kẹp",["ENGINEERING"],6],["Cylindrical grinding","/sɪˈlɪndrɪkəl ˈgraɪndɪŋ/","Máy mài tròn ngoài",["ENGINEERING"],6],["Deformation","/ˌdiːfɔːˈmeɪʃən/","Sự biến dạng",["ENGINEERING"],6],["Dielectric fluid","/ˌdaɪɪˈlektrɪk ˈfluːɪd/","Chất lỏng cách điện",["ENGINEERING"],6],["Direct indexing","/dɪˈrekt ˈɪndeksɪŋ/","Phân độ trực tiếp",["ENGINEERING"],6],["Acid","/ˈæsɪd/","Axit",["CHEMISTRY"],6],["Alkali","/ˈælkəlaɪ/","Chất kiềm",["CHEMISTRY"],6],["Alkaline","/ˈælkəlaɪn/","Kim loại kiềm; Kiềm",["CHEMISTRY","AGRICULTURE"],6],["Aluminum alloy","/əˈluːmɪnəm ˈælɔɪ/","Hợp kim nhôm",["CHEMISTRY"],6],["Anode","/ˈænəʊd/","Cực dương",["CHEMISTRY"],6],["Anti-rust agent","/ˈænti-rʌst ˈeɪʤənt/","Chất chống gỉ",["CHEMISTRY"],6],["Applied chemistry","/əˈplaɪd ˈkemɪstri/","Hóa học ứng dụng",["CHEMISTRY"],6],["Aromatic substance","/ˌærəʊˈmætɪk ˈsʌbstəns/","Chất thơm",["CHEMISTRY"],6],["Bar","/bɑːr/","Đơn vị áp suất",["CHEMISTRY"],6],["Biochemical","/ˌbaɪəʊˈkemɪkl/","Hóa sinh",["CHEMISTRY"],6],["Divalent","/daɪˈveɪlənt/","Có hoá trị hai",["CHEMISTRY"],6],["Break up","/breɪk ʌp/","Phân hủy",["CHEMISTRY"],6],["Calorific radiations","/ˌkæləˈrɪfɪk ˌreɪdɪˈeɪʃənz/","Bức xạ phát nhiệt",["CHEMISTRY"],6],["Catalyst","/ˈkætəlɪst/","Chất xúc tác",["CHEMISTRY"],6],["Cathode","/ˈkæθəʊd/","Cực âm",["CHEMISTRY"],6],["Chemical analysis","/ˈkemɪkəl əˈnæləsɪs/","Hóa phân",["CHEMISTRY"],6],["Chemical attraction","/ˈkemɪkəl əˈtrækʃən/","Lực hút hóa học",["CHEMISTRY"],6],["Chemical fertilizer","/ˈkemɪkəl ˈfɜːtɪlaɪzə/","Phân hoá học",["CHEMISTRY"],6],["Chemical properties","/ˈkemɪkəl ˈprɒpətiz/","Tính chất hóa học",["CHEMISTRY"],6],["Chemosynthesis","/ˌkiːməʊˈsɪnθəsɪs/","Hóa tổng hợp",["CHEMISTRY"],6],["Chemotherapy","/ˌkiːməʊˈθerəpi/","Hoá liệu pháp",["CHEMISTRY"],6],["Coincide","/ˌkəʊɪnˈsaɪd/","Trùng hợp",["CHEMISTRY"],6],["Colorant","/ˈkʌlərənt/","Chất nhuộm",["CHEMISTRY"],6],["Coloring matter","/ˈkʌlərɪŋ ˈmætə/","Chất nhuộm màu",["CHEMISTRY"],6],["Combustible","/kəmˈbʌstəbl/","Nhiên liệu (chất đốt)",["CHEMISTRY"],6],["Condensation heat","/ˌkɒndenˈseɪʃən hiːt/","Nhiệt đông đặc",["CHEMISTRY"],6],["Crude oil","/kruːd ɔɪl/","Dầu thô",["CHEMISTRY"],6],["Derivative","/dɪˈrɪvətɪv/","Chất dẫn xuất",["CHEMISTRY"],6],["Detonating gas","/ˈdetəʊneɪtɪŋ gæs/","Khí gây nổ",["CHEMISTRY"],6],["Diffuse","/dɪˈfjuːs/","Khuếch tán",["CHEMISTRY"],6],["Distil","/dɪˈstɪl/","Chưng cất",["CHEMISTRY"],6],["Electrode","/ɪˈlektrəʊd/","Điện cực",["CHEMISTRY"],6],["Electrolysis","/ɪˌlekˈtrɑːləsɪs/","Điện phân",["CHEMISTRY"],6],["Electrolytic dissociation","/ɪˌlektrəˈlɪtɪk dɪˌsəʊʃiˈeɪʃn/","Điện ly",["CHEMISTRY"],6],["Endothermic reaction","/ˌendəʊˈθɜːrmɪk riːˈækʃən/","Phản ứng thu nhiệt",["CHEMISTRY"],6],["Equilibrium","/ˌekwɪˈlɪbriəm/","Cân bằng",["CHEMISTRY"],6],["Evaporate","/ɪˈvæpəreɪt/","Bay hơi",["CHEMISTRY"],6],["Exothermic","/ˌeksəʊˈθɜːrmɪk/","Phát nhiệt",["CHEMISTRY"],6],["Ferromagnetic substance","/ˈferəʊmægˈnetɪk ˈsʌbstəns/","Chất sắt từ",["CHEMISTRY"],6],["Hydrolysis","/haɪˈdrɑːlɪsɪs/","Thủy phân",["CHEMISTRY"],6],["Insulator","/ˈɪnsəleɪtər/","Điện môi",["CHEMISTRY"],6],["Isotope","/ˈaɪsətəʊp/","Đồng vị",["CHEMISTRY"],6],["Metalloid","/ˈmetlɔɪd/","Á kim",["CHEMISTRY"],6],["Metallurgy","/ˈmetəlɜːrdʒi/","Luyện kim",["CHEMISTRY"],6],["Molecular weight","/məʊˈlekjʊlə weɪt/","Phân tử lượng",["CHEMISTRY"],6],["Nitrogenous fertilizer","/naɪˈtrɒʤɪnəs ˈfɜːtɪlaɪzə/","Phân đạm",["CHEMISTRY"],6],["Paramagnetic substance","/ˌpærəmægˈnetɪk ˈsʌbstəns/","Chất thuận từ",["CHEMISTRY"],6],["Phosphate fertilizer","/ˈfɒsfeɪt ˈfɜːtɪlaɪzə/","Phân lân",["CHEMISTRY"],6],["Information Technology","/ˌɪnfəˈmeɪʃn tekˈnɒlədʒi/","Công nghệ thông tin",["INFORMATION TECHNOLOGY"],6],["Multiplication","/ˌmʌltɪplɪˈkeɪʃən/","Phép nhân",["INFORMATION TECHNOLOGY"],6],["Numeric","/njuːˈmerɪk/","Số học, thuộc về số học",["INFORMATION TECHNOLOGY"],6],["Operation","/ˌɒpərˈeɪʃən/","Thao tác",["INFORMATION TECHNOLOGY"],6],["Subtraction","/səbˈtrækʃən/","Phép trừ",["INFORMATION TECHNOLOGY"],6],["Alloy","/ˈælɔɪ/","Hợp kim",["INFORMATION TECHNOLOGY"],6],["Capacity","/kəˈpæsəti/","Dung lượng",["INFORMATION TECHNOLOGY"],6],["Semiconductor memory","/ˌsemɪkənˈdʌktə ˈmeməri/","Bộ nhớ bán dẫn",["INFORMATION TECHNOLOGY"],6],["Phenomenon","/fəˈnɒmɪnən/","Hiện tượng",["INFORMATION TECHNOLOGY"],6],["Superb","/suːˈpɜːb/","Tuyệt vời, xuất sắc",["INFORMATION TECHNOLOGY"],6],["Thermal","/ˈθɜːməl/","Nhiệt",["INFORMATION TECHNOLOGY"],6],["Configuration","/kənˌfɪɡəˈreɪʃən/","Cấu hình",["INFORMATION TECHNOLOGY"],6],["Implement","/ˈɪmplɪment/","Công cụ, phương tiện",["INFORMATION TECHNOLOGY"],6],["Acoustic coupler","/əˈkuːstɪk ˈkʌplə/","Bộ ghép âm",["INFORMATION TECHNOLOGY"],6],["Electro sensitive","/ɪˈlektrəʊ ˈsensɪtɪv/","Nhiễm điện",["INFORMATION TECHNOLOGY"],6],["Electrostatic","/iˌlektrəʊˈstætɪk/","Tĩnh điện",["INFORMATION TECHNOLOGY"],6],["Intranet","/ˈɪntrənet/","Mạng nội bộ",["INFORMATION TECHNOLOGY"],6],["Inertia","/ɪˈnɜːʃə/","Quán tính",["INFORMATION TECHNOLOGY"],6],["Alphanumeric data","/ˌælfənjuːˈmerɪk ˈdeɪtə/","Dữ liệu chữ-số",["INFORMATION TECHNOLOGY"],6],["Establish","/ɪsˈtæblɪʃ/","Thiết lập",["INFORMATION TECHNOLOGY"],6],["Component","/kəmˈpəʊnənt/","Thành phần",["INFORMATION TECHNOLOGY"],6],["Computerized","/kəmˈpjuːtəraɪzd/","Tin học hóa",["INFORMATION TECHNOLOGY"],6],["Convert","/kənˈvɜːt/","Chuyển đổi",["INFORMATION TECHNOLOGY"],6],["ISP (Internet Service Provider)","/ˈɪntəˌnet ˈsɜːvɪs prəˈvaɪdə/","Nhà phân phối dịch vụ Internet",["INFORMATION TECHNOLOGY"],6],["Web hosting","/web ˈhəʊstɪŋ/","Dịch vụ thuê máy chủ",["INFORMATION TECHNOLOGY"],6],["Exploit","/ɪkˈsplɔɪt/","Tấn công lỗ hổng mạng",["INFORMATION TECHNOLOGY"],6],["Breach","/briːtʃ/","Lỗ hổng dữ liệu",["INFORMATION TECHNOLOGY"],6],["Malware","/ˈmælweər/","Phần mềm độc hại",["INFORMATION TECHNOLOGY"],6],["Worm","/wɜːm/","Sâu máy tính",["INFORMATION TECHNOLOGY"],6],["Spyware","/ˈspaɪweər/","Phần mềm gián điệp",["INFORMATION TECHNOLOGY"],6],["Cartridge","/ˈkɑːtrɪʤ/","Đầu quay đĩa",["INFORMATION TECHNOLOGY"],6],["Centerpiece","/ˈsentəpiːs/","Mảnh trung tâm",["INFORMATION TECHNOLOGY"],6],["Characteristic","/ˌkærɪktəˈrɪstɪk/","Thuộc tính, nét tính cách",["INFORMATION TECHNOLOGY"],6],["Chronological","/ˌkrɒnəˈlɒʤɪkəl/","Thứ tự thời gian",["INFORMATION TECHNOLOGY"],6],["Cluster controller","/ˈklʌstə kənˈtrəʊlə/","Bộ điều khiển trùm",["INFORMATION TECHNOLOGY"],6],["Compiler","/kəmˈpaɪlə/","Trình biên dịch",["INFORMATION TECHNOLOGY"],6],["Conceptual","/kənˈseptjʊəl/","Thuộc về khái niệm",["INFORMATION TECHNOLOGY"],6],["Crystal","/ˈkrɪstl/","Tinh thể",["INFORMATION TECHNOLOGY"],6],["Demagnetize","/ˌdiːˈmægnɪtaɪz/","Khử từ hóa",["INFORMATION TECHNOLOGY"],6],["Deteriorate","/dɪˈtɪərɪəreɪt/","Phá hủy, làm hư hại",["INFORMATION TECHNOLOGY"],6],["Diagram","/ˈdaɪəgræm/","Biểu đồ",["INFORMATION TECHNOLOGY"],6],["Disparate","/ˈdɪspərɪt/","Khác nhau, khác loại",["INFORMATION TECHNOLOGY"],6],["Distributed system","/dɪsˈtrɪbjuːtɪd ˈsɪstɪm/","Hệ phân tán",["INFORMATION TECHNOLOGY"],6],["Electromechanical","/ɪˌlektrəʊmɪˈkænɪkəl/","Có tính chất cơ điện tử",["INFORMATION TECHNOLOGY"],6],["Fibre-optic cable","/ˈfaɪbər-ˈɒptɪk ˈkeɪbl/","Cáp quang",["INFORMATION TECHNOLOGY"],6],["Multiplexors","/ˈmʌltɪpleksə/","Bộ dồn kênh",["INFORMATION TECHNOLOGY"],6],["Peripheral","/pəˈrɪfərəl/","Ngoại vi",["INFORMATION TECHNOLOGY"],6],["Ornithology","/ˌɔrnəˈθɑlədʒi/; /,ɔ:ni'θɔlədʒi/","Ngành khoa học nghiên cứu các loài chim (Cầm điểu học); Cầm điểu học",["ORNITHOLOGY","ARCHAEOLOGY"],3],["Migrate","/ˈmaɪˌɡreɪt/","Di cư",["ORNITHOLOGY"],3],["Hibernate","/ˈhaɪbərˌneɪt/","Ngủ đông",["ORNITHOLOGY"],3],["Interpret","/ɪnˈtərprət/","Lý giải (1 hiện tượng/ sự vật) sau khi đã quan sát được",["ORNITHOLOGY"],3],["Harass","/həˈræs/","Quấy rối",["ORNITHOLOGY"],3],["Bizarre","/bəˈzɑr/","Kì lạ",["ORNITHOLOGY"],3],["Acclimatization","/ə'klaimətai'zeiʃn/","Sự thích nghi khí hậu",["ORNITHOLOGY"],3],["Archaeopteryx","/ɑ:ki'ɔptəriks/","Chim thuỷ tổ",["ORNITHOLOGY"],3],["Oviparous","/əʊ'vipərəs/","Đẻ trứng",["ORNITHOLOGY"],3],["Plumulaceous","/plu:mju'leiʃiəs ˈfeðə/","Lông tơ",["ORNITHOLOGY"],3],["Contour feather","/ˈkɒntʊə ˈfeðə/","Lông vũ bao quanh cơ thể",["ORNITHOLOGY"],3],["Down feather","/daʊn ˈfeðə/","Lông mềm và đẹp",["ORNITHOLOGY"],3],["Furcula","/´fə:kjulə/","Xương chạc",["ORNITHOLOGY"],3],["Pygostyle","/’paigəˌstail/","Xương lưỡi cày",["ORNITHOLOGY"],3],["Alula","/'ælju:lə/","Thùy cánh",["ORNITHOLOGY"],3],["Crop","/krɒp/","Diều (chim)",["ORNITHOLOGY"],3],["Proventriculus","/ˌprəʊvenˈtrikjələs/","Dạ dày tuyến (chim)",["ORNITHOLOGY"],3],["Gizzard","/ˈgɪzəd/","Mề (chim)",["ORNITHOLOGY"],3],["Syrinx","/ˈsɪrɪŋks/","Minh quản (chim)",["ORNITHOLOGY"],3],["Clutch","/klʌʧ/","Ổ trứng",["ORNITHOLOGY"],3],["Altricial","/al’triʃəl/","Chim non yếu, không tự kiếm mồi sớm",["ORNITHOLOGY"],3],["Precocial","/prə’kəʊʃəl/","Có thể sống độc lập sau khi sinh",["ORNITHOLOGY"],3],["Canary","/kə'neəri/","Chim hoàng yến",["ORNITHOLOGY"],3],["Aviary","/'eiviəri/","Chuồng chim",["ORNITHOLOGY"],3],["Incubate","/'iŋkjʊbeit/","Ấp (trứng)",["ORNITHOLOGY"],3],["Nestling","/'nestliŋ/","Chim non",["ORNITHOLOGY"],3],["Avifauna","/,eivi'fɔ:nə/","Hệ chim",["ORNITHOLOGY"],3],["Avocet","/'ævouset/","Chim mỏ cứng",["ORNITHOLOGY"],3],["Cassowary","/'kæsəweəri/","Đà điểu (úc) đầu mèo",["ORNITHOLOGY"],3],["Congregation","/,kɔɳgri'geiʃn/","Sự tập hợp",["ORNITHOLOGY"],3],["Cormorant","/'kɔ:mərənt/","Chim cốc",["ORNITHOLOGY"],3],["Kestrel","/'kestrəl/","Chim cắt",["ORNITHOLOGY"],3],["Ptarmigan","/'tɑ:migən/","Gà gô trắng",["ORNITHOLOGY"],3],["Accumulation period","/əˌkjuːmjʊˈleɪʃən ˈpɪərɪəd/","Thời kỳ tích luỹ",["INSURANCE"],16],["Accumulation unit","/əˌkjuːmjʊˈleɪʃən ˈjuːnɪt/","Đơn vị tích luỹ",["INSURANCE"],16],["Actuary","/'æktjʊəri/","Cố vấn tính toán bảo hiểm",["INSURANCE"],16],["Aleatory contract","/ˈeɪlɪətəri ˈkɒntrækt/","Hợp đồng may rủi",["INSURANCE"],16],["Assessment method","/əˈsesmənt ˈmeθəd/","Phương pháp định giá",["INSURANCE"],16],["Assignor","/əˈsaɪnər/","Người sang nhượng",["INSURANCE"],16],["Assignee","/əˌsaɪˈniː/","Người được sang nhượng",["INSURANCE"],16],["Attained age","/əˈteɪnd eɪʤ/","Tuổi hiện thời",["INSURANCE"],16],["Blended rating","/ˈblendɪd ˈreɪtɪŋ/","Định phí theo bí quyết tổng hợp",["INSURANCE"],16],["Buysell agreement","/baɪsɛl əˈgriːmənt/","Thoả thuận tậu bán",["INSURANCE"],16],["Cancellable policy","/ˈkænsələbl ˈpɒlɪsi/","Hợp đồng có thể bãi bỏ",["INSURANCE"],16],["Capitation","/ˌkæpɪˈteɪʃən/","Phí đóng theo đầu người",["INSURANCE"],16],["Cede","/siːd/","Nhượng tái bảo hiểm",["INSURANCE"],16],["Collateral assignment","/kɒˈlætərəl əˈsaɪnmənt/","Thế chấp",["INSURANCE"],16],["Compound interest","/ˈkɒmpaʊnd ˈɪntrɪst/","Lãi gộp",["INSURANCE"],16],["Concurrent review","/kənˈkʌrənt rɪˈvjuː/","Đánh giá song song",["INSURANCE"],16],["Conditional renewable policy","/kənˈdɪʃənl rɪˈnjuːəbl ˈpɒlɪsi/","Hợp đồng tái tục có điều kiện",["INSURANCE"],16],["Contingent payee","/kənˈtɪnʤənt peɪˈiː/","Người thụ hưởng kế tiếp",["INSURANCE"],16],["Contract of indemnity","/ˈkɒntrækt ɒv ɪnˈdemnɪti/","Hợp đồng bồi thường",["INSURANCE"],16],["Contractual capacity","/kənˈtræktjʊəl kəˈpæsɪti/","Năng lực pháp lý khi ký hợp đồng",["INSURANCE"],16],["Conversion privilege","/kənˈvɜːʃən ˈprɪvɪlɪʤ/","Quyền chuyển đổi hợp đồng",["INSURANCE"],16],["Conversion provision","/kənˈvɜːʃən prəˈvɪʒən/","Điều khoản chuyển đổi hợp đồng",["INSURANCE"],16],["Critical illness coverage","/ˈkrɪtɪkəl ˈɪlnɪs ˈkʌvərɪʤ/","Bảo hiểm bệnh hiểm nghèo",["INSURANCE"],16],["Deductible","/dɪˈdʌktəbl/","Mức miễn thường",["INSURANCE"],16],["Eligibility period","/ˌelɪʤəˈbɪlɪti ˈpɪərɪəd/","Thời hạn chờ đủ điều kiện",["INSURANCE"],16],["Elimination period","/ɪˌlɪmɪˈneɪʃən ˈpɪərɪəd/","Thời gian chờ trả tiền",["INSURANCE"],16],["Endorsement","/ɪnˈdɔːrsmənt/","Bản chỉnh sửa bổ sung",["INSURANCE"],16],["Face value","/feɪs ˈvæljuː/","Số tiền bảo hiểm",["INSURANCE"],16],["Fraudulent claim","/ˈfrɔːdjʊlənt kleɪm/","Khiếu nại gian lận",["INSURANCE"],16],["Fraudulent misrepresentation","/ˈfrɔːdjʊlənt ˌmɪsˌreprɪzenˈteɪʃən/","Kê khai gian lận",["INSURANCE"],16],["Grace period","/greɪs ˈpɪərɪəd/","Thời gian gia hạn nộp phí",["INSURANCE"],16],["Immediate annuity","/ɪˈmiːdiət əˈnjuːɪti/","Niên kim trả ngay",["INSURANCE"],16],["Indemnity benefit","/ɪnˈdemnɪti ˈbenɪfɪt/","Quyền lợi đền bù",["INSURANCE"],16],["Key person","/kiː ˈpɜːsn/","Người chủ chốt",["INSURANCE"],16],["Lapse","/læps/","Huỷ bỏ hợp đồng",["INSURANCE"],16],["Liquidation","/ˌlɪkwɪˈdeɪʃn/","Thanh lý",["INSURANCE"],16],["Morbidity table","/mɔːˈbɪdɪti ˈteɪbl/","Bảng tỷ lệ thương tật",["INSURANCE"],16],["Mortality experience","/mɔːˈtælɪti ɪksˈpɪərɪəns/","Tỷ lệ thiệt mạng kinh nghiệm",["INSURANCE"],16],["Mortality table","/mɔːˈtælɪti ˈteɪbl/","Bảng tỷ lệ thiệt mạng",["INSURANCE"],16],["Paralegal","/ˌpærəˈliːɡl/","Chuyên gia hỗ trợ pháp lý",["INSURANCE"],16],["Reserve valuation","/rɪˈzɜːv ˌvæljʊˈeɪʃən/","Tính toán dự phòng",["INSURANCE"],16],["Accident frequency","/ˈæksɪdənt ˈfriːkwənsi/","Tần số tai nạn",["INSURANCE"],16],["Commission","/kəˈmɪʃ.ən/","Tiền hoa hồng",["INSURANCE"],16],["Consequential loss","/ˌkɒnsɪˈkwenʃəl lɒs/","Thiệt hại có tính chất hậu quả",["INSURANCE"],16],["Employer’s liability","/ɪmˈplɔɪəz ˌlaɪəˈbɪlɪti/","Bảo hiểm trách nhiệm của người sử dụng lao động",["INSURANCE"],16],["Insurance broker","/ɪnˈʃʊərəns ˈbrəʊkə/","Môi giới bảo hiểm",["INSURANCE"],16],["Loss adjuster","/lɒs əˈʤʌstə/","Người tính toán xử lý tổn thất bảo hiểm",["INSURANCE"],16],["Product liability","/ˈprɒdʌkt ˌlaɪəˈbɪlɪti/","Bảo hiểm trách nhiệm sản phẩm",["INSURANCE"],16],["Public liability","/ˈpʌblɪk ˌlaɪəˈbɪlɪti/","Bảo hiểm trách nhiệm công cộng",["INSURANCE"],16],["Reinsurance","/'ri:in'ʃuərəns/","Bảo hiểm lại",["INSURANCE"],16],["Archaeologist","/ˌɑːrkiˈɑːlədʒɪst/","Nhà khảo cổ học",["ARCHAEOLOGY"],7],["Carbon dating","/ˌkɑːrbən ˈdeɪtɪŋ/","Phương pháp xác định niên đại bằng carbon",["ARCHAEOLOGY"],7],["Crypt","/krɪpt/","Hầm mộ",["ARCHAEOLOGY"],7],["Hieroglyphic","/ˌhaɪərəˈɡlɪfɪk/","(thuộc) Chữ tượng hình",["ARCHAEOLOGY"],7],["Idol","/ˈaɪdl/","Vị thần",["ARCHAEOLOGY"],7],["Lithic","/'liθik/","(thuộc) Đá",["ARCHAEOLOGY"],7],["Prehistoric","/ˌpriːhɪˈstɔːrɪk/","Thời tiền sử",["ARCHAEOLOGY"],7],["Relic","/ˈrelɪk/","Thánh tích",["ARCHAEOLOGY"],7],["Tomb","/tuːm/","Mộ",["ARCHAEOLOGY"],7],["Arcade","/ɑːrˈkeɪd/","Đường có mái vòm",["ARCHAEOLOGY"],7],["Civilization","/ˌsɪvələˈzeɪʃn/","Nền văn minh",["ARCHAEOLOGY"],7],["Bronze age","/ðə ˈbrɑːnz eɪdʒ/","Thời kỳ đồ đồng",["ARCHAEOLOGY"],7],["Palaeontology","/ˌpeɪliɑːnˈtɑːlədʒi/","Cổ vật học",["ARCHAEOLOGY"],7],["Stratigraphy","/strə'tigrəfi/","Địa tầng học",["ARCHAEOLOGY"],7],["Archaeological survey","/ˌɑːrkiəˈlɑːdʒɪkl ˈsɜːrveɪ/","Khảo sát khảo cổ học",["ARCHAEOLOGY"],7],["Tumulus","/ˈtuːmjələs/","Nấm mồ",["ARCHAEOLOGY"],7],["Paleoecology","/,peiliə i'kɔlədʒi/","Cổ sinh vật học",["ARCHAEOLOGY"],7],["Palaeography","/ˌpeɪliˈɑːɡrəfi/","Môn chữ cổ",["ARCHAEOLOGY"],7],["Neolithic","/ˌniːəˈlɪθɪk/","(thuộc về)Thời kỳ đồ đá mới",["ARCHAEOLOGY"],7],["Trowel","/ˈtraʊəl/","Cái xẻng bay",["ARCHAEOLOGY"],7],["Shovel test","/ˈʃʌvl test/","Thử xẻng",["ARCHAEOLOGY"],7],["Antiquities","/ænˈtɪkwətis/","Cổ vật",["ARCHAEOLOGY"],7],["Stonehenge","/ˈstəʊnhendʒ/","Công trình kiến trúc cổ đại bằng đá tại Anh",["ARCHAEOLOGY"],7],["Geoscience","/ˈdʒiːəʊsaɪəns/","Khoa học địa lý",["ARCHAEOLOGY"],7],["Curator","/ˈkjʊreɪtər/","Người phụ trách (bảo tàng)",["ARCHAEOLOGY"],7],["Typology","/taɪˈpɑːlədʒi/","Loại hình học",["ARCHAEOLOGY"],7],["Epigraphy","/e'pigrəfi/","Khoa nghiên cứu văn khắc",["ARCHAEOLOGY"],7],["Numismatics","/ˌnuːmɪzˈmætɪks/","Số học",["ARCHAEOLOGY"],7],["Exploration","/ˌekspləˈreɪʃn/","Cuộc thám hiểm, thăm dò",["ARCHAEOLOGY"],7],["Philology","/fəˈlɑːlədʒi/","Phi văn học",["ARCHAEOLOGY"],7],["Musicology","/ˌmjuːzɪˈkɑːlədʒi/","Âm nhạc học",["ARCHAEOLOGY"],7],["Mythology","/mɪˈθɑːlədʒi/","Thần thoại",["ARCHAEOLOGY"],7],["Cartography","/kɑːrˈtɑːɡrəfi/","Bản đồ học",["ARCHAEOLOGY"],7],["Ethnographical","/,eθnou'græfikəl/","(thuộc) Dân tộc học",["ARCHAEOLOGY"],7],["Historian","/hɪˈstɔːriən/","Nhà sử học",["ARCHAEOLOGY"],7],["Biofact","/baɪəʊ fækt/","Sinh vật hữu cơ",["ARCHAEOLOGY"],7],["Culture history","/ˈkʌltʃər ˈhɪstri/","Lịch sử văn hóa",["ARCHAEOLOGY"],7],["Pleistocene","/'pleistəsi:n/","Kỷ nguyên Pleistocene",["ARCHAEOLOGY"],7],["Mesolithic","/,mesə'liθik/","Thời kỳ đồ đá cũ",["ARCHAEOLOGY"],7],["Accredited","/əˈkred.ɪt/","Ủy quyền",["LAW"],17],["Acquit","/əˈkwɪt/","Xử trắng án",["LAW"],17],["Act as amended","/ækt æz əˈmendid/","Luật sửa đổi",["LAW"],17],["Act of legislation","/ækt əv ˌledʒɪˈsleɪʃən/","Sắc luật",["LAW"],17],["Affidavit","/ˌæfəˈdeɪvɪt/","Bản khai",["LAW"],17],["Amicus curiae","/ˈæmɪkəs kjurɪaɪ/","Thân hữu của tòa án",["LAW"],17],["Appellate jurisdiction","/əˈpelət ˌdʒʊərɪsˈdɪkʃən/","Thẩm quyền phúc thẩm",["LAW"],17],["Bail","/beɪl/","Tiền bảo lãnh, bảo lãnh",["LAW"],17],["Collegial court","/kəˈliːdʒiəl kɔːt/","Tòa cấp cao",["LAW"],17],["Corpus juris","/ˈkɔːpərəˈiu̯ːris/","Luật đoàn thể",["LAW"],17],["Criminal law","/ˈkrɪmɪnəl lɔ/","Luật hình sự",["LAW"],17],["Congress","/ˈkɒŋɡres/","Quốc hội",["LAW"],17],["Constitutional rights","/ˌkɒnstɪˈtʃuːʃənəl raɪts/","Quyền hiến định",["LAW"],17],["Defendant","/dɪˈfendənt/","Bị cáo",["LAW"],17],["Democratic","/ˌdeməˈkrætɪk/","Dân Chủ",["LAW"],17],["Forfeitures","/ˈfɔːfɪʧəz/","Phạt",["LAW"],17],["General Election","/ˈʤenərəlɪˈlekʃən/","Tổng Tuyển Cử",["LAW"],17],["Government bodies","/ˈgʌvnməntˈbɒdiz/","Cơ quan công quyền",["LAW"],17],["Governor","/ˈgʌvənə/","Thống Đốc",["LAW"],17],["Impeachment","/ɪmˈpiːʧmənt/","Luận tội",["LAW"],17],["Indictment","/ɪnˈdaɪtmənt/","Cáo trạng",["LAW"],17],["Interrogatories","/ˌɪntəˈrɒgətəriz/","Câu chất vấn tranh tụng",["LAW"],17],["Judicial review","/ʤuːˈdɪʃəl rɪˈvjuː/","Xem xét của tòa án",["LAW"],17],["Justify","/ˈʤʌstɪfaɪ/","Giải trình",["LAW"],17],["Juveniles","/ˈʤuːvɪnaɪlz/","Vị thành niên",["LAW"],17],["Lobbying","/ˈlɒbiɪŋ/","Vận động hành lang",["LAW"],17],["Misdemeanor","/ˌmɪsdɪˈmiːnə/","Khinh tội",["LAW"],17],["Loophole","/ˈluːphəʊl/","Lỗ hổng luật pháp",["LAW"],17],["Plaintiff","/ˈpleɪntɪf/","Nguyên đơn",["LAW"],17],["Probation","/prəˈbeɪʃən/","Tù treo",["LAW"],17],["Paramedics","/ˌpærəˈmedɪks/","Hộ lý",["LAW"],17],["Senate","/ˈsenɪt/","Thượng Viện",["LAW"],17],["Statutory law","/ˈstætjʊtəri lɔː/","Luật thành văn",["LAW"],17],["Taxpayers","/ˈtæksˌpeɪəz/","Người đóng thuế",["LAW"],17],["Transparent","/trænsˈpeərənt/","Minh bạch",["LAW"],17],["Treasurer","/ˈtreʒərə/","Thủ Quỹ",["LAW"],17],["State Assembly","/steɪt əˈsembli/","Hạ Viện Tiểu Bang",["LAW"],17],["State Legislature","/steɪt ˈleʤɪsleɪʧə/","Lập Pháp Tiểu Bang",["LAW"],17],["State Senate","/steɪt ˈsenɪt/","Thượng viện tiểu bang",["LAW"],17],["Senatorial courtesy","/ˌsenəˈtɔːrɪəl ˈkɜːtəsi/","Quyền ưu tiên của thượng nghị sĩ",["LAW"],17],["Sub-Law document","/sʌb-lɔː ˈdɒkjʊmənt/","Văn bản dưới luật",["LAW"],17],["Standing","/ˈstændɪŋ/","Vị thế tranh chấp",["LAW"],17],["Reversible error","/rɪˈvɜːsəbl ˈerə/","Sai lầm cần phải sửa chữa",["LAW"],17],["Political Party","/pəˈlɪtɪkəl ˈpɑːti/","Đảng Phái Chính Trị",["LAW"],17],["Political platform","/pəˈlɪtɪkəl ˈplætfɔːm/","Cương lĩnh chính trị",["LAW"],17],["Precinct board","/ˈpriːsɪŋkt bɔːd/","Ủy ban phân khu bầu cử",["LAW"],17],["Merit selection","/ˈmerɪt sɪˈlekʃən/","Tuyển lựa theo công trạng",["LAW"],17],["Real Estate","/ˈriːəl ɪsteɪt/","Bất động sản",["REAL ESTATE"],13],["Gross floor area","/grəʊs flɔːr ˈeərɪə/","Tổng diện tích sàn",["REAL ESTATE"],13],["Planning area","/ˈplænɪŋ ˈeərɪə/","Khu quy hoạch",["REAL ESTATE"],13],["Layout floor","/ˈleɪaʊt flɔː/","Mặt bằng điển hình tầng",["REAL ESTATE"],13],["Layout apartment","/ˈleɪaʊt əˈpɑːtmənt/","Mặt bằng căn hộ",["REAL ESTATE"],13],["Density of building","/ˈdensɪti ɒv ˈbɪldɪŋ/","Mật độ xây dựng",["REAL ESTATE"],13],["Amenity","/əˈmenəti/","Tiện ích, tiện nghi",["REAL ESTATE"],13],["Show flat","/ʃəʊ flæt/","Căn hộ mẫu",["REAL ESTATE"],13],["Quality assurance","/ˈkwɒlɪti əˈʃʊərəns/","Đảm bảo về chất lượng",["REAL ESTATE"],13],["Coastal property","/ˈkəʊstəl ˈprɒpəti/","Bất động sản ven biển",["REAL ESTATE"],13],["Appraisal","/əˈpreɪzl/","Sự định giá",["REAL ESTATE"],13],["Liquid asset","/ˈlɪkwɪd ˈæset/","Tài sản lưu động",["REAL ESTATE"],13],["Liquidated damage","/ˈlɪkwɪdeɪtɪd ˈdæmɪʤ/","Giá trị thanh toán tài sản",["REAL ESTATE"],13],["Bankruptcy","/ˈbæŋkrəptsi/","Vỡ nợ, phá sản",["REAL ESTATE"],13],["Buy-back agreement","/baɪ-bæk əˈgriːmənt/","Thỏa thuận mua lại",["REAL ESTATE"],13],["Detached villa","/dɪˈtæʧt ˈvɪlə/","Biệt thự đơn lập",["REAL ESTATE"],13],["Coastal villa","/ˈkəʊstəl ˈvɪlə/","Biệt thự ven biển",["REAL ESTATE"],13],["Semi-detached Villa","/ˈsemi-dɪˈtæʧt ˈvɪlə/","Biệt thự song lập",["REAL ESTATE"],13],["Sale policy","/seɪl ˈpɒlɪsi/","Chính sách bán hàng",["REAL ESTATE"],13],["Cost control","/kɒst kənˈtrəʊl/","Kiểm soát chi phí",["REAL ESTATE"],13],["Landmark","/ˈlændmɑːrk/","Khu vực quan trọng trong thành phố",["REAL ESTATE"],13],["Application","/ˌæplɪˈkeɪʃn/","Đơn từ",["REAL ESTATE"],13],["Montage","/ˌmɑːnˈtɑːʒ/; /'mɒntɑ:ʒ/","Khoản nợ; Sự dựng phim",["REAL ESTATE","CINEMATOGRAPHY"],13],["Loan origination","/ləʊn əˌrɪʤɪˈneɪʃən/","Nguồn gốc cho vay",["REAL ESTATE"],13],["Capital gain","/ˈkæpɪtl geɪn/","Vốn điều lệ tăng",["REAL ESTATE"],13],["Buyer-agency agreement","/ˈbaɪər-ˈeɪʤənsi əˈgriːmənt/","Thỏa thuận giữa người mua và đại lý",["REAL ESTATE"],13],["Overtime-fee","/ˈəʊvətaɪm-fiː/","Phí làm thêm giờ",["REAL ESTATE"],13],["Payment upon termination","/ˈpeɪmənt əˈpɒn ˌtɜːmɪˈneɪʃən/","Thanh toán khi kết thúc hợp đồng",["REAL ESTATE"],13],["Office for lease","/ˈɒfɪs fɔː liːs/","Văn phòng cho thuê",["REAL ESTATE"],13],["Building permit","/ˈbɪldɪŋ ˈpɜːmɪt/","Giấy phép xây dựng",["REAL ESTATE"],13],["Built-up area","/bɪlt-ʌp ˈeərɪə/","Diện tích theo tim tường",["REAL ESTATE"],13],["Saleable area","/ˈseɪləbl ˈeərɪə/","Diện tích xây dựng",["REAL ESTATE"],13],["Porch","/pɔːʧ/","Mái hiên",["REAL ESTATE"],13],["Shutter","/ˈʃʌtə/","Cửa chớp",["REAL ESTATE"],13],["Real estate agent","/rɪəl ɪsˈteɪt ˈeɪʤənt/","Đại lý tư vấn bất động sản",["REAL ESTATE"],13],["Investor","/in'vestər/","Người đầu tư",["REAL ESTATE"],13],["Constructor","/kən'strʌktər/","Nhà thầu",["REAL ESTATE"],13],["Site area","/saɪt ˈeərɪə/","Diện tích toàn khu",["REAL ESTATE"],13],["Carpet area","/ˈkɑːpɪt ˈeərɪə/","Diện tích thông thủy",["REAL ESTATE"],13],["Void","/vɔid/","Thông tầng",["REAL ESTATE"],13],["Mezzanine","/'mezəni:n/","Tầng lửng",["REAL ESTATE"],13],["Take over","/teɪk ˈəʊvə/","Tiếp quản",["REAL ESTATE"],13],["Acid soil","/ˈæsɪd sɔɪl/","Đất phèn",["AGRICULTURE"],2],["Acreage","/ˈeɪkərɪʤ/","Diện tích gieo trồng",["AGRICULTURE"],2],["Aerobic bacteria","/eəˈrəʊbɪk bækˈtɪərɪə/","Vi khuẩn hiếu khí",["AGRICULTURE"],2],["Agrarian society","/əˈgreərɪən səˈsaɪəti/","Xã hội nông nghiệp",["AGRICULTURE"],2],["Agricultural cooperative","/ˌægrɪˈkʌlʧərəl kəʊˈɒpərətɪv/","Hợp tác xã nông nghiệp",["AGRICULTURE"],2],["Agroecology","/ægroui'kɔlədʒi/","Sinh thái học nông nghiệp",["AGRICULTURE"],2],["Agronomy","/ə'grɒnəmi/","Nông học",["AGRICULTURE"],2],["Alcohol monopoly","/ˈælkəhɒl məˈnɒpəli/","Độc quyền sản xuất rượu",["AGRICULTURE"],2],["Alluvial soil","/əˈluːviəl sɔɪl/","Đất phù sa",["AGRICULTURE"],2],["Anti-poverty program","/ˈænti-ˈpɒvəti ˈprəʊgræm/","Chương trình xóa đói giảm nghèo",["AGRICULTURE"],2],["Arable land","/ˈærəbl lænd/","Đất canh tác",["AGRICULTURE"],2],["Bad crop","/bæd krɒp/","Mất mùa",["AGRICULTURE"],2],["Bumper crop","/ˈbʌmpə krɒp/","Vụ mùa bội thu",["AGRICULTURE"],2],["Biennial","/baɪˈenɪəl/","Cây hai năm",["AGRICULTURE"],2],["Communal land","/ˈkɒmjʊnl lænd/","Công điền",["AGRICULTURE"],2],["Crop rotation","/krɒp rəʊˈteɪʃən/","Luân canh",["AGRICULTURE"],2],["Cross pollination","/krɒs ˌpɒlɪˈneɪʃən/","Thụ phấn chéo",["AGRICULTURE"],2],["Cultivation","/ˌkʌltɪˈveɪʃən/","Trồng trọt, chăn nuôi",["AGRICULTURE"],2],["Decomposition","/di:kəmpə'zi∫n/","Sự phân hủy",["AGRICULTURE"],2],["Depleted soil","/dɪˈpliːtɪd sɔɪl/","Đất nghèo",["AGRICULTURE"],2],["Drainage canal","/ˈdreɪnɪʤ kəˈnæl/","Mương tiêu nước",["AGRICULTURE"],2],["Drainage system","/ˈdreɪnɪʤ ˈsɪstɪm/","Hệ thống tiêu thoát nước",["AGRICULTURE"],2],["Dredging operation","/ˈdreʤɪŋ ˌɒpəˈreɪʃən/","Công tác nạo vét kênh rạch",["AGRICULTURE"],2],["Evaporation","/ɪˌvæpəˈreɪʃən/","Sự bốc hơi nước",["AGRICULTURE"],2],["Feeder canal","/ˈfiːdə kəˈnæl/","Mương cấp nước",["AGRICULTURE"],2],["Floating-rice area","/ˈfləʊtɪŋ-raɪs ˈeərɪə/","Khu vực trồng lúa nổi",["AGRICULTURE"],2],["Food self-sufficiency","/fuːd self-səˈfɪʃənsi/","Tự túc lương thực",["AGRICULTURE"],2],["Germination","/ˌʤɜːmɪˈneɪʃən/","Sự nảy mầm",["AGRICULTURE"],2],["Herbicide","/ˈhɜːrbɪsaɪd/","Thuốc diệt cỏ",["AGRICULTURE"],2],["Heredity","/həˈredəti/","Di truyền",["AGRICULTURE"],2],["Monoculture","/ˈmɑːnəkʌltʃər/","Độc canh",["AGRICULTURE"],2],["Osmosis","/ɑːzˈməʊsɪs/","Sự thẩm thấu",["AGRICULTURE"],2],["Photosynthesis","/ˌfəʊtəʊˈsɪnθəsɪs/","Quang hợp",["AGRICULTURE"],2],["Pollination","/ˌpɑːləˈneɪʃn/","Sự thụ phấn",["AGRICULTURE"],2],["Precipitation","/prɪˌsɪpɪˈteɪʃn/","Lượng mưa",["AGRICULTURE"],2],["Seed dispersal","/siːd dɪsˈpɜːsəl/","Sự phát tán hạt",["AGRICULTURE"],2],["Shrivel","/ˈʃrɪvl/","Nhăn nheo, xoăn lại",["AGRICULTURE"],2],["Soil horizon","/sɔɪl həˈraɪzn/","Tầng đất",["AGRICULTURE"],2],["Transplant","/træn'splɑ:nt/","Cấy",["AGRICULTURE"],2],["Wood vessel","/wʊd ˈvesl/","Mạch gỗ",["AGRICULTURE"],2],["Agricultural reform","/ˌægrɪˈkʌlʧərəl ˌriːˈfɔːm/","Cải cách nông nghiệp",["AGRICULTURE"],2],["Distillery","/dɪˈstɪləri/","Nhà máy rượu",["AGRICULTURE"],2],["Spermatophyte","/spəˈmætəˌfaɪt/","Thực vật có hạt",["AGRICULTURE"],2],["Spore","/spɔːr/","Bào tử",["AGRICULTURE"],2],["Stamen","/'steimən/","Nhị hoa",["AGRICULTURE"],2],["Stomata","/'stoumə/","Khí khổng",["AGRICULTURE"],2],["Testa","/ˈtestə/","Vỏ ngoài của hạt",["AGRICULTURE"],2],["Vein","/vein/","Gân lá",["AGRICULTURE"],2],["Well-drained soil","/wel-dreɪnd sɔɪl/","Đất tiêu thoát tốt",["AGRICULTURE"],2],["Xylem","/'zailem/","Mô gỗ",["AGRICULTURE"],2],["Manure","/mə'njʊər/","Bón phân",["AGRICULTURE"],2],["Live weight","/laɪv weɪt/","Cân hơi",["AGRICULTURE"],2],["Lignify","/'lignifai/","Hoá gỗ",["AGRICULTURE"],2],["Landowner","/'lændəʊnər/","Địa chủ",["AGRICULTURE"],2],["Land register book","/lænd ˈreʤɪstə bʊk/","Sổ địa bạ",["AGRICULTURE"],2],["Land rent","/lænd rent/","Địa tô",["AGRICULTURE"],2],["Irrigation engineering","/ˌɪrɪˈgeɪʃən ˌenʤɪˈnɪərɪŋ/","Công tác thủy lợi",["AGRICULTURE"],2],["Intensive farming","/ɪnˈtensɪv ˈfɑːmɪŋ/","Thâm canh",["AGRICULTURE"],2],["Heifer","/'hefər/","Bê cái",["AGRICULTURE"],2],["Guard cell","/gɑːd sel/","Tế bào bảo vệ",["AGRICULTURE"],2],["Cinematography","/sɪnəməˈtɒɡrəfi/","Điện ảnh",["CINEMATOGRAPHY"],9],["Blockbuster","/ˈblɑːkbʌstər/","Phim bom tấn",["CINEMATOGRAPHY"],9],["Box-office hit","/ˈbɒksˈɒfɪs hɪt/","Phim nổi, bom tấn",["CINEMATOGRAPHY"],9],["Low-budget film","/ləʊ-ˈbʌʤɪt fɪlm/","Phim có kinh phí thấp",["CINEMATOGRAPHY"],9],["Biography","/baɪˈɑːɡrəfi/","Phim về tiểu sử một nhân vật",["CINEMATOGRAPHY"],9],["Soundtrack","/ˈsaʊndtræk/","Nhạc phim",["CINEMATOGRAPHY"],9],["Movie buff","/ˈmuːvi bʌf/","Fan cuồng phim",["CINEMATOGRAPHY"],9],["Premiere","/prɪˈmɪr/","Buổi công chiếu phim",["CINEMATOGRAPHY"],9],["Dub","/dʌb/","Lồng tiếng",["CINEMATOGRAPHY"],9],["Stunt man","/stʌnt mæn/","Diễn viên đóng thế",["CINEMATOGRAPHY"],9],["Compelling","/kəmˈpelɪŋ/","Thuyết phục",["CINEMATOGRAPHY"],9],["Enigmatic","/ˌenɪɡˈmætɪk/","Bí ẩn",["CINEMATOGRAPHY"],9],["Poignant","/ˈpɔɪnjənt/","Thấm thía",["CINEMATOGRAPHY"],9],["Provocative","/prəˈvɑːkətɪv/","Trêu chọc",["CINEMATOGRAPHY"],9],["Aerial Shot","/ˈeərɪəl ʃɒt/","Góc quay trên không",["CINEMATOGRAPHY"],9],["Ambient Light","/ˈæmbɪənt laɪt/","Ánh sáng tự nhiên",["CINEMATOGRAPHY"],9],["Antagonist","/æn'tægənist/","Địch thủ",["CINEMATOGRAPHY"],9],["Anthology Film","/ænˈθɒləʤi fɪlm/","Phim hợp tuyển",["CINEMATOGRAPHY"],9],["Climax","/'klaimæks/","Cực điểm",["CINEMATOGRAPHY"],9],["Anticlimax","/ˌæntiˈklaɪmæks/","Sự kiện không như mong đợi",["CINEMATOGRAPHY"],9],["Archetype","/'ɑ:kitaip/","Nguyên mẫu",["CINEMATOGRAPHY"],9],["Film-goer","/fɪlm ˈgəʊə/","Người xem phim",["CINEMATOGRAPHY"],9],["Film adaptation","/film ˌædæpˈteɪʃən/","Sự chuyển thể thành phim",["CINEMATOGRAPHY"],9],["Sequel","/'si:kwəl/","Phần tiếp theo",["CINEMATOGRAPHY"],9],["Villain","/'vilən/","Nhân vật phản diện",["CINEMATOGRAPHY"],9],["Oppressive","/ə'presiv/","Áp bức",["CINEMATOGRAPHY"],9],["Alternate Scene","/ɔːlˈtɜːnɪt siːn/","Cảnh quay xen kẽ",["CINEMATOGRAPHY"],9],["Anamorphosis","/ænə'mɔ:fəsis/","Hệ thống quang học ép giãn hình ảnh theo chiều ngang.",["CINEMATOGRAPHY"],9],["Aperture","/'æpət∫ə[r]/","Khẩu độ ống kính máy quay",["CINEMATOGRAPHY"],9],["Archival Footage","/ɑːˈkaɪvəl ˈfʊtɪʤ/","Đoạn phim trích dẫn từ nguồn phim tài liệu",["CINEMATOGRAPHY"],9],["Armorer","/ˈɑːrmərər/","Người phụ trách đạo cụ vũ khí",["CINEMATOGRAPHY"],9],["Auto dissolve","/ˈɔːtəʊ dɪˈzɒlv/","Chống mờ tự động",["CINEMATOGRAPHY"],9],["Answer Print","/ˈɑːnsə prɪnt/","Đoạn phim nháp",["CINEMATOGRAPHY"],9],["Animal Wrangler","/ˈænɪməl ˈræŋglə/","Người điều khiển con vật sử dụng để quay phim",["CINEMATOGRAPHY"],9],["Booster","/bu:stə[r]/","Thiết bị khuếch đại tín hiệu âm thanh",["CINEMATOGRAPHY"],9],["Breakdown","/'breikdaʊn/","Phân cảnh của bộ phim",["CINEMATOGRAPHY"],9],["Blooper","/'blu:pə[r]/","Cảnh quay hỏng",["CINEMATOGRAPHY"],9],["Plot Hole","/plɒt həʊl/","Lỗ hổng trong cốt truyện",["CINEMATOGRAPHY"],9],["B-Movie","/biː-ˈmuːvi/","Phim hạng B",["CINEMATOGRAPHY"],9],["Biographical film","/ˌbaɪəʊˈgræfɪkəl fɪlm/","Phim tiểu sử hư cấu",["CINEMATOGRAPHY"],9],["Blacklisting","/'blæklist/","Danh sách đen",["CINEMATOGRAPHY"],9],["Call Sheet","/kɔːl ʃiːt/","Bảng gọi vai",["CINEMATOGRAPHY"],9],["Movie geek","/ˈmuːvi giːk/","Người mê xem phim",["CINEMATOGRAPHY"],9],["Cinemascope","/'siniməskoup/","Màn ảnh rộng",["CINEMATOGRAPHY"],9],["Clapperboard","/'klæpər bɔ:d/","Bảng quay phim",["CINEMATOGRAPHY"],9],["Coming-of-age Film","/ˈkʌmɪŋ ɒv eɪʤ fɪlm/","Phim tuổi mới lớn",["CINEMATOGRAPHY"],9],["Cyclorama","/¸saiklou´ra:mə/","(Sân khấu) màn vây",["CINEMATOGRAPHY"],9],["Day-for-Night Shot","/deɪ-fɔː-naɪt ʃɒt/","Cảnh giả đêm",["CINEMATOGRAPHY"],9],["Historical movie","/hɪsˈtɒrɪkəl ˈmuːvi/","Phim cổ trang",["CINEMATOGRAPHY"],9],["Anti-war movie","/ˈænti-wɔː ˈmuːvi/","Phim phản chiến",["CINEMATOGRAPHY"],9],["Tragedy movie","/ˈtræʤɪdi ˈmuːvi/","Phim bi kịch",["CINEMATOGRAPHY"],9],["Movie criticism","/ˈmuːvi ˈkrɪtɪsɪzm/","Bài phân tích và đánh giá phim",["CINEMATOGRAPHY"],9],["Movie critic","/ˈmuːvi ˈkrɪtɪk/","Người phân tích và đánh giá phim",["CINEMATOGRAPHY"],9],["Scriptwriter","/ˈskrɪptˌraɪtə/","Biên kịch",["CINEMATOGRAPHY"],9],["Extra","/'ekstrə/","Diễn viên quần chúng",["CINEMATOGRAPHY"],9],["Show time","/ʃəʊ taɪm/","Giờ chiếu",["CINEMATOGRAPHY"],9],["Accounting - audit","/əˈkaʊntɪŋ/ /ˈɔːdɪt/","Kế toán - kiểm toán",["ACCOUNTING"],16],["Adjusting journal entries (AJEs)","/əˈʤʌstɪŋ ˈʤɜːnl ˈentriz/","Bảng tổng hợp các bút toán điều chỉnh",["ACCOUNTING"],16],["Accounting policy","/əˈkaʊntɪŋ ˈpɒlɪsi/","Chính sách kế toán",["ACCOUNTING"],16],["Bank reconciliation","/bæŋk ˌrekənsɪlɪˈeɪʃən/","Bảng chỉnh hợp Ngân hàng",["ACCOUNTING"],16],["Controlled program","/kənˈtrəʊld ˈprəʊgræm/","Chương trình kiểm soát",["ACCOUNTING"],16],["Aged trial balance of accounts receivable","/eɪʤd ˈtraɪəl ˈbæləns ɒv əˈkaʊnts rɪˈsiːvəbl/","Bảng số dư chi tiết phân tích theo tuổi nợ",["ACCOUNTING"],16],["Audit evidence","/ˈɔːdɪt ˈevɪdəns/","Bằng chứng kiểm toán",["ACCOUNTING"],16],["Audit report","/ˈɔːdɪt rɪˈpɔːt/","Báo cáo kiểm toán",["ACCOUNTING"],16],["Audit trail","/ˈɔːdɪt treɪl/","Dấu vết kiểm toán",["ACCOUNTING"],16],["Auditing standard","/ˈɔːdɪtɪŋ ˈstændəd/","Chuẩn mực kiểm toán",["ACCOUNTING"],16],["Documentary evidence","/ˌdɒkjʊˈmentəri ˈevɪdəns/","Bằng chứng tài liệu",["ACCOUNTING"],16],["Disclosure","/dɪsˈkləʊʒə/","Công bố",["ACCOUNTING"],16],["Integrity","/ɪnˈtegrɪti/","Chính trực",["ACCOUNTING"],16],["Expenditure cycle","/ɪksˈpendɪʧə ˈsaɪkl/","Chu trình chi phí",["ACCOUNTING"],16],["Generally accepted auditing standards (GAAS)","/ˈʤenərəli əkˈseptɪd ˈɔːdɪtɪŋ ˈstændədz/","Các chuẩn mực kiểm toán được chấp nhận phổ biến",["ACCOUNTING"],16],["Final audit work","/ˈfaɪnl ˈɔːdɪt wɜːk/","Công việc kiểm toán sau ngày kết thúc niên độ",["ACCOUNTING"],16],["Interim audit work","/ˈɪntərɪm ˈɔːdɪt wɜːk/","Công việc kiểm toán trước ngày kết thúc niên độ",["ACCOUNTING"],16],["Written narrative of internal control","/ˈrɪtn ˈnærətɪv ɒv ɪnˈtɜːnl kənˈtrəʊl/","Bảng tường thuật về kiểm soát nội bộ",["ACCOUNTING"],16],["Working trial balance","/ˈwɜːkɪŋ ˈtraɪəl ˈbæləns/","Bảng cân đối tài khoản",["ACCOUNTING"],16],["Management assertion","/ˈmænɪʤmənt əˈsɜːrʃn/","Cơ sở dẫn liệu",["ACCOUNTING"],16],["Observation evidence","/ˌɒbzəːˈveɪʃən ˈevɪdəns/","Bằng chứng quan sát",["ACCOUNTING"],16],["Organization structure","/ˌɔːgənaɪˈzeɪʃən ˈstrʌkʧə/","Cơ cấu tổ chức",["ACCOUNTING"],16],["Payroll cycle","/ˈpeɪrəʊl ˈsaɪkl/","Chu trình tiền lương",["ACCOUNTING"],16],["Oral evidence","/ˈɔːrəl ˈevɪdəns/","Bằng chứng phỏng vấn",["ACCOUNTING"],16],["Physical evidence","/ˈfɪzɪkəl ˈevɪdəns/","Bằng chứng vật chất",["ACCOUNTING"],16],["Production/Conversion cycle","/prəˈdʌkʃən kənˈvɜːʃən ˈsaɪkl/","Chu trình sản xuất/chuyển đổi",["ACCOUNTING"],16],["Random number generators","/ˈrændəm ˈnʌmbə ˈʤenəreɪtəz/","Chương trình chọn số ngẫu nhiên",["ACCOUNTING"],16],["Reclassification journal entries (RJEs)","/ˌriːˌklæsɪfɪˈkeɪʃən ˈʤɜːnl ˈentriz/","Bảng liệt kê các bút toán sắp xếp lại khoản mục",["ACCOUNTING"],16],["Reconciliation of vendors’ statements","/ˌrekənsɪlɪˈeɪʃən ɒv ˈvendɔːz ˈsteɪtmənts/","Bảng chỉnh hợp nợ phải trả",["ACCOUNTING"],16],["Revenue cycle","/ˈrevɪnjuː ˈsaɪkl/","Chu trình doanh thu",["ACCOUNTING"],16],["Break-even point","/breɪk-ˈiːvən pɔɪnt/","Điểm hòa vốn",["ACCOUNTING"],16],["Calls in arrear","/kɔlz ɪn əˈrɪə/","Vốn gọi trả sau",["ACCOUNTING"],16],["Capital","/ˈkæpətəl/","Vốn",["ACCOUNTING"],16],["Authorized capital","/ˈɔθəˌraɪzd ˈkæpətəl/","Vốn điều lệ",["ACCOUNTING"],16],["Called-up capital","/kɔld–ʌp ˈkæpətəl/","Vốn đã gọi",["ACCOUNTING"],16],["Invested capital","/ɪnˈvestəd ˈkæpətəl/","Vốn đầu tư",["ACCOUNTING"],16],["Issued capital","/ˈɪʃud ˈkæpətəl/","Vốn phát hành",["ACCOUNTING"],16],["Uncalled capital","/ənˈkɔld ˈkæpətəl/","Vốn chưa gọi",["ACCOUNTING"],16],["Working capital","/ˈwɜːkɪŋ ˈkæpətəl/","Vốn lưu động",["ACCOUNTING"],16],["Capital redemption reserve","/ˈkæpətəl rɪˈdempʃən rɪˈzɜːv/","Quỹ dự trữ bồi hoàn vốn cổ phần",["ACCOUNTING"],16],["Cash book","/kæʃ bʊk/","Sổ tiền mặt",["ACCOUNTING"],16],["Cash discounts","/kæʃ dɪˈskaʊnts/","Chiết khấu tiền mặt",["ACCOUNTING"],16],["Cash flow statement","/kæʃ floʊ ˈsteɪtmənt/","Bảng phân tích lưu chuyển tiền mặt",["ACCOUNTING"],16],["Fixed assets","/fɪkst ˈæˌsets/","Tài sản cố định",["ACCOUNTING"],16],["Fixed capital","/fɪkst ˈkæpətəl/","Vốn cố định",["ACCOUNTING"],16],["Carriage inwards","/ˈkærɪʤ ˈɪnwərdz/","Chi phí vận chuyển hàng hóa mua",["ACCOUNTING"],16],["Carriage outwards","/ˈkærɪʤ ˈaʊtwərdz/","Chi phí vận chuyển hàng hóa bán",["ACCOUNTING"],16],["Depreciation","/dɪˌpriʃiˈeɪʃən/","Khấu hao",["ACCOUNTING"],16],["Provision for depreciation","/prəˈvɪʒən fɔr dɪˌpriʃiˈeɪʃən/","Dự phòng khấu hao",["ACCOUNTING"],16],["Human Resources","/hjuːmən rɪˈsɔːsɪz/","Nhân sự",["HUMAN RESOURCES"],19],["Probation period","/prəˈbeɪʃən ˈpɪərɪəd/","Thời gian thử việc",["HUMAN RESOURCES"],19],["Subordinate","/səˈbɔːdɪneɪt/","Cấp dưới",["HUMAN RESOURCES"],19],["Governmental agencies","/ˌgʌvənˈmentl ˈeɪʤənsiz/","Cơ quan nhà nước",["HUMAN RESOURCES"],19],["State owned company","/steɪt əʊnd ˈkʌmpəni/","Công ty nhà nước",["HUMAN RESOURCES"],19],["Aggrieved employee","/əˈgriːvd ˌemplɔɪˈiː/","Nhân viên bị ngược đãi",["HUMAN RESOURCES"],19],["Career employee","/kəˈrɪər ˌemplɔɪˈiː/","Nhân viên biên chế",["HUMAN RESOURCES"],19],["Contractual employee","/kənˈtræktjʊəl ˌemplɔɪˈiː/","Nhân viên hợp đồng",["HUMAN RESOURCES"],19],["Former employee","/ˈfɔːmər ˌemplɔɪˈiː/","Cựu nhân viên",["HUMAN RESOURCES"],19],["Layoff","/ˈleɪɒf/","Đào thải",["HUMAN RESOURCES"],19],["Allowance","/əˈlaʊəns/","Trợ cấp",["HUMAN RESOURCES"],19],["Compensation","/ˌkɒmpenˈseɪʃən/","Đền bù",["HUMAN RESOURCES"],19],["Pay parity","/peɪ ˈpærɪti/","Bình đẳng tiền lương",["HUMAN RESOURCES"],19],["Supervisory style","/ˌsjuːpəˈvaɪzəri staɪl/","Phong cách quản lý",["HUMAN RESOURCES"],19],["Violation of law","/ˌvaɪəˈleɪʃən ɒv lɔː/","Vi phạm luật",["HUMAN RESOURCES"],19],["Violation of company rules","/ˌvaɪəˈleɪʃən ɒv ˈkʌmpəni ruːlz/","Vi phạm điều lệ của Công ty",["HUMAN RESOURCES"],19],["Specific environment","/spɪˈsɪfɪk ɪnˈvaɪərənmənt/","Môi trường đặc thù",["HUMAN RESOURCES"],19],["Self appraisal","/self əˈpreɪzəl/","Tự đánh giá",["HUMAN RESOURCES"],19],["Self-actualization needs","/self-ˌækʧʊəlaɪˈzeɪʃ(ə)n niːdz/","Nhu cầu thể hiện bản thân",["HUMAN RESOURCES"],19],["Reorientation","/ˌriːˌɔːrienˈteɪʃən/","Tái hội nhập vào môi trường làm việc",["HUMAN RESOURCES"],19],["Risk tolerance","/rɪsk ˈtɒlərəns/","Chấp nhận rủi ro",["HUMAN RESOURCES"],19],["Performance expectation","/pəˈfɔːməns ˌekspekˈteɪʃən/","Kỳ vọng hoàn thành công việc",["HUMAN RESOURCES"],19],["Manual dexterity","/ˈmænjʊəl deksˈterɪti/","Sự khéo léo của tay",["HUMAN RESOURCES"],19],["Job satisfaction","/ʤɒb ˌsætɪsˈfækʃən/","Thỏa mãn với công việc",["HUMAN RESOURCES"],19],["Job rotation","/ʤɒb rəʊˈteɪʃən/","Luân phiên công tác",["HUMAN RESOURCES"],19],["Job involvement","/ʤɒb ɪnˈvɒlvmənt/","Tích cực với công việc",["HUMAN RESOURCES"],19],["Internal equity","/ɪnˈtɜːnl ˈekwɪti/","Bình đẳng nội bộ",["HUMAN RESOURCES"],19],["Intelligence tests","/ɪnˈtelɪʤəns tests/","Trắc nghiệm trí thông minh",["HUMAN RESOURCES"],19],["Group appraisal","/gruːp əˈpreɪzəl/","Đánh giá nhóm",["HUMAN RESOURCES"],19],["Corporate culture","/ˈkɔːpərɪt ˈkʌlʧə/","Văn hóa công ty",["HUMAN RESOURCES"],19],["Congenial co-workers","/kənˈʤiːniəl kəʊ-ˈwɜːkəz/","Đồng nghiệp hợp ý",["HUMAN RESOURCES"],19],["Corporate philosophy","/ˈkɔːpərɪt fɪˈlɒsəfi/","Triết lý công ty",["HUMAN RESOURCES"],19],["Administrator cadre","/ədˈmɪnɪstreɪtə ˈkɑːdə/","Cán bộ quản trị cấp cao",["HUMAN RESOURCES"],19],["Apprenticeship training","/əˈprentɪʃɪp ˈtreɪnɪŋ/","Đào tạo học nghề",["HUMAN RESOURCES"],19],["Appropriate status symbols","/əˈprəʊprɪeɪt ˈsteɪtəs ˈsɪmbəlz/","Biểu tượng địa vị phù hợp",["HUMAN RESOURCES"],19],["Alternation Ranking method","/ˌɔːltəˈneɪʃ(ə)n ˈræŋkɪŋ ˈmeθəd/","Phương pháp xếp hạng luân phiên",["HUMAN RESOURCES"],19],["Behavior modeling","/bɪˈheɪvjə ˈmɒdlɪŋ/","Mô hình ứng xử",["HUMAN RESOURCES"],19],["Behavioral norms","/bɪˈheɪvjərəl nɔːmz/","Các chuẩn mực hành vi",["HUMAN RESOURCES"],19],["Board interview","/bɔːd ˈɪntəvjuː/","Phỏng vấn hội đồng",["HUMAN RESOURCES"],19],["Bottom-up approach","/ˈbɒtəm-ʌp əˈprəʊʧ/","Phương pháp từ cấp dưới lên cấp trên",["HUMAN RESOURCES"],19],["Bureaucracy","/bjʊˈrɑː.krə.si/","Quan liêu",["HUMAN RESOURCES"],19],["Essay method","/ˈeseɪ ˈmeθəd/","Phương pháp đánh giá bằng văn bản tường thuật",["HUMAN RESOURCES"],19],["Evaluation of application","/ɪˌvæljʊˈeɪʃən ɒv ˌæplɪˈkeɪʃ(ə)n/","Xét đơn ứng tuyển",["HUMAN RESOURCES"],19],["Gross salary","/grəʊs ˈsæləri/","Lương gộp (Chưa trừ thuế)",["HUMAN RESOURCES"],19],["Gantt task and Bonus payment","/ˈɡænt tɑːsk ænd ˈbəʊnəs ˈpeɪmənt/","Trả lương cơ bản cộng với tiền thưởng",["HUMAN RESOURCES"],19],["Grievance procedure","/ˈgriːvəns prəˈsiːʤə/","Thủ tục giải quyết khiếu nại",["HUMAN RESOURCES"],19],["Prevailing rate","/prɪˈveɪlɪŋ reɪt/","Mức lương hiện hành trong Xã hội",["HUMAN RESOURCES"],19],["Adjusting pay rates","/əˈʤʌstɪŋ peɪ reɪts/","Điều chỉnh mức lương",["HUMAN RESOURCES"],19],["Gratification","/ˌgrætɪfɪˈkeɪʃən/","Thưởng",["HUMAN RESOURCES"],19],["Leading","/ˈliːdɪŋ/","Lãnh đạo",["HUMAN RESOURCES"],19],["Executive","/ɪgˈzekjʊtɪv/","Chuyên viên",["HUMAN RESOURCES"],19]];
 
-.filter-bar { display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap; }.search-box { flex:1;min-width:250px;display:flex;align-items:center;background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:0 12px; }.search-box input { flex:1;border:0;background:transparent;padding:10px;outline:0;font-size:11px; }
-.chapter-curriculum { margin-bottom:18px;padding:22px;background:var(--navy);color:white;border-radius:24px;overflow:hidden; }
-.chapter-curriculum header { display:flex;justify-content:space-between;align-items:flex-start;gap:18px;margin-bottom:17px; }
-.chapter-curriculum h2 { margin:4px 0 0; }.chapter-curriculum header button { border:1px solid rgba(255,255,255,.24);background:transparent;color:white;border-radius:10px;padding:7px 10px;font-size:9px; }
-.chapter-track { display:flex;gap:10px;overflow-x:auto;padding:2px 2px 10px;scrollbar-color:rgba(255,255,255,.28) transparent; }
-.chapter-card { flex:0 0 190px;min-height:112px;border:1px solid rgba(255,255,255,.13);background:rgba(255,255,255,.07);color:white;border-radius:16px;padding:14px;text-align:left;transition:.2s; }
-.chapter-card:hover,.chapter-card.active { background:var(--paper);color:var(--navy);transform:translateY(-2px); }.chapter-card.active { box-shadow:inset 0 -3px var(--pink); }
-.chapter-card small,.chapter-card b,.chapter-card span { display:block; }.chapter-card small { opacity:.62;font-size:8px;text-transform:uppercase;letter-spacing:.1em; }.chapter-card b { margin:5px 0 2px;font-size:11px; }.chapter-card span { font-family:"Noto Sans SC";font-size:10px; }.chapter-card i { display:block;margin-top:8px;font-style:normal;font-size:8px;opacity:.72; }
-.corpus-status { display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin:-7px 0 18px;padding:11px 14px;background:rgba(255,253,249,.72);border:1px solid var(--line);border-radius:13px;font-size:9px;color:var(--muted); }
-.corpus-status span { display:flex;align-items:center;gap:5px; }.corpus-status>b { margin-left:auto;color:var(--navy); }
-.quality-dot { width:8px;height:8px;border-radius:50%;display:inline-block; }.quality-dot.deep { background:var(--mint-deep); }.quality-dot.imported { background:var(--lavender-deep); }.quality-dot.indexed { background:#b7aeb9; }
-.vocab-list { display:grid;gap:10px; }.vocab-row { display:grid;grid-template-columns:1.1fr .9fr .9fr 1fr auto;align-items:center;gap:18px;background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:17px 20px;transition:.2s; }.vocab-row:hover { transform:translateY(-2px);box-shadow:0 12px 25px rgba(70,50,50,.07); }.vocab-row button.word-name { border:0;background:transparent;text-align:left;padding:0; }.word-name b { display:block;font:600 18px Fredoka; }.word-name small,.vocab-row>span small { color:var(--muted);display:block;font-size:9px; }.vocab-row>span { font-size:11px; }.mastery { display:flex;align-items:center;gap:8px; }.mastery i { width:70px;height:5px;background:#eee7e2;border-radius:9px;overflow:hidden; }.mastery i:after { content:"";display:block;height:100%;width:var(--mastery);background:var(--pink); }.save-button { border:1px solid var(--line);background:white;width:35px;height:35px;border-radius:11px; }.save-button.saved { background:var(--butter); }
-.vocab-list.group-view { display:grid;grid-template-columns:repeat(2,1fr);gap:20px; }.vocab-group { background:var(--paper);border-radius:20px;border:1px solid var(--line);padding:22px; }.vocab-group .vocab-row { grid-template-columns:1fr auto;padding:12px;border:0;border-top:1px solid var(--line);border-radius:0; }.vocab-group .vocab-row>span:not(.mastery),.vocab-group .mastery { display:none; }
-.vocab-list.network-view { position:relative;min-height:620px;background:var(--paper);border:1px solid var(--line);border-radius:24px;display:block;overflow:hidden; }.network-word { position:absolute;border:1px solid var(--line);background:var(--blush);padding:8px 11px;border-radius:99px;font-size:10px;font-weight:700;transform:translate(-50%,-50%); }
-.index-badge { display:inline-block;margin-top:5px;padding:3px 6px;border-radius:6px;background:#efebee;color:#716977;font-size:7px;font-weight:800;text-transform:uppercase;letter-spacing:.08em; }
-.index-badge.imported { background:var(--lavender);color:#56437e; }
-.pagination { display:flex;justify-content:center;align-items:center;gap:8px;margin:24px 0; }.pagination button { border:1px solid var(--line);background:var(--paper);border-radius:10px;padding:8px 12px;font-size:10px; }.pagination button:disabled { opacity:.4;cursor:not-allowed; }
+  const chapters = [
+    {id:1,en:"Natural Geography",zh:"自然地理",vi:"Địa lý tự nhiên"},
+    {id:2,en:"Plant Studies",zh:"植物研究",vi:"Thực vật học"},
+    {id:3,en:"Animal Protection",zh:"动物保护",vi:"Động vật và bảo tồn"},
+    {id:4,en:"Space Exploration",zh:"太空探索",vi:"Khám phá không gian"},
+    {id:5,en:"School & Education",zh:"学校教育",vi:"Trường học và giáo dục"},
+    {id:6,en:"Technology & Invention",zh:"科技发明",vi:"Công nghệ và phát minh"},
+    {id:7,en:"Culture & History",zh:"文化历史",vi:"Văn hóa và lịch sử"},
+    {id:8,en:"Language Evolution",zh:"语言演化",vi:"Ngôn ngữ và diễn đạt"},
+    {id:9,en:"Entertainment & Sports",zh:"娱乐运动",vi:"Giải trí và thể thao"},
+    {id:10,en:"Objects & Materials",zh:"物品材料",vi:"Vật thể và vật liệu"},
+    {id:11,en:"Fashion & Trends",zh:"时尚潮流",vi:"Thời trang và xu hướng"},
+    {id:12,en:"Food & Health",zh:"饮食健康",vi:"Ẩm thực và sức khỏe"},
+    {id:13,en:"Buildings & Places",zh:"建筑场所",vi:"Công trình và địa điểm"},
+    {id:14,en:"Transport & Travel",zh:"交通旅行",vi:"Giao thông và du lịch"},
+    {id:15,en:"Government & State",zh:"国家政府",vi:"Nhà nước và chính phủ"},
+    {id:16,en:"Society & Economics",zh:"社会经济",vi:"Xã hội và kinh tế"},
+    {id:17,en:"Law & Regulation",zh:"法律法规",vi:"Pháp luật và quy định"},
+    {id:18,en:"Conflict & Competition",zh:"沙场争锋",vi:"Xung đột và cạnh tranh"},
+    {id:19,en:"Social Roles",zh:"社会角色",vi:"Vai trò xã hội"},
+    {id:20,en:"Behaviour & Action",zh:"行为动作",vi:"Hành vi và hành động"},
+    {id:21,en:"Mind & Mental Health",zh:"身心健康",vi:"Tâm trí và sức khỏe tinh thần"},
+    {id:22,en:"Time & Dates",zh:"时间日期",vi:"Thời gian và ngày tháng"}
+  ];
+  const deepChapterMap = {considerable:20,detect:6,signal:6,civilisation:7,substantial:16,controversial:17,evolution:8,phenomenon:1,deteriorate:12,climate:1,significant:20,abundant:1,withstand:20,influence:20,evidence:6,indicate:20,decline:16,contribute:16,rigorous:5,predict:6,impact:16,crucial:20,encounter:20,emerge:20};
+  const normalizeVocabWord = word => String(word).trim().toLocaleLowerCase("en").replace(/\s+/g," ");
+  const importedVocabulary = importedVocabRows.map((row,index) => {
+    const chapterId=row[4],chapter=chapters[chapterId-1];
+    return {
+      id:`json-${index}`,word:row[0],ipaUK:row[1],ipaUS:row[1],partOfSpeech:"word / phrase",
+      vietnameseMeaning:row[2],chineseMeaning:"Chưa biên tập nghĩa tiếng Trung",pinyin:"",
+      englishDefinition:"Imported vocabulary entry with Vietnamese meaning and phonetic transcription.",
+      level:"B2",ieltsUse:"IELTS vocabulary by topic",register:"varied",
+      topic:row[3],chapterId,chapter,quality:"imported",source:"vocab.json — IELTS Fighter - 2500 TỪ VỰNG THEO CHỦ ĐỀ",
+      synonyms:[],antonyms:[],collocations:[],wordFamily:[],commonPrepositions:[],patterns:[],
+      commonMistakes:[],confusingWords:[],memoryTip:"Gặp lại từ trong một câu hoặc đoạn mới trước khi đánh dấu đã biết.",
+      morphology:"",chineseCollocation:"",chineseExample:"",chineseNuance:"",
+      examples:[]
+    };
+  });
+  const importedByKey = new Map(importedVocabulary.map(word => [normalizeVocabWord(word.word),word]));
 
-.review-due { text-align:center;background:var(--butter);padding:12px 18px;border-radius:16px; }.review-due b,.review-due span { display:block; }.review-due b { font:700 22px Fredoka; }.review-due span { font-size:8px; }
-.review-card { max-width:850px;margin:auto;padding:clamp(28px,5vw,56px); }.review-top { display:flex;justify-content:space-between;font-size:10px; }.review-progress { margin:16px 0 35px; }.review-prompt { font-size:21px;line-height:1.55; }.review-options { display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:24px 0; }.review-options button { border:1px solid var(--line);background:white;border-radius:13px;padding:13px;text-align:left;font-size:11px; }.review-options button.selected { background:var(--blush);border-color:var(--pink); }.review-input { width:100%;border:1px solid var(--line);border-radius:13px;padding:13px;margin:17px 0; }.review-actions { display:flex;justify-content:flex-end;gap:9px;border-top:1px solid var(--line);padding-top:20px; }.review-feedback { margin-top:15px;padding:13px;border-radius:12px;font-size:11px;background:var(--mint); }
+  const indexedVocabulary = corpusWordList.map((word, index) => {
+    const rank = index + 1;
+    const level = rank < 1800 ? "B1" : rank < 4800 ? "B2" : "C1";
+    const chapterId = corpusChapterIds[index];
+    const chapter = chapters[chapterId - 1];
+    return {
+      id: word, word, level, rank, partOfSpeech: "indexed headword",
+      vietnameseMeaning: "Chưa biên tập nghĩa tiếng Việt",
+      chineseMeaning: "中文释义待编辑", chapterId, chapter,
+      pinyin: "", topic: [chapter.en], quality: "indexed",
+      source: "Google 10,000 English frequency list",
+      englishDefinition: "This headword is indexed for frequency and search. Deep trilingual content has not yet been editorially verified.",
+      collocations: [], synonyms: [], antonyms: [], wordFamily: [],
+      memoryTip: "Hãy lưu từ này nếu bạn gặp nó trong bài đọc; nội dung chuyên sâu sẽ được bổ sung theo mức ưu tiên học."
+    };
+  });
+  vocabulary.forEach(word => {
+    word.quality="deep";word.chapterId=deepChapterMap[word.id]||20;word.chapter=chapters[word.chapterId-1];
+    const imported=importedByKey.get(normalizeVocabWord(word.word));
+    if(imported){word.sourceTopics=imported.topic;word.importedMeaningVi=imported.vietnameseMeaning;word.importedIpa=imported.ipaUK;}
+  });
+  const deepKeys=new Set(vocabulary.map(word=>normalizeVocabWord(word.word)));
+  const importedOnly=importedVocabulary.filter(word=>!deepKeys.has(normalizeVocabWord(word.word)));
+  const importedKeys=new Set(importedVocabulary.map(word=>normalizeVocabWord(word.word)));
+  const indexedOnly=indexedVocabulary.filter(word=>!deepKeys.has(normalizeVocabWord(word.word))&&!importedKeys.has(normalizeVocabWord(word.word)));
+  const allVocabulary=[...vocabulary,...importedOnly,...indexedOnly];
 
-.metric-grid { display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px; }.metric { background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:21px; }.metric span,.metric b,.metric small { display:block; }.metric span { color:var(--muted);font-size:9px; }.metric b { font:600 30px Fredoka;margin:5px 0; }.metric small { color:var(--pink-deep);font-size:8px; }
-.progress-layout { display:grid;grid-template-columns:1.3fr .7fr;gap:18px; }.chart-card,.skills-card { padding:26px; }.chart-card canvas { width:100%;height:270px; }.skill-row { margin:18px 0; }.skill-row header { display:flex;justify-content:space-between;font-size:10px;margin-bottom:6px; }.skill-row div { height:8px;background:#eee8e3;border-radius:99px; }.skill-row i { display:block;height:100%;border-radius:inherit;background:var(--pink); }
-.insight-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px; }.insight { border-radius:18px;padding:22px; }.insight span { font-size:9px;text-transform:uppercase;font-weight:800; }.insight h3 { margin:7px 0;font-size:15px; }.insight p { margin:0;font-size:10px; }.insight.strong { background:var(--mint); }.insight.weak { background:#fee5df; }.insight.next { background:var(--lavender); }
+  const lessons = [
+    {id:"climate-signals",title:"Signals in a Changing Climate",topic:"Climate and Environment",words:["detect","signal","evidence","indicate","decline","considerable"],
+      warmup:"Khi nhiệt độ thành phố tăng, dấu hiệu nào cho thấy đây là xu hướng dài hạn chứ không phải một ngày nóng bất thường?",
+      encounter:"Sensors can <mark class='word'>detect</mark> tiny changes in surface temperature before residents notice them.",
+      choices:["tạo ra thay đổi","phát hiện thay đổi khó nhận thấy","ngăn thay đổi xảy ra"],answer:1,clue:"Thiết bị cảm biến làm gì với một thay đổi còn quá nhỏ để con người nhận ra?",
+      paragraph:"Urban researchers increasingly rely on inexpensive sensors to detect local heat patterns. A single reading is not strong evidence, but repeated measurements can indicate where shade is disappearing and which neighbourhoods face a considerable risk. When tree cover begins to decline, paved surfaces retain more heat after sunset. This signal helps planners decide where new planting may have the greatest impact. Yet data alone are insufficient: residents must also explain how heat affects daily travel, work, and sleep.",
+      vi:"Các nhà nghiên cứu đô thị ngày càng dựa vào cảm biến giá rẻ để phát hiện mô hình nhiệt cục bộ. Một kết quả đơn lẻ chưa phải bằng chứng mạnh, nhưng đo lặp lại có thể chỉ ra nơi bóng râm đang mất đi và khu dân cư nào chịu rủi ro đáng kể.",
+      zh:"城市研究人员越来越依赖低成本传感器来检测局部热量模式。单次读数并非有力证据，但重复测量可以表明树荫正在消失的位置。",
+      grammar:"Researchers|have found|that neighbourhood temperatures fall more slowly|when tree cover declines|after sunset.",
+      grammarTypes:["subject","verb","object","clause","phrase"],
+      paraphrase:["a major reduction","declined considerably"],comprehension:"Why are repeated measurements more useful than a single reading?",comprehensionAnswer:"They reveal stable patterns and provide stronger evidence."},
+    {id:"research-evidence",title:"From Evidence to Conclusion",topic:"Science and Technology",words:["rigorous","evidence","predict","phenomenon","significant","emerge"],
+      warmup:"Điều gì khiến một kết luận khoa học đáng tin cậy hơn một phỏng đoán?",
+      encounter:"Only a <mark class='word'>rigorous</mark> method can separate a genuine pattern from random variation.",
+      choices:["nhanh và linh hoạt","nghiêm ngặt và chặt chẽ","mới nhưng chưa kiểm chứng"],answer:1,clue:"Phương pháp này phải đủ cẩn thận để loại trừ biến động ngẫu nhiên.",
+      paragraph:"When an unusual phenomenon emerges, researchers rarely accept the first explanation. They gather evidence under controlled conditions and apply rigorous checks to each stage of the study. If a model can predict similar results in a second sample, confidence grows. However, a statistically significant result does not automatically prove that the effect is important in daily life. Good science therefore separates mathematical certainty from practical value and reports the limits of its conclusions.",
+      vi:"Khi một hiện tượng lạ xuất hiện, nhà nghiên cứu hiếm khi chấp nhận lời giải thích đầu tiên. Họ thu thập bằng chứng trong điều kiện kiểm soát và kiểm tra chặt chẽ từng giai đoạn.",
+      zh:"当一种异常现象出现时，研究人员很少接受最初的解释。他们在受控条件下收集证据，并严格检查研究的每个阶段。",
+      grammar:"A result|does not prove|that an effect matters in daily life|although it may be statistically significant|in a controlled sample.",
+      grammarTypes:["subject","verb","object","clause","phrase"],paraphrase:["careful testing","rigorous checks"],comprehension:"What distinction should good science report?",comprehensionAnswer:"The distinction between statistical certainty and practical importance."},
+    {id:"ancient-adaptation",title:"Civilisations That Withstood Change",topic:"History and Archaeology",words:["civilisation","withstand","abundant","evolution","deteriorate","contribute"],
+      warmup:"Vì sao một nền văn minh có thể phát triển mạnh ở nơi tài nguyên không ổn định?",
+      encounter:"Flexible water systems helped the settlement <mark class='word'>withstand</mark> several long droughts.",
+      choices:["chịu đựng mà không sụp đổ","dự đoán chính xác","làm tình hình tệ hơn"],answer:0,clue:"Sau hạn hán, khu định cư vẫn tồn tại.",
+      paragraph:"Early civilisations did not depend only on abundant resources. Their survival often rested on institutions that could withstand uncertainty. Archaeological evidence indicates that shared storage, seasonal migration, and careful water management contributed to resilience. When soil quality began to deteriorate, communities sometimes changed crops rather than abandoning a region. This gradual evolution of practice challenges the idea that environmental stress always caused sudden collapse.",
+      vi:"Các nền văn minh sớm không chỉ phụ thuộc vào tài nguyên dồi dào. Khả năng tồn tại thường dựa trên những thiết chế có thể chống chịu sự bất định.",
+      zh:"早期文明并不只依赖丰富的资源。它们的生存往往取决于能够承受不确定性的制度。",
+      grammar:"Archaeological evidence|indicates|that shared storage contributed to resilience|when harvests deteriorated|during prolonged droughts.",
+      grammarTypes:["subject","verb","object","clause","phrase"],paraphrase:["survived pressure","withstood uncertainty"],comprehension:"What challenges the sudden-collapse explanation?",comprehensionAnswer:"Communities adapted their practices instead of immediately abandoning the region."},
+    {id:"social-change",title:"How Ideas Gain Influence",topic:"Society",words:["influence","controversial","impact","crucial","encounter","substantial"],
+      warmup:"Một ý tưởng gây tranh cãi có thể trở nên phổ biến bằng những con đường nào?",
+      encounter:"People are more likely to accept a <mark class='word'>controversial</mark> proposal after encountering it in several trusted settings.",
+      choices:["được đồng thuận hoàn toàn","gây tranh cãi mạnh","không có ảnh hưởng"],answer:1,clue:"Người nghe chưa đồng ý ngay vì đề xuất tạo ra bất đồng.",
+      paragraph:"A controversial idea rarely spreads through information alone. People interpret claims through relationships, institutions, and prior experience. Repeated exposure may have a substantial impact, but the source of a message is often crucial. When individuals encounter the same proposal from a teacher, a colleague, and a local organisation, its influence can grow without any single message being decisive. This helps explain why public attitudes sometimes change gradually and then appear to shift all at once.",
+      vi:"Một ý tưởng gây tranh cãi hiếm khi lan truyền chỉ nhờ thông tin. Con người diễn giải nhận định qua quan hệ, thiết chế và trải nghiệm trước đó.",
+      zh:"一个有争议的观点很少只靠信息传播。人们会通过关系、机构和既往经验来理解主张。",
+      grammar:"Repeated exposure|may have|a substantial impact|when people encounter a message in trusted settings|over time.",
+      grammarTypes:["subject","verb","object","clause","phrase"],paraphrase:["strong effect","substantial impact"],comprehension:"Why does the source of a message matter?",comprehensionAnswer:"Trusted sources shape how people interpret and accept a claim."}
+  ];
 
-.settings-grid { display:grid;grid-template-columns:repeat(2,1fr);gap:18px; }.settings-group { padding:26px; }.settings-group h2 { margin:5px 0 16px; }.settings-group>label { display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-top:1px solid var(--line);gap:20px; }.settings-group label b,.settings-group label small { display:block; }.settings-group label b { font-size:11px; }.settings-group label small,.settings-group>p { color:var(--muted);font-size:9px; }
-input[type=checkbox] { appearance:none;width:40px;height:22px;border-radius:99px;background:#ddd5d0;position:relative;flex:none;transition:.2s; }.settings-group input[type=checkbox]:after { content:"";position:absolute;width:16px;height:16px;top:3px;left:3px;border-radius:50%;background:white;box-shadow:0 2px 5px rgba(0,0,0,.2);transition:.2s; }.settings-group input[type=checkbox]:checked { background:var(--pink); }.settings-group input[type=checkbox]:checked:after { transform:translateX(18px); }
-.range-setting input { width:45%;accent-color:var(--pink-deep); }
+  const shortReadings = [
+    {title:"Signals beneath a lake",topic:"Natural Geography",text:"Sediment at the bottom of a lake can preserve chemical signals for centuries. By comparing layers, researchers detect periods of drought and abundant rainfall. The pattern does not provide a perfect calendar, but it contributes evidence about how a region’s climate changed."},
+    {title:"A quieter classroom",topic:"Education",text:"A school replaced frequent announcements with visual signals. Teachers predicted that the change would reduce distraction. After a rigorous trial, students reported a significant improvement in concentration, although the impact differed across age groups."},
+    {title:"When a market recovers",topic:"Business and Economics",text:"A decline in sales may reflect temporary uncertainty rather than permanent deterioration. Analysts therefore examine several indicators before predicting recovery. New evidence often emerges from household spending and business investment."}
+  ];
 
-.dictionary-panel { position:fixed;z-index:80;right:24px;top:90px;width:min(390px,calc(100vw - 32px));max-height:calc(100vh - 115px);overflow:auto;background:var(--paper);border:1px solid var(--line);border-radius:24px;padding:27px;box-shadow:0 25px 70px rgba(39,31,34,.2);animation:panelIn .25s ease; }
-@keyframes panelIn { from { opacity:0;transform:translateY(10px) scale(.98); } }.panel-close { position:absolute;right:15px;top:12px;border:0;background:transparent;font-size:24px; }.dict-word { font:700 32px Fredoka;margin:0; }.dict-ipa { color:var(--pink-deep);font-size:11px; }.dict-meaning { padding:15px;margin:17px 0;border-radius:14px;background:var(--blush); }.dict-meaning.zh { background:var(--mint); }.dict-meaning b,.dict-meaning span { display:block; }.dict-meaning b { font-size:9px;text-transform:uppercase;color:var(--muted); }.dict-meaning span { font-weight:700;font-size:13px; }.dict-section { border-top:1px solid var(--line);padding-top:13px;margin-top:13px;font-size:10px; }.dict-section b { display:block;margin-bottom:5px; }.dict-actions { display:flex;gap:7px;flex-wrap:wrap;margin-top:18px; }.dict-actions button { border:1px solid var(--line);background:white;border-radius:9px;padding:7px 9px;font-size:9px; }
-.toast { position:fixed;z-index:100;left:50%;bottom:35px;transform:translate(-50%,20px);background:var(--navy);color:white;padding:10px 15px;border-radius:12px;font-size:10px;opacity:0;pointer-events:none;transition:.25s; }.toast.show { opacity:1;transform:translate(-50%,0); }
-.rabbit-cursor {
-  position:fixed;z-index:200;left:0;top:0;width:32px;height:29px;pointer-events:none;
-  transform:translate(-50%,-46%);border:2px solid #4d3d49;border-radius:48% 48% 45% 45%;
-  background:linear-gradient(155deg,#fff 15%,#fff6f8 72%);box-shadow:0 5px 13px rgba(70,47,60,.18),inset 0 -3px 0 rgba(239,143,168,.12);
-  transition:width .18s ease,height .18s ease,background .18s ease,box-shadow .18s ease;
-}
-.rabbit-cursor:before,.rabbit-cursor:after {
-  content:"";position:absolute;z-index:-1;top:-18px;width:10px;height:22px;
-  border:2px solid #4d3d49;border-radius:62% 62% 34% 34%;background:linear-gradient(to right,#fff 20%,#f6b9c9 21% 73%,#fff 74%);
-  transform-origin:bottom center;transition:transform .2s cubic-bezier(.2,.8,.25,1.35),height .2s ease;
-}
-.rabbit-cursor:before { left:3px;transform:rotate(-12deg); }
-.rabbit-cursor:after { right:3px;transform:rotate(12deg); }
-.rabbit-cursor i,.rabbit-cursor b {
-  position:absolute;top:9px;width:4px;height:5px;border-radius:50%;background:#4d3d49;
-  box-shadow:inset 1px 1px 0 rgba(255,255,255,.8);transition:height .14s ease,transform .14s ease;
-}
-.rabbit-cursor i { left:7px; }.rabbit-cursor b { right:7px; }
-.rabbit-cursor span {
-  position:absolute;left:50%;top:15px;width:6px;height:5px;transform:translateX(-50%) rotate(45deg);
-  border-radius:55% 55% 45% 55%;background:#e67898;
-}
-.rabbit-cursor span:before,.rabbit-cursor span:after { content:"";position:absolute;background:#e67898;width:6px;height:5px;border-radius:50%; }
-.rabbit-cursor span:before { left:-3px;top:0; }.rabbit-cursor span:after { left:0;top:-3px; }
-.rabbit-cursor.hover { width:36px;height:32px;background:linear-gradient(155deg,#fff 8%,#fbdde5 78%);box-shadow:0 7px 17px rgba(217,95,131,.25),0 0 0 5px rgba(251,221,229,.32); }
-.rabbit-cursor.hover:before { transform:rotate(-22deg) translateY(1px); }.rabbit-cursor.hover:after { transform:rotate(22deg) translateY(1px); }
-.rabbit-cursor.hover i,.rabbit-cursor.hover b { height:2px;transform:translateY(2px); }
-.rabbit-cursor.clicking { width:29px;height:27px;box-shadow:0 3px 8px rgba(217,95,131,.24),0 0 0 7px rgba(239,143,168,.18); }
-.cursor-spark {
-  position:fixed;z-index:199;left:0;top:0;pointer-events:none;color:var(--spark-color,var(--pink-deep));
-  font:700 var(--spark-size,13px)/1 Fredoka,sans-serif;text-shadow:0 2px 5px rgba(87,48,65,.18);
-  transform:translate(-50%,-50%);animation:cursorBurst .72s cubic-bezier(.16,.75,.28,1) forwards;
-}
-@keyframes cursorBurst {
-  55% { opacity:1;transform:translate(calc(-50% + var(--spark-x)),calc(-50% + var(--spark-y))) rotate(var(--spark-rotate)) scale(1.12); }
-  100% { opacity:0;transform:translate(calc(-50% + var(--spark-x)),calc(-50% + var(--spark-y) - 12px)) rotate(var(--spark-rotate)) scale(.7); }
-}
-body.custom-cursor,body.custom-cursor button,body.custom-cursor a { cursor:none; }
-.bottom-nav { display:none; }
-.reveal { opacity:0;transform:translateY(16px);transition:opacity .55s ease,transform .55s ease; }.reveal.visible { opacity:1;transform:none; }
-.no-animations * { animation:none!important;transition:none!important; }.no-animations .reveal { opacity:1;transform:none; }
-.no-grammar-colors .chunk { background:#f1ece8!important;border-color:#aaa!important; }
-.hide-chinese .zh-only { display:none!important; }.hide-vietnamese .vi-only { display:none!important; }.hide-pinyin .pinyin { display:none!important; }
-.dark-reading .passage-panel { background:#242832;color:#f5eee7;border-color:#3e4451; }.dark-reading .passage-label { color:var(--navy); }.dark-reading .passage-word { color:#ffd5df; }
-.app-focus .sidebar { transform:translateX(-100%); }.app-focus .topbar { left:0; }.app-focus main { margin-left:0; }
+  const readingPassage = [
+    {label:"A",html:`Cities were once treated as passive victims of rising temperatures. <span class="connector">However</span>, a new generation of urban climate projects asks whether neighbourhoods can actively learn to cool themselves. The approach begins with a simple observation: heat is distributed unevenly. A road with <button class="passage-word" data-word="abundant">abundant</button> tree cover may be several degrees cooler than a nearby car park, even though both appear on the same weather map. This local variation is not noise; it is a <button class="passage-word" data-word="signal">signal</button> of how materials, shade and human activity interact.<p class="passage-translation vi-only">Các thành phố từng bị xem là nạn nhân thụ động của nhiệt độ tăng. Tuy nhiên, các dự án khí hậu đô thị mới đặt câu hỏi liệu khu dân cư có thể chủ động học cách tự làm mát hay không.</p>`},
+    {label:"B",html:`The first challenge is measurement. Official stations are accurate but sparse, so researchers now place low-cost sensors on balconies, buses and bicycles. One reading can be misleading. A <button class="passage-word" data-word="rigorous">rigorous</button> project therefore compares instruments, repeats observations and records the time of day. When the same pattern <button class="passage-word" data-word="emerge">emerges</button> across several weeks, planners gain stronger <button class="passage-word" data-word="evidence">evidence</button> that a hot spot is persistent rather than accidental.<p class="passage-translation vi-only">Thách thức đầu tiên là đo lường. Trạm chính thức chính xác nhưng thưa, nên nhà nghiên cứu đặt cảm biến giá rẻ trên ban công, xe buýt và xe đạp.</p>`},
+    {label:"C",html:`Measurement alone does not produce adaptation. In one pilot programme, residents marked routes they avoided after midday and described rooms that failed to cool at night. Their accounts helped researchers <button class="passage-word" data-word="detect">detect</button> problems that sensors could not explain, such as closed public buildings or bus stops without shade. <span class="connector">As a result</span>, the city redirected a <button class="passage-word" data-word="substantial">substantial</button> part of its planting budget from ornamental avenues to walking routes used by older residents.<p class="passage-translation vi-only">Chỉ đo lường chưa tạo ra khả năng thích ứng. Lời kể của cư dân giúp phát hiện những vấn đề cảm biến không giải thích được.</p>`},
+    {label:"D",html:`Not every intervention succeeds. Young trees take years to provide shade, reflective paint can <button class="passage-word" data-word="deteriorate">deteriorate</button>, and fountains may be inappropriate where water is scarce. The most resilient programmes treat each action as a test. They <button class="passage-word" data-word="predict">predict</button> an effect, measure the outcome and revise the plan. The lesson is less dramatic than a single technological cure, but more useful: urban cooling is an evolving practice in which reliable data and local knowledge <button class="passage-word" data-word="contribute">contribute</button> to better decisions.<p class="passage-translation vi-only">Không phải can thiệp nào cũng thành công. Chương trình bền bỉ nhất xem mỗi hành động như một phép thử và điều chỉnh kế hoạch theo kết quả.</p>`}
+  ];
 
-@media (max-width:1100px) {
-  :root { --sidebar: 205px; }
-  .hero { grid-template-columns:1fr .8fr; }.hero-copy{padding:45px}.hero-stats{grid-template-columns:repeat(2,1fr);row-gap:20px}
-  .home-grid,.reading-layout,.progress-layout { grid-template-columns:1fr; }.question-panel { position:relative;top:auto;max-height:none; }.constellation-card { grid-template-columns:1fr 1fr; }
-  .reading-facts { gap:12px; }.vocab-row { grid-template-columns:1fr 1fr 1fr auto; }.vocab-row>.mastery { display:none; }
-}
-@media (max-width:900px) {
-  :root { --sidebar: 250px; }
-  .sidebar { transform:translateX(-105%)!important;transition:.25s;box-shadow:var(--shadow); }.sidebar.open { transform:none!important; }
-  .topbar { left:0;height:66px;padding:0 16px; }.mobile-menu{display:block}.top-title{display:none}
-  main { margin-left:0;padding:88px 16px 90px; }.bottom-nav { display:grid;grid-template-columns:repeat(5,1fr);position:fixed;z-index:50;bottom:0;left:0;right:0;background:rgba(255,253,249,.96);border-top:1px solid var(--line);padding:8px 8px max(8px,env(safe-area-inset-bottom));backdrop-filter:blur(14px); }
-  .bottom-nav button { border:0;background:transparent;font-size:8px;color:var(--muted); }.bottom-nav span { display:block;font-size:16px; }.bottom-nav button.active { color:var(--pink-deep);font-weight:800; }
-  .hero { grid-template-columns:1fr;background:linear-gradient(160deg,#fffdfa 0 63%,#f8dbe3 63%); }.hero-copy{padding:36px 25px 10px}.hero h1{font-size:48px}.hero-visual{min-height:400px;transform:scale(.88)}
-  .home-grid,.constellation-card,.lesson-shell,.sentence-grid,.settings-grid,.insight-grid { grid-template-columns:minmax(0,1fr); }.constellation-copy{padding:28px}.constellation{min-height:300px}
-  .path-steps{grid-template-columns:1fr 1fr;gap:18px}.lesson-rail{position:relative;top:auto;width:100%}.lesson-rail #lesson-steps{display:flex;overflow-x:auto;width:100%}.lesson-rail #lesson-steps button{white-space:nowrap;flex:0 0 auto}
-  .page-heading { align-items:flex-start;flex-direction:column; }.page-heading h1{font-size:40px}
-  .reading-info { align-items:flex-start;flex-direction:column;gap:16px}.reading-facts{display:grid;grid-template-columns:repeat(2,1fr);width:100%}.passage-panel,.question-panel{padding:20px}.reader-toolbar>span{display:none}
-  .sentence-workbench{padding:24px;flex-direction:column}.sentence-number{font-size:30px}.tri-grid{grid-template-columns:1fr}
-  .filter-bar{display:grid}.search-box{min-width:0}.vocab-row{grid-template-columns:1fr auto}.vocab-row>span:not(.mastery),.vocab-row>.mastery{display:none}.vocab-list.group-view{grid-template-columns:1fr}
-  .metric-grid{grid-template-columns:1fr 1fr}.review-options{grid-template-columns:1fr}
-  .dictionary-panel { top:auto;bottom:0;right:0;width:100%;max-height:72vh;border-radius:24px 24px 0 0; }
-  .rabbit-cursor{display:none!important}body.custom-cursor,body.custom-cursor button,body.custom-cursor a{cursor:auto}
-}
-@media (prefers-reduced-motion:reduce) {
-  html { scroll-behavior:auto; } *,*:before,*:after { animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important; }
-  .reveal { opacity:1;transform:none; }.rabbit-cursor{display:none}
-}
+  const questions = [
+    {type:"Matching Heading",q:"Đoạn nào mô tả việc chuyển ngân sách theo trải nghiệm cư dân?",options:["A","B","C","D"],answer:"C",evidence:"redirected ... planting budget",para:"residents’ accounts → local experience",error:"locating information"},
+    {type:"True / False / Not Given",q:"Mọi nơi trong cùng một thành phố có nhiệt độ tương đương.",options:["True","False","Not Given"],answer:"False",evidence:"heat is distributed unevenly",para:"equivalent temperatures ↔ unevenly distributed",error:"logic"},
+    {type:"True / False / Not Given",q:"Các cảm biến giá rẻ chính xác hơn trạm chính thức.",options:["True","False","Not Given"],answer:"False",evidence:"Official stations are accurate but sparse",para:"more accurate ≠ accurate but sparse",error:"logic"},
+    {type:"True / False / Not Given",q:"Dự án thí điểm diễn ra trong hai năm.",options:["True","False","Not Given"],answer:"Not Given",evidence:"Không có thời lượng dự án trong bài.",para:"two years has no passage match",error:"locating information"},
+    {type:"Multiple Choice",q:"Vì sao cần lặp lại quan sát?",options:["Để làm cảm biến rẻ hơn","Để phân biệt mô hình bền vững với ngẫu nhiên","Để thay thế hiểu biết địa phương","Để tạo bản đồ thời tiết quốc gia"],answer:"Để phân biệt mô hình bền vững với ngẫu nhiên",evidence:"persistent rather than accidental",para:"stable pattern ↔ persistent; random ↔ accidental",error:"vocabulary"},
+    {type:"Matching Information",q:"Thông tin về hạn chế của lớp sơn phản quang nằm ở đoạn:",options:["A","B","C","D"],answer:"D",evidence:"reflective paint can deteriorate",para:"limitation ↔ can deteriorate",error:"locating information"},
+    {type:"Summary Completion",q:"Nhà nghiên cứu kết hợp dữ liệu cảm biến với ______ của cư dân.",answer:"accounts",evidence:"Their accounts helped researchers",para:"residents’ descriptions ↔ accounts",error:"vocabulary"},
+    {type:"Sentence Completion",q:"Chương trình bền bỉ xem mỗi hành động như một ______.",answer:"test",evidence:"treat each action as a test",para:"intervention ↔ action",error:"grammar"},
+    {type:"Vocabulary in Context",q:"“sparse” ở đoạn B gần nghĩa nhất với:",options:["widely separated","highly precise","recently installed","poorly maintained"],answer:"widely separated",evidence:"stations are accurate but sparse",para:"sparse ↔ few and far apart",error:"vocabulary"},
+    {type:"Reference Question",q:"“Their accounts” ở đoạn C nói tới điều gì?",options:["Các tuyến đường","Lời kể của cư dân","Các cảm biến","Tòa nhà công cộng"],answer:"Lời kể của cư dân",evidence:"residents marked ... and described ... Their accounts",para:"descriptions ↔ accounts",error:"reference"},
+    {type:"Paraphrase Matching",q:"“a major reallocation” tương ứng với cụm nào?",options:["a substantial part ... redirected","one reading can be misleading","distributed unevenly","take years to provide shade"],answer:"a substantial part ... redirected",evidence:"redirected a substantial part of its planting budget",para:"major ↔ substantial; reallocation ↔ redirected",error:"paraphrase"},
+    {type:"Multiple Choice",q:"Ý chính của đoạn D là gì?",options:["Công nghệ duy nhất sẽ giải quyết nhiệt đô thị","Mọi giải pháp cây xanh đều thất bại","Thích ứng hiệu quả cần thử nghiệm và điều chỉnh","Thiếu nước không ảnh hưởng kế hoạch"],answer:"Thích ứng hiệu quả cần thử nghiệm và điều chỉnh",evidence:"predict an effect, measure the outcome and revise the plan",para:"test-and-revise ↔ evolving practice",error:"logic"},
+    {type:"Short Answer",q:"Yếu tố nào ngoài dữ liệu đáng tin cậy góp phần tạo quyết định tốt hơn? (tối đa 2 từ)",answer:"local knowledge",evidence:"reliable data and local knowledge contribute",para:"community understanding ↔ local knowledge",error:"locating information"},
+    {type:"Yes / No / Not Given",q:"Tác giả cho rằng một giải pháp công nghệ đơn lẻ hấp dẫn hơn nhưng ít hữu ích hơn.",options:["Yes","No","Not Given"],answer:"Yes",evidence:"less dramatic than a single technological cure, but more useful",para:"more dramatic but less useful",error:"logic"}
+  ];
+
+  const sentences = [
+    {en:"Researchers have found that vocabulary is remembered more effectively when learners encounter it repeatedly in meaningful contexts.",vi:"Các nhà nghiên cứu đã phát hiện rằng từ vựng được ghi nhớ hiệu quả hơn khi người học gặp lại nó nhiều lần trong những ngữ cảnh có ý nghĩa.",zh:"研究人员发现，当学习者在有意义的语境中反复遇到词汇时，记忆效果会更好。",chunks:[["Researchers","subject"],["have found","verb"],["that vocabulary is remembered more effectively","object"],["when learners encounter it repeatedly","clause"],["in meaningful contexts","phrase"]],quick:[["Chủ ngữ","Researchers"],["Động từ chính","have found"],["Tân ngữ","Mệnh đề that"],["Ý chính","Nghiên cứu cho thấy lặp lại trong ngữ cảnh giúp nhớ tốt hơn."]],deep:[["Thì","Hiện tại hoàn thành: kết quả nghiên cứu còn liên quan hiện tại."],["Thể","is remembered: bị động, nhấn vào vocabulary."],["Mệnh đề","that-clause làm tân ngữ; when-clause chỉ điều kiện/thời điểm."],["Tham chiếu","it = vocabulary."],["Paraphrase","remembered more effectively → improved retention."]]},
+    {en:"Although low-cost sensors are less precise than official stations, the patterns they reveal can indicate where heat risk is greatest.",vi:"Mặc dù cảm biến giá rẻ kém chính xác hơn trạm chính thức, các mô hình mà chúng hé lộ có thể chỉ ra nơi rủi ro nhiệt lớn nhất.",zh:"尽管低成本传感器不如官方监测站精确，但它们揭示的模式可以表明热风险最高的地区。",chunks:[["Although low-cost sensors are less precise","clause"],["than official stations","phrase"],["the patterns they reveal","subject"],["can indicate","verb"],["where heat risk is greatest","object"]],quick:[["Mệnh đề nhượng bộ","Although ... stations"],["Chủ ngữ chính","the patterns they reveal"],["Động từ","can indicate"],["Ý chính","Mô hình dữ liệu vẫn có giá trị dù cảm biến kém chính xác hơn."]],deep:[["Quan hệ logic","Although biểu thị nhượng bộ."],["Mệnh đề quan hệ","they reveal rút gọn đại từ quan hệ that."],["Wh-clause","where heat risk is greatest làm tân ngữ."],["So sánh","less precise than."],["Dễ dịch sai","they chỉ sensors, không phải patterns."]]},
+    {en:"Not until the evidence had been checked against a second sample did the researchers describe the result as significant.",vi:"Mãi đến khi bằng chứng được kiểm tra với mẫu thứ hai, các nhà nghiên cứu mới mô tả kết quả là đáng kể.",zh:"直到证据与第二个样本核对后，研究人员才将结果描述为显著。",chunks:[["Not until the evidence had been checked","clause"],["against a second sample","phrase"],["did describe","verb"],["the researchers","subject"],["the result as significant","object"]],quick:[["Cụm đầu","Not until ... tạo đảo ngữ"],["Chủ ngữ","the researchers"],["Động từ","did describe"],["Ý chính","Chỉ sau kiểm tra chéo, kết quả mới được công nhận."]],deep:[["Đảo ngữ","Not until ở đầu câu kéo trợ động từ did lên trước chủ ngữ."],["Thì","had been checked xảy ra trước describe."],["Thể","had been checked là quá khứ hoàn thành bị động."],["Bổ ngữ","as significant mô tả the result."],["Paraphrase","only after verification → not until checked."]]},
+    {en:"The more frequently a learner encounters a word across topics, the less likely its meaning is to remain tied to a single sentence.",vi:"Người học càng gặp một từ thường xuyên ở nhiều chủ đề, nghĩa của từ đó càng ít bị gắn với một câu duy nhất.",zh:"学习者在不同主题中遇到一个词的频率越高，该词的意义就越不容易局限于一个句子。",chunks:[["The more frequently","clause"],["a learner encounters","subject"],["a word across topics","object"],["the less likely","clause"],["its meaning is to remain tied","verb"],["to a single sentence","phrase"]],quick:[["Cấu trúc","the more ..., the less ..."],["Chủ thể 1","a learner"],["Chủ thể 2","its meaning"],["Ý chính","Đa dạng ngữ cảnh giúp nghĩa không bị khóa vào một câu."]],deep:[["So sánh tương liên","Hai thay đổi diễn ra cùng nhau."],["Tham chiếu","its = a word's."],["Bị động tính từ","remain tied to."],["Trạng từ","frequently bổ nghĩa encounters."],["Paraphrase","contextual diversity reduces context-bound memory."]]},
+    {en:"What makes the proposal controversial is not the amount of evidence it contains but the influence it may have on public policy.",vi:"Điều khiến đề xuất gây tranh cãi không phải lượng bằng chứng trong đó mà là ảnh hưởng nó có thể tạo ra đối với chính sách công.",zh:"使该提议产生争议的并不是它所包含的证据数量，而是它可能对公共政策产生的影响。",chunks:[["What makes the proposal controversial","subject"],["is","verb"],["not the amount of evidence it contains","object"],["but the influence it may have","object"],["on public policy","phrase"]],quick:[["Chủ ngữ","Wh-clause mở đầu"],["Động từ chính","is"],["Bổ ngữ","not A but B"],["Ý chính","Tranh cãi đến từ ảnh hưởng chính sách, không phải lượng bằng chứng."]],deep:[["Wh-clause","What ... controversial hoạt động như danh từ."],["Đối lập","not A but B."],["Quan hệ rút gọn","evidence (that) it contains; influence (that) it may have."],["Collocation","have an influence on."],["Dễ dịch sai","What không mang nghĩa câu hỏi ở đây."]]},
+    {en:"It was the gradual deterioration of the water system, rather than a sudden climatic event, that contributed most directly to the settlement's decline.",vi:"Chính sự xuống cấp dần của hệ thống nước, chứ không phải một biến cố khí hậu đột ngột, đã góp phần trực tiếp nhất vào sự suy tàn của khu định cư.",zh:"对该聚落衰退产生最直接影响的，是供水系统的逐渐恶化，而不是突发的气候事件。",chunks:[["It was","verb"],["the gradual deterioration of the water system","subject"],["rather than a sudden climatic event","phrase"],["that contributed most directly","clause"],["to the settlement's decline","object"]],quick:[["Cấu trúc","Câu chẻ It was ... that ..."],["Thành phần nhấn mạnh","the gradual deterioration"],["Động từ ý nghĩa","contributed"],["Ý chính","Hệ thống nước xuống cấp là nguyên nhân chính."]],deep:[["Câu chẻ","It is/was X that dùng để nhấn mạnh X."],["Cụm danh từ","the gradual deterioration of the water system."],["Đối lập","rather than loại bỏ nguyên nhân thay thế."],["Giới từ","contribute to + noun."],["Paraphrase","main cause → contributed most directly."]]}
+  ];
+
+  const reviewQuestions = [
+    {type:"Đoán nghĩa trong câu",prompt:"Repeated measurements can <b>indicate</b> whether a decline is temporary.",options:["che giấu","chỉ ra","gây ra","chịu đựng"],answer:"chỉ ra",explain:"indicate = cho thấy hoặc chỉ ra một kết luận từ dấu hiệu."},
+    {type:"Collocation",prompt:"Chọn collocation tự nhiên nhất.",options:["considerable evidence","considerable proofings","considerable detect","considerable crucial"],answer:"considerable evidence",explain:"considerable + danh từ; evidence là danh từ không đếm được."},
+    {type:"Paraphrase",prompt:"“declined drastically” gần nhất với:",options:["a major reduction","a careful prediction","an abundant supply","a hidden signal"],answer:"a major reduction",explain:"decline → reduction; drastically → major."},
+    {type:"中文 nghĩa",prompt:"“withstand pressure” tương ứng với:",options:["预测压力","承受压力","表明压力","贡献压力"],answer:"承受压力",explain:"承受 / 经受住 nhấn mạnh khả năng chống chịu."},
+    {type:"Anh – Trung – Việt",prompt:"Chọn bộ tương ứng chính xác.",options:["evidence — 证据 — bằng chứng","emerge — 恶化 — suy giảm","rigorous — 丰富 — dồi dào","decline — 预测 — dự đoán"],answer:"evidence — 证据 — bằng chứng",explain:"Ba thành phần cùng biểu đạt khái niệm bằng chứng."},
+    {type:"Sửa lỗi từ",prompt:"Sửa lỗi: “The study provides <b>an evidence</b> of change.”",input:true,answer:"evidence",explain:"Evidence không đếm được: provides evidence / a piece of evidence."},
+    {type:"Điền đoạn",prompt:"New patterns may ______ after researchers combine local knowledge with sensor data.",input:true,answer:"emerge",explain:"emerge = xuất hiện hoặc trở nên rõ ràng."},
+    {type:"Sắc thái",prompt:"Từ nào phù hợp nhất với “standards được áp dụng rất chặt chẽ”?",options:["abundant","rigorous","controversial","gradual"],answer:"rigorous",explain:"rigorous standards = tiêu chuẩn nghiêm ngặt/chặt chẽ."},
+    {type:"Từ dễ nhầm",prompt:"Chọn câu đúng về climate và weather.",options:["Climate chỉ trạng thái hôm nay.","Weather là mô hình nhiều thập kỷ.","Climate là mô hình dài hạn.","Hai từ luôn thay thế nhau."],answer:"Climate là mô hình dài hạn.",explain:"Climate mô tả mẫu dài hạn; weather mô tả điều kiện ngắn hạn."},
+    {type:"Dịch ngược",prompt:"Dịch sang Anh: “Bằng chứng mới đã xuất hiện.”",input:true,answer:"new evidence has emerged",explain:"New evidence has emerged. Hiện tại hoàn thành nhấn mạnh kết quả mới có ở hiện tại."}
+  ];
+
+  const defaultState = {
+    currentPage:"home", lessonIndex:0, lessonStep:0, savedWords:["detect","evidence"],
+    knownWords:["climate","impact","signal"], difficultWords:["deteriorate","indicate"],
+    mastery:{detect:35,evidence:62,climate:78,impact:70,signal:55}, reviewCount:0,
+    accuracy:72, readingHistory:3, sentencesAnalysed:2, streak:7,
+    settings:{showChinese:true,showVietnamese:true,showPinyin:true,useUSIpa:false,fontSize:18,lineHeight:1.85,focusMode:false,darkMode:false,animations:true,rabbitCursor:true,grammarColors:true}
+  };
+
+  let state = loadState();
+  let readingMode = "guided", timerSeconds = 1200, timerInterval = null, currentSentence = 0;
+  let reviewIndex = 0, reviewSelection = "", reviewCorrect = 0, rebuildSelection = [], vocabPage = 0;
+
+  function loadState() {
+    try { return {...defaultState, ...JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}"), settings:{...defaultState.settings,...(JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}").settings || {})}}; }
+    catch { return structuredClone(defaultState); }
+  }
+  function saveState() {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch { showToast("Không thể lưu tiến độ trong trình duyệt này."); }
+  }
+  function showToast(message) {
+    const toast = $("#toast"); toast.textContent = message; toast.classList.add("show");
+    clearTimeout(showToast.timeout); showToast.timeout = setTimeout(() => toast.classList.remove("show"), 2400);
+  }
+
+  function navigate(pageId) {
+    if (!$("#" + pageId)) return;
+    $$(".page").forEach(p => p.classList.toggle("active", p.id === pageId));
+    $$("[data-nav]").forEach(b => b.classList.toggle("active", b.dataset.nav === pageId));
+    const names = {home:["Hôm nay","Chào buổi học mới"],learn:["Context journey","Learn by Context"],reading:["IELTS practice","Reading Lab"],sentence:["Syntax studio","Sentence Lab"],vocabulary:["Word explorer","Vocabulary Map"],review:["Active recall","Review Studio"],progress:["Learning analytics","Your Progress"],settings:["Personalise","Settings"]};
+    $("#section-kicker").textContent = names[pageId][0]; $("#section-title").textContent = names[pageId][1];
+    state.currentPage = pageId; saveState(); window.scrollTo({top:0,behavior:"smooth"}); $(".sidebar").classList.remove("open");
+    if (pageId === "progress") drawChart();
+    requestAnimationFrame(revealVisible);
+  }
+
+  function initNavigation() {
+    $$("[data-nav]").forEach(btn => btn.addEventListener("click", () => navigate(btn.dataset.nav)));
+    $("#mobile-menu").addEventListener("click", () => {
+      const open = $(".sidebar").classList.toggle("open"); $("#mobile-menu").setAttribute("aria-expanded", open);
+    });
+    $("#focus-toggle").addEventListener("click", () => {
+      state.settings.focusMode = !state.settings.focusMode; applySettings(); saveState();
+    });
+  }
+
+  function initHome() {
+    $("#today-chip").textContent = new Intl.DateTimeFormat("vi-VN",{weekday:"short",day:"2-digit",month:"2-digit"}).format(new Date());
+    $("#stat-learned").textContent = state.knownWords.length + state.savedWords.length + 13;
+    $("#stat-readings").textContent = state.readingHistory; $("#stat-streak").textContent = state.streak;
+    $("#sidebar-streak").textContent = `${state.streak} ngày`;
+    const mastery = Math.round(Object.values(state.mastery).reduce((a,b)=>a+b,0)/Math.max(1,Object.keys(state.mastery).length));
+    $("#stat-mastery").textContent = mastery + "%"; $("#top-level").textContent = `B2 • ${mastery}%`;
+    $("#continue-lesson").addEventListener("click", () => navigate("learn"));
+    $$("[data-toast]").forEach(b => b.addEventListener("click", () => showToast(b.dataset.toast)));
+  }
+
+  function initLessons() {
+    $("#lesson-select").innerHTML = lessons.map((l,i)=>`<option value="${i}">${i+1}. ${l.title}</option>`).join("");
+    $("#lesson-select").value = state.lessonIndex;
+    $("#lesson-select").addEventListener("change", e => { state.lessonIndex=+e.target.value;state.lessonStep=0;saveState();renderLesson(); });
+    renderLesson();
+  }
+  const stepNames = ["Encounter","Understand","Sentence in Context","Short Paragraph","Vocabulary Network","Grammar Lens","Active Recall","Context Transfer"];
+  function renderLesson() {
+    const l=lessons[state.lessonIndex], step=state.lessonStep;
+    $("#lesson-topic").textContent=l.topic;$("#lesson-count").textContent=`0${state.lessonIndex+1} / 04`;
+    $("#lesson-progress-bar").style.width=`${((step+1)/8)*100}%`;
+    $("#lesson-steps").innerHTML=stepNames.map((n,i)=>`<button class="${i===step?"active":""} ${i<step?"done":""}" data-step="${i}">${i+1}. ${n}</button>`).join("");
+    $$("[data-step]",$("#lesson-steps")).forEach(b=>b.addEventListener("click",()=>{state.lessonStep=+b.dataset.step;saveState();renderLesson();}));
+    $("#lesson-stage").innerHTML = lessonStepHTML(l,step);
+    bindLessonActions(l,step);
+  }
+  function lessonStepHTML(l,step) {
+    const w=vocabulary.find(x=>x.id===l.words[0]);
+    const headers=[
+      ["First encounter","Đoán nghĩa trước khi mở từ điển."],["Understand","Kết nối hình thức, nghĩa và sắc thái."],["Sentence in Context","Đọc câu dài bằng ba ngôn ngữ."],["Short Paragraph","Gặp lại từ mới cùng 2–4 từ cũ."],["Vocabulary Network","Từ không đứng một mình."],["Grammar Lens","Tìm xương sống rồi mới nhìn chi tiết."],["Active Recall","Tự lấy từ ra khỏi trí nhớ."],["Context Transfer","Chuyển từ sang một thế giới mới."]
+    ][step];
+    let body="";
+    if(step===0) body=`<div class="target-strip">${l.words.map(x=>`<button class="word-trigger" data-word="${x}">${x}</button>`).join("")}</div><p class="lead">Warm-up: ${l.warmup}</p><div class="encounter-box"><span class="section-label">Đọc và đoán</span><p class="encounter-sentence">${l.encounter}</p><div class="choice-list">${l.choices.map((c,i)=>`<button data-guess="${i}">${c}</button>`).join("")}</div><button class="button soft" id="show-clue">Show clue</button><p class="clue" id="clue" hidden>${l.clue}</p></div>`;
+    if(step===1) body=`<div class="tri-grid"><div><b>English</b><span>${w.word} · ${w.partOfSpeech}</span><small>${w.ipaUK}</small></div><div><b>Tiếng Việt</b><span>${w.vietnameseMeaning}</span><small>${w.nuance}</small></div><div class="zh zh-only"><b>中文 <i class="pinyin">${w.pinyin}</i></b><span>${w.chineseMeaning}</span><small>${w.chineseNuance}</small></div></div><div class="context-box"><b>${w.englishDefinition}</b><p>${w.commonMistakes[0]}</p></div>`;
+    if(step===2) body=`<div class="context-box"><p><mark class="word">${w.examples[0].en}</mark></p><div class="translation-drawer vi-only"><b>VI</b> ${w.examples[0].vi}</div><div class="translation-drawer zh-only"><b>中文</b> ${w.examples[0].zh}</div></div><p class="source-note">Nguồn: ${w.examples[0].source}</p>`;
+    if(step===3) body=`<div class="context-box"><p>${highlightLessonWords(l.paragraph,l.words)}</p><button class="button ghost" id="show-lesson-translations">Mở bản dịch Việt & Trung</button><div id="lesson-translations" hidden><div class="translation-drawer vi-only"><b>VI</b> ${l.vi}</div><div class="translation-drawer zh-only"><b>中文</b> ${l.zh}</div></div></div><div class="paraphrase-box"><b>Câu hỏi đọc nhanh</b><p>${l.comprehension}</p><details><summary>Xem đáp án</summary><p>${l.comprehensionAnswer}</p></details></div>`;
+    if(step===4) body=`<div class="network-box"><div class="network-tags"><span><b>Synonyms</b> ${w.synonyms.join(" · ")}</span><span><b>Antonyms</b> ${w.antonyms.join(" · ")||"—"}</span><span><b>Collocations</b> ${w.collocations.join(" · ")}</span><span><b>Word family</b> ${w.wordFamily.join(" · ")}</span><span class="zh-only"><b>中文</b> ${w.chineseMeaning}</span></div></div><div class="paraphrase-box"><b>IELTS paraphrase</b><p>${w.word} → ${w.synonyms[0]} → ${w.synonyms[1]||"related expression"}</p><p>Dễ nhầm: ${w.confusingWords.join(", ")}</p></div>`;
+    if(step===5) body=`<div class="grammar-box"><p>${l.grammar.split("|").map((x,i)=>`<button class="chunk ${l.grammarTypes[i]}" data-chunk="${i}">${x}</button>`).join("")}</p><div id="grammar-detail">Bấm vào một cụm để xem chức năng.</div></div><p class="lead">Màu chỉ là hỗ trợ; nhãn chức năng luôn được hiển thị khi chọn.</p>`;
+    if(step===6) body=`<div class="encounter-box"><span class="section-label">Complete the sentence</span><p class="encounter-sentence">Sensors can ______ tiny changes before people notice them.</p><input class="review-input" id="lesson-recall" aria-label="Điền từ còn thiếu"><button class="button primary" id="check-lesson-recall">Kiểm tra</button><p id="lesson-recall-feedback"></p></div>`;
+    if(step===7) body=`<div class="context-box"><span class="pill mint">Bối cảnh mới · Education</span><p>Teachers can <mark class="word">${w.word}</mark> subtle changes in participation by comparing several weeks of classroom notes rather than relying on a single lesson.</p><p class="vi-only">Trong giáo dục, từ vẫn giữ ý cốt lõi nhưng đối tượng chuyển từ dữ liệu khí hậu sang mức độ tham gia.</p></div><div class="paraphrase-box"><b>Memory tip</b><p>${w.memoryTip}</p><p><b>Ôn lại dự kiến:</b> ngày mai, trong một đoạn mới.</p></div>`;
+    return `<span class="section-label">Bước ${step+1} / 8</span><h2>${headers[0]}</h2><p class="lead">${headers[1]}</p>${body}<p class="source-note">Nội dung demo được viết mới; tài liệu PDF chỉ được dùng để tham khảo phương pháp tổ chức theo câu, chủ đề và dạng bài.</p><div class="lesson-nav"><button class="button ghost" id="lesson-prev" ${step===0?"disabled":""}>← Trước</button><button class="button primary" id="lesson-next">${step===7?"Hoàn thành":"Next →"}</button></div>`;
+  }
+  function highlightLessonWords(text, words) {
+    return words.reduce((s,w)=>s.replace(new RegExp(`\\b(${w}\\w*)\\b`,"gi"),`<button class="passage-word word-trigger" data-word="${w}">$1</button>`),text);
+  }
+  function bindLessonActions(l,step) {
+    $("#lesson-prev").addEventListener("click",()=>{state.lessonStep=Math.max(0,state.lessonStep-1);saveState();renderLesson();});
+    $("#lesson-next").addEventListener("click",()=>{if(step===7){state.lessonIndex=(state.lessonIndex+1)%lessons.length;state.lessonStep=0;showToast("Bài học đã lưu. Lần ôn tiếp theo: ngày mai.");}else state.lessonStep++;saveState();renderLesson();});
+    $$("[data-guess]",$("#lesson-stage")).forEach(b=>b.addEventListener("click",()=>{b.classList.add(+b.dataset.guess===l.answer?"correct":"selected");showToast(+b.dataset.guess===l.answer?"Chính xác — hãy mở nghĩa đầy đủ.":"Chưa đúng. Hãy dùng clue và thử lại.");}));
+    $("#show-clue")?.addEventListener("click",()=>$("#clue").hidden=false);
+    $("#show-lesson-translations")?.addEventListener("click",()=>$("#lesson-translations").hidden=!$("#lesson-translations").hidden);
+    $$(".chunk",$("#lesson-stage")).forEach(c=>c.addEventListener("click",()=>{$$("#lesson-stage .chunk").forEach(x=>x.classList.remove("active"));c.classList.add("active");$("#grammar-detail").innerHTML=`<b>${["Subject","Main verb","Object / complement","Subordinate clause","Prepositional phrase"][+c.dataset.chunk]}</b>: ${c.textContent}`;}));
+    $("#check-lesson-recall")?.addEventListener("click",()=>{const ok=$("#lesson-recall").value.trim().toLowerCase()===l.words[0];$("#lesson-recall-feedback").textContent=ok?"Chính xác. Bạn đã tự gọi lại từ trong ngữ cảnh.":`Đáp án: ${l.words[0]}. Từ này sẽ xuất hiện lại sớm hơn.`;if(!ok&&!state.difficultWords.includes(l.words[0]))state.difficultWords.push(l.words[0]);saveState();});
+    bindWordTriggers($("#lesson-stage"));
+  }
+
+  function initReading() {
+    $("#passage-content").innerHTML=readingPassage.map(p=>`<section class="passage-block"><span class="passage-label">${p.label}</span><p>${p.html}</p></section>`).join("");
+    $("#reading-questions").innerHTML=questions.map((q,i)=>questionHTML(q,i)).join("");
+    bindWordTriggers($("#passage-content"));
+    $$(".reading-modes button").forEach(b=>b.addEventListener("click",()=>setReadingMode(b.dataset.mode)));
+    $("#toggle-connectors").addEventListener("click",()=>$("#passage-content").classList.toggle("show-connectors"));
+    $("#toggle-translation").addEventListener("click",()=>$("#passage-content").classList.toggle("show-translation"));
+    $("#reading-questions").addEventListener("change",updateAnswered);
+    $("#reading-questions").addEventListener("input",updateAnswered);
+    $("#submit-reading").addEventListener("click",gradeReading);
+    $("#timer-toggle").addEventListener("click",toggleTimer);
+  }
+  function questionHTML(q,i) {
+    const field=q.options?q.options.map(o=>`<label><input type="radio" name="q${i}" value="${o}"> ${o}</label>`).join(""):`<input type="text" name="q${i}" aria-label="Đáp án câu ${i+1}">`;
+    return `<div class="question-item" data-question="${i}"><span class="pill">${i+1} · ${q.type}</span><p>${q.q}</p>${field}<div class="explanation-slot"></div></div>`;
+  }
+  function setReadingMode(mode) {
+    readingMode=mode;$$(".reading-modes button").forEach(b=>b.classList.toggle("active",b.dataset.mode===mode));
+    $("#reading").classList.toggle("exam-mode",mode==="exam");$("#reading").classList.toggle("focus-reading",mode==="focus");$("#exam-clock").hidden=mode!=="exam";
+    if(mode==="exam")$("#passage-content").classList.remove("show-translation");
+  }
+  function updateAnswered() {
+    const count=questions.filter((q,i)=>q.options?$(`input[name=q${i}]:checked`):$(`input[name=q${i}]`).value.trim()).length;
+    $("#answered-count").textContent=`${count}/14`;
+  }
+  function gradeReading() {
+    let score=0;
+    questions.forEach((q,i)=>{
+      const value=q.options?($(`input[name=q${i}]:checked`)?.value||""):$(`input[name=q${i}]`).value.trim();
+      const ok=value.toLowerCase()===q.answer.toLowerCase();if(ok)score++;
+      const slot=$(`[data-question="${i}"] .explanation-slot`);
+      slot.innerHTML=`<div class="question-explanation ${ok?"correct":"wrong"}"><b>${ok?"Đúng":"Chưa đúng"} · Đáp án: ${q.answer}</b><br>Bằng chứng: “${q.evidence}”<br>Paraphrase: ${q.para}<br>Loại kỹ năng/lỗi: ${q.error}. Chiến thuật: xác định từ khóa, tìm diễn đạt tương đương rồi mới kết luận.</div>`;
+    });
+    $("#reading-results").hidden=false;$("#reading-results").innerHTML=`<b>${score}/14</b> · ${Math.round(score/14*100)}%. Mỗi câu đã có bằng chứng, paraphrase và phân loại lỗi.`;
+    state.accuracy=Math.round((state.accuracy+score/14*100)/2);state.readingHistory++;saveState();showToast("Kết quả và tiến độ đã được lưu.");
+  }
+  function toggleTimer() {
+    if(timerInterval){clearInterval(timerInterval);timerInterval=null;$("#timer-toggle").textContent="Tiếp tục";return;}
+    $("#timer-toggle").textContent="Tạm dừng";timerInterval=setInterval(()=>{timerSeconds=Math.max(0,timerSeconds-1);const m=String(Math.floor(timerSeconds/60)).padStart(2,"0"),s=String(timerSeconds%60).padStart(2,"0");$("#timer").textContent=`${m}:${s}`;if(!timerSeconds){clearInterval(timerInterval);showToast("Hết giờ. Hãy nộp bài.");}},1000);
+  }
+
+  function initSentences() {
+    $("#sentence-select").innerHTML=sentences.map((s,i)=>`<option value="${i}">Câu ${i+1} · ${s.en.slice(0,44)}…</option>`).join("");
+    $("#sentence-select").addEventListener("change",e=>{currentSentence=+e.target.value;renderSentence(false);});
+    $$(".translation-tabs button").forEach(b=>b.addEventListener("click",()=>{ $$(".translation-tabs button").forEach(x=>x.classList.toggle("active",x===b));$("#sentence-translation").textContent=sentences[currentSentence][b.dataset.lang];}));
+    $("#quick-analysis").addEventListener("click",()=>renderAnalysis(false));$("#deep-analysis").addEventListener("click",()=>renderAnalysis(true));
+    $("#rebuild-sentence").addEventListener("click",()=>{$("#rebuild-panel").hidden=false;renderRebuild();});
+    $("#reset-rebuild").addEventListener("click",()=>{rebuildSelection=[];renderRebuild();});
+    $("#check-rebuild").addEventListener("click",()=>{const correct=sentences[currentSentence].chunks.map(x=>x[0]).join(" ");const answer=rebuildSelection.join(" ");$("#rebuild-feedback").textContent=answer===correct?"Chính xác — cấu trúc câu đã được phục dựng.":"Chưa đúng. Hãy tìm chủ ngữ và động từ chính trước.";if(answer===correct){state.sentencesAnalysed++;saveState();}});
+    renderSentence(false);
+  }
+  function renderSentence(deep=false) {
+    const s=sentences[currentSentence];$("#sentence-number").textContent=String(currentSentence+1).padStart(2,"0");$("#original-sentence").textContent=s.en;$("#sentence-translation").textContent=s.vi;
+    $("#sentence-chunks").innerHTML=s.chunks.map((c,i)=>`<button class="chunk ${c[1]}" data-index="${i}">${c[0]}</button>`).join("");
+    $$("#sentence-chunks .chunk").forEach(c=>c.addEventListener("click",()=>{$$("#sentence-chunks .chunk").forEach(x=>x.classList.remove("active"));c.classList.add("active");const item=s.chunks[+c.dataset.index];$("#analysis-title").textContent=item[0];$("#sentence-analysis").innerHTML=`<div class="analysis-row"><b>Chức năng</b><span>${item[1]}</span></div><div class="analysis-row"><b>Trong câu</b><span>Cụm này kết nối với xương sống của câu và cần được đọc như một đơn vị nghĩa.</span></div>`;}));
+    renderAnalysis(deep);rebuildSelection=[];$("#rebuild-panel").hidden=true;
+  }
+  function renderAnalysis(deep) {
+    const data=deep?sentences[currentSentence].deep:sentences[currentSentence].quick;$("#analysis-level").textContent=deep?"Deep analysis":"Quick analysis";$("#analysis-title").textContent=deep?"Cú pháp, logic & paraphrase":"Xương sống của câu";$("#sentence-analysis").innerHTML=data.map(r=>`<div class="analysis-row"><b>${r[0]}</b><span>${r[1]}</span></div>`).join("");
+  }
+  function renderRebuild() {
+    const chunks=sentences[currentSentence].chunks.map(x=>x[0]);$("#rebuild-answer").className="rebuild-drop";$("#rebuild-answer").innerHTML=rebuildSelection.map((x,i)=>`<button class="rebuild-token" data-remove="${i}">${x}</button>`).join("");
+    $("#rebuild-options").className="rebuild-options";$("#rebuild-options").innerHTML=chunks.filter(x=>!rebuildSelection.includes(x)).sort(()=>.5-Math.random()).map(x=>`<button class="rebuild-token" data-add="${encodeURIComponent(x)}">${x}</button>`).join("");
+    $$("[data-add]").forEach(b=>b.addEventListener("click",()=>{rebuildSelection.push(decodeURIComponent(b.dataset.add));renderRebuild();}));
+    $$("[data-remove]").forEach(b=>b.addEventListener("click",()=>{rebuildSelection.splice(+b.dataset.remove,1);renderRebuild();}));
+  }
+
+  function initVocabulary() {
+    $("#vocab-total-label").textContent=allVocabulary.length.toLocaleString("vi-VN");
+    $("#imported-count").textContent=importedVocabulary.length.toLocaleString("vi-VN");
+    const topics=[...new Set(allVocabulary.flatMap(v=>v.topic))];$("#topic-filter").innerHTML+=topics.map(t=>`<option>${t}</option>`).join("");
+    $("#chapter-filter").innerHTML+=chapters.map(c=>`<option value="${c.id}">${String(c.id).padStart(2,"0")} · ${c.vi} / ${c.zh}</option>`).join("");
+    ["vocab-search","chapter-filter","topic-filter","level-filter","status-filter"].forEach(id=>$("#"+id).addEventListener(id==="vocab-search"?"input":"change",()=>{vocabPage=0;renderVocabulary();renderChapterTrack();}));
+    $$(".view-switch button").forEach(b=>b.addEventListener("click",()=>{$$(".view-switch button").forEach(x=>x.classList.toggle("active",x===b));vocabPage=0;renderVocabulary(b.dataset.view);}));
+    $("#show-all-chapters").addEventListener("click",()=>{$("#chapter-filter").value="all";vocabPage=0;renderVocabulary();renderChapterTrack();});
+    renderChapterTrack();
+    renderVocabulary();
+  }
+  function renderChapterTrack() {
+    const active=$("#chapter-filter").value;
+    $("#chapter-track").innerHTML=chapters.map(c=>{const count=allVocabulary.filter(v=>v.chapterId===c.id).length;return `<button class="chapter-card ${String(c.id)===active?"active":""}" data-chapter="${c.id}"><small>Chapter ${String(c.id).padStart(2,"0")}</small><b>${c.vi}</b><span>${c.zh} · ${c.en}</span><i>${count.toLocaleString("vi-VN")} từ</i></button>`}).join("");
+    $$("[data-chapter]",$("#chapter-track")).forEach(b=>b.addEventListener("click",()=>{$("#chapter-filter").value=b.dataset.chapter;vocabPage=0;renderVocabulary();renderChapterTrack();}));
+  }
+  function filteredVocabulary() {
+    const query=$("#vocab-search").value.toLowerCase(),chapter=$("#chapter-filter").value,topic=$("#topic-filter").value,level=$("#level-filter").value,status=$("#status-filter").value;
+    return allVocabulary.filter(v=>(!query||[v.word,v.vietnameseMeaning,v.chineseMeaning,v.chapter.vi,v.chapter.zh,v.chapter.en].join(" ").toLowerCase().includes(query))&&(chapter==="all"||v.chapterId===+chapter)&&(topic==="all"||v.topic.includes(topic))&&(level==="all"||v.level===level)&&(status==="all"||(status==="saved"&&state.savedWords.includes(v.id))||(status==="known"&&state.knownWords.includes(v.id))||(status==="difficult"&&state.difficultWords.includes(v.id))));
+  }
+  function vocabRow(v) {
+    const mastery=state.mastery[v.id]||0;
+    const meta=v.quality==="deep"?`${v.ipaUK} · ${v.partOfSpeech}`:v.quality==="imported"?`${v.ipaUK||"Chưa có IPA"} · ${v.partOfSpeech}`:`Frequency rank ${v.rank} · ${v.level}`;
+    const badge=v.quality==="indexed"?'<i class="index-badge">Frequency index</i>':v.quality==="imported"?'<i class="index-badge imported">vocab.json</i>':"";
+    return `<article class="vocab-row"><button class="word-name word-trigger" data-word="${v.id}"><b>${v.word}</b><small>${meta}</small>${badge}</button><span>${v.vietnameseMeaning}<small>${v.chapter.vi}</small></span><span class="zh-only">${v.chineseMeaning}<small class="pinyin">${v.chapter.zh}</small></span><span class="mastery"><i style="--mastery:${mastery}%"></i><small>${mastery}%</small></span><button class="save-button ${state.savedWords.includes(v.id)?"saved":""}" data-save="${v.id}" aria-label="Lưu từ ${v.word}">♡</button></article>`;
+  }
+  function renderVocabulary(view) {
+    view=view||$(".view-switch .active")?.dataset.view||"list";const data=filteredVocabulary(),container=$("#vocab-container"),pageSize=view==="network"?70:120,totalPages=Math.max(1,Math.ceil(data.length/pageSize));vocabPage=Math.min(vocabPage,totalPages-1);const pageData=data.slice(vocabPage*pageSize,(vocabPage+1)*pageSize);container.className=`vocab-list ${view}-view`;$("#vocab-result-count").textContent=`${data.length.toLocaleString("vi-VN")} kết quả`;
+    if(view==="group"){const groups={};pageData.forEach(v=>(groups[v.topic[0]]??=[]).push(v));container.innerHTML=Object.entries(groups).map(([t,vs])=>`<section class="vocab-group"><h2>${t}</h2>${vs.map(vocabRow).join("")}</section>`).join("");}
+    else if(view==="network"){container.innerHTML=pageData.map((v,i)=>`<button class="network-word word-trigger" data-word="${v.id}" style="left:${12+(i*29)%78}%;top:${10+(i*37)%82}%;background:${i%3===0?"var(--mint)":i%3===1?"var(--blush)":"var(--butter)"}">${v.word}</button>`).join("");}
+    else container.innerHTML=pageData.map(vocabRow).join("");
+    $("#vocab-pagination").innerHTML=`<button data-page="prev" ${vocabPage===0?"disabled":""}>← Trước</button><span>Trang ${vocabPage+1} / ${totalPages}</span><button data-page="next" ${vocabPage>=totalPages-1?"disabled":""}>Sau →</button>`;
+    $$("[data-page]").forEach(b=>b.addEventListener("click",()=>{vocabPage+=b.dataset.page==="next"?1:-1;renderVocabulary(view);$("#vocab-heading").scrollIntoView({behavior:"smooth"});}));
+    bindWordTriggers(container);$$("[data-save]",container).forEach(b=>b.addEventListener("click",()=>toggleSaved(b.dataset.save)));
+  }
+  function toggleSaved(id) { const i=state.savedWords.indexOf(id);if(i>=0)state.savedWords.splice(i,1);else state.savedWords.push(id);saveState();renderVocabulary();showToast(i>=0?"Đã bỏ lưu từ.":"Đã lưu từ để ôn."); }
+
+  function bindWordTriggers(root=document) { $$(".word-trigger,.passage-word",root).forEach(b=>{if(b.dataset.bound)return;b.dataset.bound="1";b.addEventListener("click",()=>openDictionary(b.dataset.word,b));}); }
+  function openDictionary(id,anchor) {
+    const v=allVocabulary.find(x=>x.id===id);if(!v)return;const panel=$("#dictionary-panel");panel.hidden=false;
+    if(v.quality==="imported"){panel.dataset.word=id;$("#dictionary-content").innerHTML=`<span class="section-label">vocab.json · Chapter ${String(v.chapterId).padStart(2,"0")}</span><h2 class="dict-word">${v.word}</h2><p class="dict-ipa">${v.ipaUK||"IPA chưa có"}</p><div class="dict-meaning vi-only"><b>Tiếng Việt</b><span>${v.vietnameseMeaning}</span></div><div class="dict-meaning zh zh-only"><b>中文</b><span>Chưa biên tập nghĩa tiếng Trung</span></div><div class="dict-section"><b>Chương</b>${v.chapter.vi} · ${v.chapter.zh} · ${v.chapter.en}</div><div class="dict-section"><b>Chủ đề nguồn</b>${v.topic.join(" · ")}</div><div class="dict-section"><b>Nguồn</b>${v.source}</div><div class="dict-actions"><button data-dict="save">${state.savedWords.includes(id)?"Saved ✓":"Save"}</button><button data-dict="known">Mark as known</button><button data-dict="review">Add to review</button><button data-dict="full">Open in Vocabulary Map</button></div>`;$$("[data-dict]",panel).forEach(b=>b.addEventListener("click",()=>dictionaryAction(b.dataset.dict,id)));return;}
+    if(v.quality==="indexed"){panel.dataset.word=id;$("#dictionary-content").innerHTML=`<span class="section-label">Chapter ${String(v.chapterId).padStart(2,"0")} · ${v.level}</span><h2 class="dict-word">${v.word}</h2><p class="dict-ipa">${v.chapter.zh} · ${v.chapter.vi}</p><div class="dict-meaning"><b>Trạng thái nội dung</b><span>Đã phân chương bằng WordNet, chưa biên tập sâu Anh–Trung–Việt</span></div><div class="dict-section"><b>Phạm vi</b>${v.englishDefinition}</div><div class="dict-section"><b>Độ tin cậy phân chương</b>Phân loại tự động theo nghĩa và trường ngữ nghĩa; mục này cần được biên tập viên duyệt trước khi coi là dữ liệu học hoàn chỉnh.</div><div class="dict-section"><b>Nguồn chỉ mục</b>${v.source}. Dùng cho mục đích giáo dục/cá nhân.</div><div class="dict-actions"><button data-dict="save">${state.savedWords.includes(id)?"Saved ✓":"Save"}</button><button data-dict="known">Mark as known</button><button data-dict="review">Add to review</button></div>`;$$("[data-dict]",panel).forEach(b=>b.addEventListener("click",()=>dictionaryAction(b.dataset.dict,id)));return;}
+    panel.dataset.word=id;$("#dictionary-content").innerHTML=`<span class="section-label">${v.partOfSpeech} · ${v.level}</span><h2 class="dict-word">${v.word}</h2><p class="dict-ipa">${state.settings.useUSIpa?v.ipaUS:v.ipaUK}</p><div class="dict-meaning vi-only"><b>Tiếng Việt</b><span>${v.vietnameseMeaning}</span></div><div class="dict-meaning zh zh-only"><b>中文 <i class="pinyin">${v.pinyin}</i></b><span>${v.chineseMeaning}</span></div><div class="dict-section"><b>Easy English</b>${v.englishDefinition}</div><div class="dict-section"><b>Collocation</b>${v.collocations.join(" · ")}</div><div class="dict-section"><b>Synonym</b>${v.synonyms.join(" · ")}</div><div class="dict-section zh-only"><b>中文搭配与例句</b>${v.chineseCollocation}<br>${v.chineseExample}</div><div class="dict-actions"><button data-dict="save">${state.savedWords.includes(id)?"Saved ✓":"Save"}</button><button data-dict="known">Mark as known</button><button data-dict="review">Add to review</button><button data-dict="full">Open full word page</button></div><p class="source-note">Nguồn ví dụ: ${v.examples[0].source}</p>`;
+    $$("[data-dict]",panel).forEach(b=>b.addEventListener("click",()=>dictionaryAction(b.dataset.dict,id)));
+  }
+  function dictionaryAction(action,id) {
+    if(action==="save"){toggleArrayItem(state.savedWords,id);showToast("Đã cập nhật danh sách lưu.");}
+    if(action==="known"){if(!state.knownWords.includes(id))state.knownWords.push(id);state.mastery[id]=Math.max(70,state.mastery[id]||0);showToast("Đã đánh dấu là Familiar.");}
+    if(action==="review"){if(!state.difficultWords.includes(id))state.difficultWords.push(id);showToast("Từ sẽ xuất hiện sớm trong Review.");}
+    if(action==="full"){const word=allVocabulary.find(item=>item.id===id)?.word||id;navigate("vocabulary");$("#vocab-search").value=word;vocabPage=0;renderVocabulary();$("#dictionary-panel").hidden=true;}
+    saveState(); if(action!=="full")openDictionary(id);
+  }
+  function toggleArrayItem(arr,id){const i=arr.indexOf(id);i>=0?arr.splice(i,1):arr.push(id);}
+
+  function initReview(){renderReview();$("#review-check").addEventListener("click",checkReview);$("#review-next").addEventListener("click",()=>{reviewIndex=(reviewIndex+1)%reviewQuestions.length;reviewSelection="";renderReview();});$("#review-skip").addEventListener("click",()=>{reviewIndex=(reviewIndex+1)%reviewQuestions.length;reviewSelection="";renderReview();});}
+  function renderReview() {
+    const q=reviewQuestions[reviewIndex];$("#review-type").textContent=q.type;$("#review-counter").textContent=`${reviewIndex+1} / ${reviewQuestions.length}`;$("#review-progress").style.width=`${(reviewIndex+1)/reviewQuestions.length*100}%`;
+    $("#review-content").innerHTML=`<p class="review-prompt">${q.prompt}</p>${q.input?'<input class="review-input" id="review-input" aria-label="Nhập đáp án">':`<div class="review-options">${q.options.map(o=>`<button data-review-option="${o}">${o}</button>`).join("")}</div>`}`;
+    $$("[data-review-option]").forEach(b=>b.addEventListener("click",()=>{$$("[data-review-option]").forEach(x=>x.classList.toggle("selected",x===b));reviewSelection=b.dataset.reviewOption;}));
+    $("#review-feedback").innerHTML="";$("#review-check").hidden=false;$("#review-next").hidden=true;
+  }
+  function normalize(s){return s.toLowerCase().replace(/[.,!?]/g,"").trim();}
+  function checkReview() {
+    const q=reviewQuestions[reviewIndex],value=q.input?$("#review-input").value:reviewSelection,ok=normalize(value||"")===normalize(q.answer);if(ok)reviewCorrect++;
+    $("#review-feedback").className="review-feedback";$("#review-feedback").innerHTML=`<b>${ok?"Chính xác":"Chưa đúng · "+q.answer}</b><br>${q.explain}`;
+    $("#review-check").hidden=true;$("#review-next").hidden=false;state.reviewCount++;state.accuracy=Math.round((state.accuracy+(ok?100:0))/2);saveState();
+  }
+
+  function initProgress() {
+    renderProgress();$("#export-progress").addEventListener("click",()=>{const text=`BunnyLingo Progress\nWords encountered: ${vocabulary.length}\nKnown: ${state.knownWords.length}\nAccuracy: ${state.accuracy}%\nStreak: ${state.streak} days`;const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([text],{type:"text/plain"}));a.download="bunnylingo-progress.txt";a.click();URL.revokeObjectURL(a.href);});
+  }
+  function renderProgress() {
+    const metrics=[["Kho từ",allVocabulary.length,`${importedVocabulary.length.toLocaleString("vi-VN")} từ vocab.json`],["Từ đang học",state.savedWords.length+state.difficultWords.length,"Context queue"],["Bài đã đọc",state.readingHistory,"Reading Lab"],["Câu đã phân tích",state.sentencesAnalysed,"Sentence Lab"]];
+    $("#metric-grid").innerHTML=metrics.map(m=>`<article class="metric"><span>${m[0]}</span><b>${m[1]}</b><small>${m[2]}</small></article>`).join("");
+    const skills=[["Matching headings",76],["T/F/NG",58],["Paraphrase",71],["Vocabulary",82]];
+    $("#skill-bars").innerHTML=skills.map(s=>`<div class="skill-row"><header><span>${s[0]}</span><b>${s[1]}%</b></header><div><i style="width:${s[1]}%"></i></div></div>`).join("");
+  }
+  function drawChart() {
+    const c=$("#progress-chart"),ctx=c.getContext("2d"),dpr=window.devicePixelRatio||1,rect=c.getBoundingClientRect();c.width=rect.width*dpr;c.height=270*dpr;ctx.scale(dpr,dpr);const w=rect.width,h=270,data=[24,38,31,52,47,65,78],pad=34;
+    ctx.clearRect(0,0,w,h);ctx.strokeStyle="#eadfd9";ctx.lineWidth=1;for(let i=0;i<4;i++){const y=pad+i*(h-pad*2)/3;ctx.beginPath();ctx.moveTo(pad,y);ctx.lineTo(w-pad,y);ctx.stroke();}
+    const grad=ctx.createLinearGradient(0,pad,0,h-pad);grad.addColorStop(0,"rgba(239,143,168,.35)");grad.addColorStop(1,"rgba(239,143,168,0)");
+    ctx.beginPath();data.forEach((v,i)=>{const x=pad+i*(w-pad*2)/(data.length-1),y=h-pad-(v/100)*(h-pad*2);i?ctx.lineTo(x,y):ctx.moveTo(x,y);});ctx.lineTo(w-pad,h-pad);ctx.lineTo(pad,h-pad);ctx.closePath();ctx.fillStyle=grad;ctx.fill();
+    ctx.beginPath();data.forEach((v,i)=>{const x=pad+i*(w-pad*2)/(data.length-1),y=h-pad-(v/100)*(h-pad*2);i?ctx.lineTo(x,y):ctx.moveTo(x,y);});ctx.strokeStyle="#d95f83";ctx.lineWidth=3;ctx.stroke();
+    ["T2","T3","T4","T5","T6","T7","CN"].forEach((d,i)=>{ctx.fillStyle="#7a7373";ctx.font="10px Be Vietnam Pro";ctx.textAlign="center";ctx.fillText(d,pad+i*(w-pad*2)/6,h-9);});
+  }
+
+  function initSettings() {
+    $$("[data-setting]").forEach(input=>{const key=input.dataset.setting;if(input.type==="checkbox")input.checked=!!state.settings[key];else input.value=state.settings[key];input.addEventListener("input",()=>{state.settings[key]=input.type==="checkbox"?input.checked:+input.value;applySettings();saveState();});});
+    $("#reset-data").addEventListener("click",()=>{if(confirm("Xóa toàn bộ tiến độ và cài đặt trên trình duyệt này?")){localStorage.removeItem(STORAGE_KEY);state=structuredClone(defaultState);location.reload();}});
+    applySettings();
+  }
+  function applySettings() {
+    const s=state.settings,b=document.body;b.classList.toggle("hide-chinese",!s.showChinese);b.classList.toggle("hide-vietnamese",!s.showVietnamese);b.classList.toggle("hide-pinyin",!s.showPinyin);b.classList.toggle("no-animations",!s.animations);b.classList.toggle("no-grammar-colors",!s.grammarColors);b.classList.toggle("dark-reading",s.darkMode);b.classList.toggle("app-focus",s.focusMode);
+    const canCursor=matchMedia("(pointer:fine)").matches&&!matchMedia("(prefers-reduced-motion: reduce)").matches;b.classList.toggle("custom-cursor",s.rabbitCursor&&canCursor);$("#rabbit-cursor").hidden=!(s.rabbitCursor&&canCursor);
+    document.documentElement.style.setProperty("--reader-size",`${s.fontSize}px`);document.documentElement.style.setProperty("--reader-line",s.lineHeight);$("#font-size-value").textContent=`${s.fontSize}px`;$("#line-height-value").textContent=s.lineHeight;
+  }
+
+  function initCursor() {
+    const cursor=$("#rabbit-cursor");let tx=0,ty=0,x=0,y=0;document.addEventListener("mousemove",e=>{tx=e.clientX;ty=e.clientY;});function move(){x+=(tx-x)*.24;y+=(ty-y)*.24;cursor.style.left=x+"px";cursor.style.top=y+"px";requestAnimationFrame(move)}move();
+    document.addEventListener("mouseover",e=>cursor.classList.toggle("hover",!!e.target.closest("button,a,input,select")));
+    document.addEventListener("mousedown",()=>{if(!cursor.hidden)cursor.classList.add("clicking");});
+    document.addEventListener("mouseup",()=>cursor.classList.remove("clicking"));
+    document.addEventListener("click",e=>{
+      if(cursor.hidden||!document.body.classList.contains("custom-cursor"))return;
+      const shapes=["♥","✦","♡","★","✧"],colors=["#d95f83","#ef8fa8","#7d68b3","#e7ad34"];
+      for(let i=0;i<6;i++){
+        const spark=document.createElement("span"),angle=(Math.PI*2*i/6)+(Math.random()*.38-.19),distance=20+Math.random()*18;
+        spark.className="cursor-spark";spark.textContent=shapes[(i+Math.floor(Math.random()*shapes.length))%shapes.length];
+        spark.style.left=e.clientX+"px";spark.style.top=e.clientY+"px";
+        spark.style.setProperty("--spark-x",Math.cos(angle)*distance+"px");spark.style.setProperty("--spark-y",Math.sin(angle)*distance+"px");
+        spark.style.setProperty("--spark-rotate",`${Math.round(Math.random()*90-45)}deg`);spark.style.setProperty("--spark-size",`${10+Math.round(Math.random()*6)}px`);
+        spark.style.setProperty("--spark-color",colors[i%colors.length]);document.body.appendChild(spark);setTimeout(()=>spark.remove(),760);
+      }
+    });
+    window.addEventListener("blur",()=>cursor.classList.remove("hover","clicking"));
+  }
+  function initReveal(){const observer=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add("visible");}),{threshold:.06});$$(".reveal").forEach(el=>observer.observe(el));}
+  function revealVisible(){$$(".page.active .reveal").forEach(el=>el.classList.add("visible"));}
+
+  $("#dictionary-close").addEventListener("click",()=>$("#dictionary-panel").hidden=true);
+  document.addEventListener("keydown",e=>{if(e.key==="Escape"){$("#dictionary-panel").hidden=true;$(".sidebar").classList.remove("open");}});
+  initNavigation();initHome();initLessons();initReading();initSentences();initVocabulary();initReview();initProgress();initSettings();initCursor();initReveal();bindWordTriggers();
+  navigate(state.currentPage);
+})();
