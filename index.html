@@ -58,9 +58,10 @@
           <h1 id="home-heading">Read deeply.<br><em>Remember longer.</em></h1>
           <p>Học từ trong câu, hiểu câu trong đoạn, ghi nhớ qua ngữ cảnh.</p>
           <div class="hero-actions">
-            <button class="button primary" data-nav="learn">Start Learning <span>→</span></button>
+            <button class="button primary" id="start-learning">Start Learning <span>→</span></button>
             <button class="button ghost" id="continue-lesson">Continue Lesson</button>
           </div>
+          <p class="autosave-note"><span aria-hidden="true">✓</span> Tiến độ được lưu tự động trên trình duyệt này</p>
           <div class="hero-stats" aria-label="Thống kê học tập">
             <div><b id="stat-learned">18</b><span>Từ đã học</span></div>
             <div><b id="stat-readings">3</b><span>Bài đã đọc</span></div>
@@ -86,22 +87,22 @@
             <div><span class="section-label">Daily path</span><h2>15–20 phút hôm nay</h2></div>
             <span class="date-chip" id="today-chip"></span>
           </header>
-          <div class="path-line" aria-hidden="true"><i style="width: 32%"></i></div>
+          <div class="path-line" role="progressbar" aria-label="Tiến độ lộ trình hôm nay" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i id="daily-progress-bar"></i></div>
           <div class="path-steps">
-            <button data-nav="learn"><span class="step-num done">✓</span><b>8 từ mới</b><small>Climate signals</small></button>
-            <button data-nav="sentence"><span class="step-num current">2</span><b>1 câu dài</b><small>Relative clause</small></button>
-            <button data-nav="reading"><span class="step-num">3</span><b>1 đoạn đọc</b><small>Urban cooling</small></button>
-            <button data-nav="review"><span class="step-num">4</span><b>5 câu ôn</b><small>Mixed recall</small></button>
+            <button data-nav="learn" data-home-task="learn"><span class="step-num">1</span><b id="daily-learn-title">8 từ mới</b><small id="daily-learn-detail">Theo tiến độ của bạn</small></button>
+            <button data-nav="sentence" data-home-task="sentence"><span class="step-num">2</span><b id="daily-sentence-title">1 câu dài</b><small id="daily-sentence-detail">Sentence Lab</small></button>
+            <button data-nav="reading" data-home-task="reading"><span class="step-num">3</span><b id="daily-reading-title">1 bài đọc</b><small id="daily-reading-detail">Reading Lab</small></button>
+            <button data-nav="review" data-home-task="review"><span class="step-num">4</span><b id="daily-review-title">Ôn tập</b><small id="daily-review-detail">Active recall</small></button>
           </div>
         </article>
 
         <article class="continue-card reveal">
-          <div class="card-top"><span class="pill coral">Đang học</span><span id="continue-percent">42%</span></div>
-          <h2>Signals in a Changing Climate</h2>
-          <p>Nhận diện bằng chứng, xu hướng và paraphrase trong bài đọc khoa học.</p>
-          <div class="weak-words"><span>detect</span><span>deteriorate</span><span>indicate</span></div>
-          <div class="progress-track"><i id="continue-bar" style="width:42%"></i></div>
-          <button class="text-button" data-nav="learn">Tiếp tục từ bước hiện tại <span>→</span></button>
+          <div class="card-top"><span class="pill coral" id="continue-status">Sẵn sàng</span><span id="continue-percent">0%</span></div>
+          <h2 id="continue-title">Signals in a Changing Climate</h2>
+          <p id="continue-description">Tiếp tục hành trình học theo ngữ cảnh.</p>
+          <div class="weak-words" id="continue-weak-words" aria-label="Từ cần chú ý"></div>
+          <div class="progress-track" role="progressbar" aria-label="Tiến độ bài đang học" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i id="continue-bar"></i></div>
+          <button class="text-button" id="continue-card-button">Tiếp tục từ bước hiện tại <span>→</span></button>
         </article>
       </div>
 
@@ -112,21 +113,21 @@
           <p>Chạm vào mỗi nút để mở nghĩa ba ngôn ngữ và thấy cách IELTS thay đổi cách diễn đạt.</p>
           <button class="button soft" data-nav="vocabulary">Explore the map</button>
         </div>
-        <div class="constellation" id="home-constellation" aria-label="Mạng từ vựng significant">
-          <button class="node main word-trigger" data-word="significant">significant</button>
-          <button class="node n1 word-trigger" data-word="substantial">substantial</button>
-          <button class="node n2" data-toast="Antonym: insignificant">insignificant</button>
-          <button class="node n3" data-toast="Collocation: significant impact">impact</button>
-          <button class="node n4" data-toast="中文: 显著的 / 重要的">显著的</button>
-          <button class="node n5" data-toast="Topic: Science & Society">science</button>
-        </div>
+        <div class="constellation" id="home-constellation" aria-label="Mạng từ vựng đang học"></div>
       </article>
     </section>
 
     <section class="page" id="learn" aria-labelledby="learn-heading">
       <div class="page-heading reveal">
-        <div><span class="eyebrow"><span></span> Context journey</span><h1 id="learn-heading">Learn by Context</h1><p>Một từ được gặp lại qua câu, đoạn và bối cảnh mới.</p></div>
-        <label class="lesson-picker">Bài học<select id="lesson-select" aria-label="Chọn bài học"></select></label>
+        <div><span class="eyebrow"><span></span> Context journey</span><h1 id="learn-heading">Learn by Context</h1><p>4 bài theo chủ đề và hành trình 8 bước cho toàn bộ từ đã có dữ liệu học tập.</p></div>
+        <div class="lesson-tools">
+          <label class="lesson-picker">Chọn bài hoặc từ<select id="lesson-select" aria-label="Chọn bài học hoặc từ vựng"></select></label>
+          <div class="lesson-word-search">
+            <label for="lesson-word-input">Học bất kỳ từ nào trong kho</label>
+            <input id="lesson-word-input" type="search" autocomplete="off" placeholder="Tìm trong 8.778 từ và cụm từ">
+            <div id="lesson-word-results" class="lesson-word-results" hidden></div>
+          </div>
+        </div>
       </div>
       <div class="lesson-shell">
         <aside class="lesson-rail" aria-label="Các bước bài học">
@@ -143,14 +144,15 @@
 
     <section class="page" id="reading" aria-labelledby="reading-heading">
       <div class="page-heading reveal">
-        <div><span class="eyebrow"><span></span> IELTS practice</span><h1 id="reading-heading">Reading Lab</h1><p>Đọc sâu khi luyện tập, đọc độc lập khi thi thử.</p></div>
-        <div class="reading-modes" role="group" aria-label="Chế độ đọc">
+        <div><span class="eyebrow"><span></span> IELTS practice</span><h1 id="reading-heading">Reading Lab</h1><p>27 đề luyện · Đọc sâu trong Guided Mode, đọc độc lập trong Exam Mode.</p></div>
+        <div class="reading-heading-tools"><label class="exam-picker">Chọn đề<select id="reading-exam-select" aria-label="Chọn đề Reading"></select></label><div class="reading-modes" role="group" aria-label="Chế độ đọc">
           <button data-mode="focus">Focus</button><button class="active" data-mode="guided">Guided</button><button data-mode="exam">Exam</button>
         </div>
       </div>
+      </div>
       <div class="reading-info reveal">
-        <div><span class="pill mint">Science & Society</span><h2>How Cities Learn to Cool Themselves</h2></div>
-        <div class="reading-facts"><span><b>B2–C1</b>Độ khó</span><span><b>~12 phút</b>Thời gian</span><span><b>628</b>Số từ</span><span><b>8</b>Từ mục tiêu</span></div>
+        <div><span class="pill mint" id="reading-topic">Science & Society</span><h2 id="reading-title">How Cities Learn to Cool Themselves</h2></div>
+        <div class="reading-facts"><span><b id="reading-level">B2-C1</b>Độ khó</span><span><b id="reading-time">~20 phút</b>Thời gian</span><span><b id="reading-word-count">628</b>Số từ</span><span><b id="reading-target-count">10</b>Từ mục tiêu</span></div>
       </div>
       <div class="exam-clock" id="exam-clock" hidden><span>Exam timer</span><b id="timer">20:00</b><button id="timer-toggle">Bắt đầu</button></div>
       <div class="reading-layout">
@@ -163,9 +165,9 @@
           <div class="passage" id="passage-content"></div>
         </article>
         <aside class="question-panel reveal">
-          <header><div><span class="section-label">Questions 1–14</span><h2>Kiểm tra đọc hiểu</h2></div><b id="answered-count">0/14</b></header>
+          <header id="question-panel-heading"><div><span class="section-label" id="reading-question-range">Questions 1-14</span><h2>Kiểm tra đọc hiểu</h2></div><b id="answered-count">0/14</b></header>
           <div id="reading-questions"></div>
-          <button class="button primary full" id="submit-reading">Nộp bài & xem giải thích</button>
+          <div class="reading-submit-actions"><button class="button primary full" id="submit-reading">Nộp bài & xem giải thích</button><button class="button ghost full" id="reset-reading">↻ Làm lại đề</button></div>
           <div id="reading-results" class="results-box" hidden></div>
         </aside>
       </div>
@@ -173,7 +175,7 @@
 
     <section class="page" id="sentence" aria-labelledby="sentence-heading">
       <div class="page-heading reveal">
-        <div><span class="eyebrow"><span></span> Syntax studio</span><h1 id="sentence-heading">Sentence Lab</h1><p>Tìm xương sống của câu trước khi giải mã chi tiết.</p></div>
+        <div><span class="eyebrow"><span></span> 198 academic sentences</span><h1 id="sentence-heading">Sentence Lab</h1><p>198 câu: gồm 100 câu hiện có và toàn bộ 98 câu có trong tệp bạn cung cấp; câu 82–83 không có trong tệp nguồn. Tất cả đều có phân tích cú pháp và bản dịch.</p></div>
         <select id="sentence-select" aria-label="Chọn câu phân tích"></select>
       </div>
       <article class="sentence-workbench reveal">
@@ -183,7 +185,7 @@
           <div class="translation-tabs">
             <button class="active" data-lang="vi">Tiếng Việt</button><button data-lang="zh">中文</button>
           </div>
-          <p id="sentence-translation"></p>
+          <p id="sentence-translation"></p><p class="source-note" id="sentence-source"></p>
           <div class="sentence-controls">
             <button class="button soft" id="quick-analysis">Quick Analysis</button>
             <button class="button ghost" id="deep-analysis">Deep Analysis</button>
@@ -203,7 +205,7 @@
 
     <section class="page" id="vocabulary" aria-labelledby="vocab-heading">
       <div class="page-heading reveal">
-        <div><span class="eyebrow"><span></span> <b id="vocab-total-label">8.778</b> từ và cụm từ</span><h1 id="vocab-heading">Vocabulary Map</h1><p>Kho hiện tại kết hợp dữ liệu chuyên sâu, vocab.json và chỉ mục tần suất.</p></div>
+        <div><span class="eyebrow"><span></span> <b id="vocab-total-label">8.778</b> từ và cụm từ</span><h1 id="vocab-heading">Vocabulary Map</h1><p>Kho hiện tại kết hợp dữ liệu chuyên sâu, 22 chương, PDF IELTS 8000 và chỉ mục tần suất.</p></div>
         <div class="view-switch" role="group" aria-label="Kiểu hiển thị"><button class="active" data-view="list">List</button><button data-view="group">Group</button><button data-view="network">Network</button></div>
       </div>
       <section class="chapter-curriculum reveal" aria-labelledby="chapter-heading">
@@ -218,8 +220,10 @@
         <select id="status-filter" aria-label="Lọc theo trạng thái"><option value="all">Mọi trạng thái</option><option value="saved">Đã lưu</option><option value="known">Đã biết</option><option value="difficult">Hay sai</option></select>
       </div>
       <div class="corpus-status reveal">
-        <span><i class="quality-dot deep"></i><b>Deep-reviewed</b> 24 mục đầy đủ Anh–Trung–Việt</span>
-        <span><i class="quality-dot imported"></i><b>vocab.json</b> <i id="imported-count">2.547</i> mục có IPA và nghĩa Việt</span>
+        <span><i class="quality-dot deep"></i><b>Deep-reviewed</b> <i id="deep-count">80</i> mục đầy đủ Anh–Trung–Việt</span>
+        <span><i class="quality-dot academic"></i><b>Academic 500</b> <i id="academic-count">500</i> mục có nghĩa Trung, pinyin, từ loại, sắc thái và ví dụ ba ngôn ngữ</span>
+        <span><i class="quality-dot imported"></i><b>22 chương đã bổ sung</b> <i id="imported-count">2.547</i> mục có IPA, nghĩa Việt–Trung, pinyin và ví dụ ba ngôn ngữ</span>
+        <span><i class="quality-dot academic"></i><b>IELTS 8000 PDF</b> <i id="pdf8000-count">6.899</i> mục mới; giữ nghĩa Trung từ nguồn, bổ sung IPA và trường học tập</span>
         <span><i class="quality-dot indexed"></i><b>Frequency index</b> các mục còn lại</span>
         <b id="vocab-result-count">8.778 kết quả</b>
       </div>
@@ -229,7 +233,7 @@
 
     <section class="page" id="review" aria-labelledby="review-heading">
       <div class="page-heading reveal">
-        <div><span class="eyebrow"><span></span> Active recall</span><h1 id="review-heading">Review Studio</h1><p>Ôn bằng lựa chọn, tái tạo và chuyển đổi ngữ cảnh.</p></div>
+        <div><span class="eyebrow"><span></span> Active recall</span><h1 id="review-heading">Review Studio</h1><p>Tự tạo câu ôn từ các từ đã học, đã lưu, đánh dấu khó hoặc trả lời sai ở những phần trước.</p></div>
         <div class="review-due"><b id="review-due">10</b><span>câu cần ôn</span></div>
       </div>
       <article class="review-card reveal">
